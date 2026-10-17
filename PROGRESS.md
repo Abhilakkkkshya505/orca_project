@@ -30,14 +30,14 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Verify Docker Compose configurations and local runtime scripts
   - [x] Commit: `feat(infra): configure Docker Compose, Dockerfile, scripts and CI workflows`
 
-- [ ] **Phase 3: Django Backend Foundation (Core, Accounts, Auth)**
-  - [ ] Setup `backend/pyproject.toml` with pinned packages and configuration
-  - [ ] Configure settings split: `base.py`, `dev.py`, `prod.py`, `test.py`
-  - [ ] Implement `apps/core/`: `TimeStampedModel`, `PublicIdModel`, `exceptions.py`, `cloudflare.py` (trusted proxy & Access JWT), health views
-  - [ ] Implement `apps/accounts/`: `CustomUser` (email login, public_id), auth views (signup, verify-email, resend, login, logout, me, password reset/confirm/change, delete account), `turnstile.py`, throttles
-  - [ ] Add database migrations for core and accounts
-  - [ ] Unit & permission matrix tests for accounts & auth
-  - [ ] Commit: `feat(auth): implement core models, custom user, session auth, turnstile and security middleware`
+- [x] **Phase 3: Django Backend Foundation (Core, Accounts, Auth)**
+  - [x] Setup `backend/pyproject.toml` with pinned packages and configuration
+  - [x] Configure settings split: `base.py`, `dev.py`, `prod.py`, `test.py`
+  - [x] Implement `apps/core/`: `TimeStampedModel`, `PublicIdModel`, `exceptions.py`, `cloudflare.py` (trusted proxy & Access JWT), health views
+  - [x] Implement `apps/accounts/`: `CustomUser` (email login, public_id), auth views (signup, verify-email, resend, login, logout, me, password reset/confirm/change, delete account), `turnstile.py`, throttles
+  - [x] Add database migrations for core and accounts
+  - [x] Unit & permission matrix tests for accounts & auth (13/13 passing)
+  - [x] Commit: `feat(auth): implement core models, custom user, session auth, turnstile and security middleware`
 
 - [ ] **Phase 4: Geodata Ingestion, Deterministic Risk Engine, Agents, and API Endpoints**
   - [ ] Implement `apps/geodata/`: models (`DataSource`, `GridCell`, `ForecastSnapshot`, `Advisory`), adapters (`OpenMeteoAdapter`, `CopernicusAdapter`, `NASAAdapter`, `INCOISAdapter`), Celery tasks
