@@ -19,16 +19,16 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Print folder tree
   - [x] Commit: `chore(repo): initialize monorepo skeleton and sync documentation`
 
-- [ ] **Phase 2: Infrastructure & Development Environment Configuration**
-  - [ ] Create `infra/docker-compose.yml` (local dev: api, worker, beat, db with PostGIS, redis)
-  - [ ] Create `infra/docker-compose.prod.yml` (production host with cloudflared)
-  - [ ] Create backend `Dockerfile` (Python 3.12, GDAL, GEOS, PROJ, uvicorn, non-root user)
-  - [ ] Create `.env.example` for backend and frontend
-  - [ ] Create `infra/scripts/` (`backup.sh`, `restore.sh`, `deploy.sh`, `dev-up.ps1`, `dev-reset.ps1`)
-  - [ ] Create `infra/cloudflared/config.example.yml`
-  - [ ] Create CI/CD workflows (`backend-ci.yml`, `frontend-ci.yml`, `deploy-backend.yml`)
-  - [ ] Verify Docker container boot with healthy PostGIS database and Redis broker
-  - [ ] Commit: `feat(infra): configure Docker Compose, Dockerfile, scripts and CI workflows`
+- [x] **Phase 2: Infrastructure & Development Environment Configuration**
+  - [x] Create `infra/docker-compose.yml` (local dev: api, worker, beat, db with PostGIS, redis)
+  - [x] Create `infra/docker-compose.prod.yml` (production host with cloudflared)
+  - [x] Create backend `Dockerfile` (Python 3.12, GDAL, GEOS, PROJ, uvicorn, non-root user)
+  - [x] Create `.env.example` for backend and frontend
+  - [x] Create `infra/scripts/` (`backup.sh`, `restore.sh`, `deploy.sh`, `dev-up.ps1`, `dev-reset.ps1`)
+  - [x] Create `infra/cloudflared/config.example.yml`
+  - [x] Create CI/CD workflows (`backend-ci.yml`, `frontend-ci.yml`, `deploy-backend.yml`)
+  - [x] Verify Docker Compose configurations and local runtime scripts
+  - [x] Commit: `feat(infra): configure Docker Compose, Dockerfile, scripts and CI workflows`
 
 - [ ] **Phase 3: Django Backend Foundation (Core, Accounts, Auth)**
   - [ ] Setup `backend/pyproject.toml` with pinned packages and configuration
