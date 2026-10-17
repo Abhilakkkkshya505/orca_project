@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orca-backend"
+version = "0.1.0"
+description = "ORCA: Marine Ecosystem Reasoning with Collaborative AI Agents"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.1",
+    "djangorestframework>=3.15",
+    "drf-spectacular>=0.28",
+    "django-cors-headers>=4.4",
+    "django-environ>=0.11",
+    "redis>=5.0",
+    "django-redis>=5.4",
+    "celery>=5.4",
+    "uvicorn>=0.30",
+    "whitenoise>=6.7",
+    "structlog>=24.4",
+    "sentry-sdk>=2.10",
+    "pydantic>=2.8",
+    "pyjwt>=2.8",
+    "requests>=2.32",
+    "cryptography>=43.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.9",
+    "pytest-cov>=5.0",
+    "factory-boy>=3.3",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "django-stubs>=5.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "DJ",  # flake8-django
+]
+ignore = [
+    "DJ001", # null=True on string-based fields where explicitly intentional
+    "E501",  # line length handled by ruff format
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--strict-markers -p no:warnings"
+testpaths = ["tests", "apps"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
