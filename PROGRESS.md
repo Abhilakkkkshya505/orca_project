@@ -1,0 +1,111 @@
+# ORCA Implementation Progress Tracker
+
+This document tracks the execution phases for building ORCA. Update after each phase.
+
+---
+
+- [x] **Phase 0: Analyse Everything First**
+  - [x] Recursively inspect and read every file in `Files/` (20 docs)
+  - [x] Read course guidelines and rubric (`Technology and Sustainability Mini Project Guidelines.pdf`)
+  - [x] Write `docs/ANALYSIS.md` with complete file inventory, requirements, conflicts, and gaps
+  - [x] Write `docs/ASSUMPTIONS.md` recording all architectural and conflict decisions
+  - [x] Create `PROGRESS.md` checklist
+
+- [ ] **Phase 1: Monorepo Skeleton & Documentation Synchronization**
+  - [ ] Copy all 20 technical docs into `docs/` and verify integrity
+  - [ ] Initialize Git repository in `orca/` with LF line endings (`.gitattributes`)
+  - [ ] Create directory structure (`frontend/`, `backend/`, `infra/`, `.github/workflows/`, `deliverables/`)
+  - [ ] Add root `.gitignore`, `.gitattributes`, `README.md`, `CLAUDE.md`, `CHANGELOG.md`
+  - [ ] Print folder tree
+  - [ ] Commit: `chore(repo): initialize monorepo skeleton and sync documentation`
+
+- [ ] **Phase 2: Infrastructure & Development Environment Configuration**
+  - [ ] Create `infra/docker-compose.yml` (local dev: api, worker, beat, db with PostGIS, redis)
+  - [ ] Create `infra/docker-compose.prod.yml` (production host with cloudflared)
+  - [ ] Create backend `Dockerfile` (Python 3.12, GDAL, GEOS, PROJ, uvicorn, non-root user)
+  - [ ] Create `.env.example` for backend and frontend
+  - [ ] Create `infra/scripts/` (`backup.sh`, `restore.sh`, `deploy.sh`, `dev-up.ps1`, `dev-reset.ps1`)
+  - [ ] Create `infra/cloudflared/config.example.yml`
+  - [ ] Create CI/CD workflows (`backend-ci.yml`, `frontend-ci.yml`, `deploy-backend.yml`)
+  - [ ] Verify Docker container boot with healthy PostGIS database and Redis broker
+  - [ ] Commit: `feat(infra): configure Docker Compose, Dockerfile, scripts and CI workflows`
+
+- [ ] **Phase 3: Django Backend Foundation (Core, Accounts, Auth)**
+  - [ ] Setup `backend/pyproject.toml` with pinned packages and configuration
+  - [ ] Configure settings split: `base.py`, `dev.py`, `prod.py`, `test.py`
+  - [ ] Implement `apps/core/`: `TimeStampedModel`, `PublicIdModel`, `exceptions.py`, `cloudflare.py` (trusted proxy & Access JWT), health views
+  - [ ] Implement `apps/accounts/`: `CustomUser` (email login, public_id), auth views (signup, verify-email, resend, login, logout, me, password reset/confirm/change, delete account), `turnstile.py`, throttles
+  - [ ] Add database migrations for core and accounts
+  - [ ] Unit & permission matrix tests for accounts & auth
+  - [ ] Commit: `feat(auth): implement core models, custom user, session auth, turnstile and security middleware`
+
+- [ ] **Phase 4: Geodata Ingestion, Deterministic Risk Engine, Agents, and API Endpoints**
+  - [ ] Implement `apps/geodata/`: models (`DataSource`, `GridCell`, `ForecastSnapshot`, `Advisory`), adapters (`OpenMeteoAdapter`, `CopernicusAdapter`, `NASAAdapter`, `INCOISAdapter`), Celery tasks
+  - [ ] Implement `apps/risk/`: `thresholds.py`, pure deterministic `rules.py` (100% branch coverage), `RiskAssessment`, `FishingZone`
+  - [ ] Implement `apps/agents/`: schemas, orchestrator, specialist agents (weather, ocean state, satellite, fishing zone, advisory), `validators.py` (number hallucination check), prompt templates, LLM client
+  - [ ] Implement `apps/chat/`: `Thread`, `Message`, SSE streaming view (`/api/v1/chat/threads/{id}/messages/`)
+  - [ ] Implement `apps/locations/`: `SavedLocation`, `AlertSubscription`, alert evaluation task
+  - [ ] Implement `apps/dashboard/`: overview endpoint
+  - [ ] Implement `apps/auditlog/`: `AuditEntry`, admin audit logging mixin
+  - [ ] Implement management commands (`ingest_all`, `seed_demo_data`, `prune_snapshots`, `evaluate_alerts`)
+  - [ ] Comprehensive pytest suite (risk engine 100% coverage, validator tests, permission matrix tests, query counts)
+  - [ ] Export OpenAPI schema via drf-spectacular (`schema.yml`)
+  - [ ] Commit: `feat(backend): implement geodata ingestion, deterministic risk engine, agents, and SSE chat API`
+
+- [ ] **Phase 5: Frontend Shell, Design System & Auth Flows**
+  - [ ] Setup Vite + React + TypeScript in `frontend/`
+  - [ ] Configure Tailwind with semantic tokens from `design.md` (`styles/tokens.css`)
+  - [ ] Implement design tokens, typography (IBM Plex Sans / Mono), custom SVG risk icons
+  - [ ] Generate typed API client from OpenAPI schema (`lib/api/generated/`)
+  - [ ] Build shared UI primitives (`Button`, `Input`, `Dialog`, `Toast`, `Skeleton`, `RiskBadge`, `DataTable`, `ErrorState`, `EmptyState`)
+  - [ ] Implement auth screens (`/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`)
+  - [ ] AppShell, Topbar, Sidebar, TabBar, routing with `RequireAuth`
+  - [ ] Vitest unit tests for components, schemas, and formatters
+  - [ ] Commit: `feat(frontend): initialize Vite SPA, design system tokens, API client, and authentication pages`
+
+- [ ] **Phase 6: Interactive Features (Chat, Map, Risk Card, Dashboard, Locations, Advisories)**
+  - [ ] Implement MapLibre GL component with PMTiles / GeoJSON vector sources (`location-marker`, `fishing-zones`, `advisory-areas`)
+  - [ ] Implement text alternatives and accessible keyboard map controls ("Use this point")
+  - [ ] Implement `useChatStream` SSE client with live message rendering
+  - [ ] Build `RiskCard` and `FactorRow` showing data ages, valid window, thresholds, and disclaimer
+  - [ ] Build Dashboard overview with saved locations status and data freshness indicators
+  - [ ] Build Saved Locations CRUD and Alert Subscriptions
+  - [ ] Build Advisories data table with server-side sort, filter, and pagination
+  - [ ] Build Settings page (units toggle, vessel class, password change, account deletion)
+  - [ ] Commit: `feat(frontend): implement map, SSE streaming chat, risk card, dashboard, and advisories table`
+
+- [ ] **Phase 7: Public Pages, 404, Privacy, Terms, Accessibility & SEO**
+  - [ ] Build Landing Page (left-aligned real sample risk card and map, genuine copy, no banned slop)
+  - [ ] Build branded 404 Page
+  - [ ] Build Privacy Policy and Terms of Service (customized to ORCA data retention and Indian DPDP Act)
+  - [ ] Build Accessibility statement page (`/accessibility`)
+  - [ ] Configure SEO files: `robots.txt`, `sitemap.xml`, `_headers`, `_redirects`
+  - [ ] Cookie and consent banner (`ConsentBanner`)
+  - [ ] Commit: `feat(frontend): implement landing page, public legal pages, accessibility statement, and SEO headers`
+
+- [ ] **Phase 8: Progressive Web App (PWA) & Standalone Offline Underwater Mini-Game**
+  - [ ] Configure `vite-plugin-pwa` with custom service worker (`sw.ts`)
+  - [ ] Implement runtime caching strategies for navigation, static assets, and cached API responses
+  - [ ] Build standalone `offline.html` + HTML5 canvas underwater fish game (swimming fish, food, jellyfish/sharks hazards, score, highscore in guarded localStorage, keyboard & touch controls, reduced-motion mode)
+  - [ ] Build auto-reconnection detector (`reconnect.ts`) pinging `/api/v1/health/live/`
+  - [ ] Commit: `feat(pwa): implement custom service worker caching, offline fallback, and underwater canvas mini-game`
+
+- [ ] **Phase 9: Comprehensive Testing, Quality Gates & Security Hardening**
+  - [ ] Run backend tests (`pytest --cov`) verifying 100% risk & validator coverage and permission matrix
+  - [ ] Run Django production check (`python manage.py check --deploy`)
+  - [ ] Run frontend unit and component tests (`pnpm test`)
+  - [ ] Run Playwright end-to-end tests for key user journeys
+  - [ ] Run security & vulnerability audits (`pip-audit`, `pnpm audit`)
+  - [ ] Verify accessibility standards with Axe
+  - [ ] Commit: `test(e2e): verify test suites, security checks, accessibility compliance, and quality gates`
+
+- [ ] **Phase 10: Course Deliverables, Code Walkthrough & Final Documentation**
+  - [ ] Generate comprehensive Academic Project Report (9 chapters complying with 2026CSAE102 rubric) in `deliverables/`
+  - [ ] Generate Presentation slides / creatives in `deliverables/`
+  - [ ] Generate Business Model Canvas (BMC) & Sustainability Impact document in `deliverables/`
+  - [ ] Generate 5-Minute YouTube Project Journey & Demo Video Script in `deliverables/`
+  - [ ] Generate LinkedIn Blog Post in `deliverables/`
+  - [ ] Write `docs/MANUAL_SETUP.md` with human deployment checklist
+  - [ ] Write `docs/CODE_WALKTHROUGH.md` with line-by-line explanations of critical files
+  - [ ] Polish root `README.md`
+  - [ ] Commit: `docs(deliverables): add academic project report, course deliverables, walkthrough, and setup manual`
