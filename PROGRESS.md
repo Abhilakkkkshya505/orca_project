@@ -11,13 +11,13 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Write `docs/ASSUMPTIONS.md` recording all architectural and conflict decisions
   - [x] Create `PROGRESS.md` checklist
 
-- [ ] **Phase 1: Monorepo Skeleton & Documentation Synchronization**
-  - [ ] Copy all 20 technical docs into `docs/` and verify integrity
-  - [ ] Initialize Git repository in `orca/` with LF line endings (`.gitattributes`)
-  - [ ] Create directory structure (`frontend/`, `backend/`, `infra/`, `.github/workflows/`, `deliverables/`)
-  - [ ] Add root `.gitignore`, `.gitattributes`, `README.md`, `CLAUDE.md`, `CHANGELOG.md`
-  - [ ] Print folder tree
-  - [ ] Commit: `chore(repo): initialize monorepo skeleton and sync documentation`
+- [x] **Phase 1: Monorepo Skeleton & Documentation Synchronization**
+  - [x] Copy all 20 technical docs into `docs/` and verify integrity
+  - [x] Initialize Git repository in `orca/` with LF line endings (`.gitattributes`)
+  - [x] Create directory structure (`frontend/`, `backend/`, `infra/`, `.github/workflows/`, `deliverables/`)
+  - [x] Add root `.gitignore`, `.gitattributes`, `README.md`, `CLAUDE.md`, `CHANGELOG.md`
+  - [x] Print folder tree
+  - [x] Commit: `chore(repo): initialize monorepo skeleton and sync documentation`
 
 - [ ] **Phase 2: Infrastructure & Development Environment Configuration**
   - [ ] Create `infra/docker-compose.yml` (local dev: api, worker, beat, db with PostGIS, redis)
