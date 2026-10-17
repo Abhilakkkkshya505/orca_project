@@ -1,0 +1,22 @@
+# Cloudflare Tunnel Configuration Example
+# File: infra/cloudflared/config.example.yml
+
+tunnel: 00000000-0000-0000-0000-000000000000
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Public API route forwarding to Docker network container
+  - hostname: api.orca.example
+    service: http://api:8000
+    originRequest:
+      connectTimeout: 10s
+      noTLSVerify: false
+      http2Origin: true
+      disableChunkedEncoding: false
+
+  # Staging API route if deployed on the same tunnel
+  - hostname: staging-api.orca.example
+    service: http://api:8000
+
+  # Default catch-all (returns 404 for unmapped subdomains)
+  - service: http_status:404

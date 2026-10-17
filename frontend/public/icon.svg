@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="#0F5C6E"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#F4F1EA" stroke-width="16" opacity="0.3"/>
+  <circle cx="256" cy="256" r="120" fill="none" stroke="#F4F1EA" stroke-width="12" opacity="0.5"/>
+  <!-- Compass pointer / Marine icon -->
+  <polygon points="256,96 296,256 256,224 216,256" fill="#F4F1EA"/>
+  <polygon points="256,416 296,256 256,288 216,256" fill="#CFC9BA"/>
+  <circle cx="256" cy="256" r="16" fill="#0E2231"/>
+  <circle cx="256" cy="256" r="8" fill="#F4F1EA"/>
+</svg>
