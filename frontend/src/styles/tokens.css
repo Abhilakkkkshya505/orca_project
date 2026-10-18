@@ -1,0 +1,53 @@
+/* Design System Color Tokens according to docs/design.md */
+
+:root {
+  /* Light mode (Chart paper aesthetic) */
+  --color-bg: #F4F1EA;
+  --color-surface: #FBFAF6;
+  --color-surface-raised: #FFFFFF;
+  --color-border: #CFC9BA;
+  --color-border-strong: #8B8574;
+  --color-ink: #0E2231;
+  --color-ink-muted: #44596A;
+  --color-primary: #0F5C6E;
+  --color-primary-hover: #0B4756;
+  --color-on-primary: #FFFFFF;
+  --color-focus: #B45309;
+  --color-water: #CFE3E8;
+
+  /* Risk Tokens (Light) */
+  --color-risk-safe: #1B6B3F;
+  --color-risk-safe-bg: #E1F1E7;
+  --color-risk-caution: #7A4B00;
+  --color-risk-caution-bg: #FCEBC2;
+  --color-risk-unsafe: #9F1D17;
+  --color-risk-unsafe-bg: #F9DAD7;
+  --color-risk-unknown: #44596A;
+  --color-risk-unknown-bg: #E3E6E8;
+}
+
+[data-theme="dark"] {
+  /* Dark mode */
+  --color-bg: #0A1A24;
+  --color-surface: #10242F;
+  --color-surface-raised: #16303D;
+  --color-border: #26414F;
+  --color-border-strong: #6C8796;
+  --color-ink: #E6EEF2;
+  --color-ink-muted: #A3B6C1;
+  --color-primary: #5FB4C7;
+  --color-primary-hover: #85C8D6;
+  --color-on-primary: #06202A;
+  --color-focus: #F59E0B;
+  --color-water: #143846;
+
+  /* Risk Tokens (Dark) */
+  --color-risk-safe: #7ED3A0;
+  --color-risk-safe-bg: #12301F;
+  --color-risk-caution: #F2C14E;
+  --color-risk-caution-bg: #3A2A07;
+  --color-risk-unsafe: #FF9E96;
+  --color-risk-unsafe-bg: #3F1411;
+  --color-risk-unknown: #A3B6C1;
+  --color-risk-unknown-bg: #1C2E39;
+}

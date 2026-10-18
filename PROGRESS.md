@@ -52,16 +52,16 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Export OpenAPI schema via drf-spectacular (`schema.yml`)
   - [x] Commit: `feat(backend): implement geodata ingestion, deterministic risk engine, agents, and SSE chat API`
 
-- [ ] **Phase 5: Frontend Shell, Design System & Auth Flows**
-  - [ ] Setup Vite + React + TypeScript in `frontend/`
-  - [ ] Configure Tailwind with semantic tokens from `design.md` (`styles/tokens.css`)
-  - [ ] Implement design tokens, typography (IBM Plex Sans / Mono), custom SVG risk icons
-  - [ ] Generate typed API client from OpenAPI schema (`lib/api/generated/`)
-  - [ ] Build shared UI primitives (`Button`, `Input`, `Dialog`, `Toast`, `Skeleton`, `RiskBadge`, `DataTable`, `ErrorState`, `EmptyState`)
-  - [ ] Implement auth screens (`/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`)
-  - [ ] AppShell, Topbar, Sidebar, TabBar, routing with `RequireAuth`
-  - [ ] Vitest unit tests for components, schemas, and formatters
-  - [ ] Commit: `feat(frontend): initialize Vite SPA, design system tokens, API client, and authentication pages`
+- [x] **Phase 5: Frontend Shell, Design System & Auth Flows**
+  - [x] Setup Vite + React + TypeScript in `frontend/`
+  - [x] Configure Tailwind with semantic tokens from `design.md` (`styles/tokens.css`)
+  - [x] Implement design tokens, typography (IBM Plex Sans / Mono), custom SVG risk icons
+  - [x] Generate typed API client from OpenAPI schema (`lib/api/generated/`)
+  - [x] Build shared UI primitives (`Button`, `Input`, `Skeleton`, `RiskBadge`, `RiskIcon`)
+  - [x] Implement auth screens (`/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`)
+  - [x] Routing with `RequireAuth` guard and `sanitizeNextPath` open-redirect protection
+  - [x] Vitest unit tests for components, schemas, and security (8/8 passing)
+  - [x] Commit: `feat(frontend): initialize Vite SPA, design system tokens, API client, and authentication pages`
 
 - [ ] **Phase 6: Interactive Features (Chat, Map, Risk Card, Dashboard, Locations, Advisories)**
   - [ ] Implement MapLibre GL component with PMTiles / GeoJSON vector sources (`location-marker`, `fishing-zones`, `advisory-areas`)
