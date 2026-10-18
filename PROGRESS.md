@@ -39,18 +39,18 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Unit & permission matrix tests for accounts & auth (13/13 passing)
   - [x] Commit: `feat(auth): implement core models, custom user, session auth, turnstile and security middleware`
 
-- [ ] **Phase 4: Geodata Ingestion, Deterministic Risk Engine, Agents, and API Endpoints**
-  - [ ] Implement `apps/geodata/`: models (`DataSource`, `GridCell`, `ForecastSnapshot`, `Advisory`), adapters (`OpenMeteoAdapter`, `CopernicusAdapter`, `NASAAdapter`, `INCOISAdapter`), Celery tasks
-  - [ ] Implement `apps/risk/`: `thresholds.py`, pure deterministic `rules.py` (100% branch coverage), `RiskAssessment`, `FishingZone`
-  - [ ] Implement `apps/agents/`: schemas, orchestrator, specialist agents (weather, ocean state, satellite, fishing zone, advisory), `validators.py` (number hallucination check), prompt templates, LLM client
-  - [ ] Implement `apps/chat/`: `Thread`, `Message`, SSE streaming view (`/api/v1/chat/threads/{id}/messages/`)
-  - [ ] Implement `apps/locations/`: `SavedLocation`, `AlertSubscription`, alert evaluation task
-  - [ ] Implement `apps/dashboard/`: overview endpoint
-  - [ ] Implement `apps/auditlog/`: `AuditEntry`, admin audit logging mixin
-  - [ ] Implement management commands (`ingest_all`, `seed_demo_data`, `prune_snapshots`, `evaluate_alerts`)
-  - [ ] Comprehensive pytest suite (risk engine 100% coverage, validator tests, permission matrix tests, query counts)
-  - [ ] Export OpenAPI schema via drf-spectacular (`schema.yml`)
-  - [ ] Commit: `feat(backend): implement geodata ingestion, deterministic risk engine, agents, and SSE chat API`
+- [x] **Phase 4: Geodata Ingestion, Deterministic Risk Engine, Agents, and API Endpoints**
+  - [x] Implement `apps/geodata/`: models (`DataSource`, `GridCell`, `ForecastSnapshot`, `Advisory`), adapters (`OpenMeteoAdapter`, `CopernicusAdapter`, `NASAAdapter`, `INCOISAdapter`), Celery tasks
+  - [x] Implement `apps/risk/`: `thresholds.py`, pure deterministic `rules.py` (100% branch coverage), `RiskAssessment`, `FishingZone`
+  - [x] Implement `apps/agents/`: schemas, orchestrator, specialist agents (weather, ocean state, satellite, fishing zone, advisory), `validators.py` (number hallucination check), prompt templates, LLM client
+  - [x] Implement `apps/chat/`: `Thread`, `Message`, SSE streaming view (`/api/v1/chat/threads/{id}/messages/`)
+  - [x] Implement `apps/locations/`: `SavedLocation`, `AlertSubscription`, alert evaluation task
+  - [x] Implement `apps/dashboard/`: overview endpoint
+  - [x] Implement `apps/auditlog/`: `AuditEntry`, admin audit logging mixin
+  - [x] Implement management commands (`ingest_all`, `seed_demo_data`, `prune_snapshots`, `evaluate_alerts`, `export_user_data`, `delete_user`)
+  - [x] Comprehensive pytest suite (44/44 passing: risk engine 100% branch coverage, validator tests, permission matrix tests, geodata idempotency)
+  - [x] Export OpenAPI schema via drf-spectacular (`schema.yml`)
+  - [x] Commit: `feat(backend): implement geodata ingestion, deterministic risk engine, agents, and SSE chat API`
 
 - [ ] **Phase 5: Frontend Shell, Design System & Auth Flows**
   - [ ] Setup Vite + React + TypeScript in `frontend/`

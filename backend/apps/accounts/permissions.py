@@ -19,6 +19,9 @@ class IsVerified(BasePermission):
         return True
 
 
+IsVerifiedUser = IsVerified
+
+
 class GuestOrAuthenticated(BasePermission):
     """
     Allows access to authenticated users OR establishes/validates an anonymous Django session

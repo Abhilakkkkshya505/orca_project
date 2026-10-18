@@ -1,16 +1,10 @@
+"""URLs for locations app."""
+
 from django.urls import path
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-
-class LocationsPlaceholder(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response({"results": []})
-
+from apps.locations.views import SavedLocationDetailView, SavedLocationListCreateView
 
 urlpatterns = [
-    path("", LocationsPlaceholder.as_view(), name="locations-list"),
+    path("", SavedLocationListCreateView.as_view(), name="locations-list-create"),
+    path("<uuid:location_id>/", SavedLocationDetailView.as_view(), name="locations-detail"),
 ]

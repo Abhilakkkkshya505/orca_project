@@ -1,16 +1,11 @@
+"""URLs for chat app."""
+
 from django.urls import path
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-
-class ChatPlaceholder(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        return Response({"threads": []})
-
+from apps.chat.views import ChatMessageStreamView, ThreadDetailView, ThreadListCreateView
 
 urlpatterns = [
-    path("threads/", ChatPlaceholder.as_view(), name="chat-threads"),
+    path("threads/", ThreadListCreateView.as_view(), name="chat-thread-list-create"),
+    path("threads/<uuid:thread_id>/", ThreadDetailView.as_view(), name="chat-thread-detail"),
+    path("threads/<uuid:thread_id>/messages/", ChatMessageStreamView.as_view(), name="chat-thread-messages"),
 ]

@@ -1,0 +1,1583 @@
+openapi: 3.0.3
+info:
+  title: ORCA Marine Safety & Ecosystem Reasoning API
+  version: 1.0.0
+  description: Decision support system turning marine and meteorological forecasts
+    into plain-language safety ratings and likely fishing areas for coastal communities.
+paths:
+  /api/v1/advisories/:
+    get:
+      operationId: advisories_list
+      description: Returns paginated list of official marine weather and ocean state
+        warnings with server-side filtering.
+      summary: List Official Marine Advisories
+      parameters:
+      - in: query
+        name: active
+        schema:
+          type: boolean
+        description: Return unexpired advisories only (default true)
+      - in: query
+        name: ordering
+        schema:
+          type: string
+        description: Sort order (-issued_at, expires_at, etc.)
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: Page number
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+        description: Page size
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search term in headline
+      - in: query
+        name: severity
+        schema:
+          type: string
+        description: Filter by severity (info, watch, warning, severe)
+      tags:
+      - advisories
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdvisoryListList'
+          description: ''
+  /api/v1/advisories/{public_id}/:
+    get:
+      operationId: advisories_retrieve
+      description: Returns full advisory narrative and geographical bounding box.
+      summary: Advisory Details
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - advisories
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvisoryDetail'
+          description: ''
+  /api/v1/alerts/subscriptions/:
+    get:
+      operationId: alerts_subscriptions_retrieve
+      description: |-
+        GET /alerts/subscriptions/: List subscriptions.
+        POST /alerts/subscriptions/: Subscribe to alerts for location.
+      tags:
+      - alerts
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertSubscription'
+          description: ''
+    post:
+      operationId: alerts_subscriptions_create
+      description: |-
+        GET /alerts/subscriptions/: List subscriptions.
+        POST /alerts/subscriptions/: Subscribe to alerts for location.
+      tags:
+      - alerts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertSubscriptionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AlertSubscriptionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AlertSubscriptionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertSubscription'
+          description: ''
+  /api/v1/alerts/subscriptions/{sub_id}/:
+    patch:
+      operationId: alerts_subscriptions_partial_update
+      description: |-
+        PATCH /alerts/subscriptions/{id}/: Update subscription min_level or is_active.
+        DELETE /alerts/subscriptions/{id}/: Unsubscribe.
+      parameters:
+      - in: path
+        name: sub_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - alerts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertSubscriptionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertSubscriptionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAlertSubscriptionRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertSubscription'
+          description: ''
+    delete:
+      operationId: alerts_subscriptions_destroy
+      description: |-
+        PATCH /alerts/subscriptions/{id}/: Update subscription min_level or is_active.
+        DELETE /alerts/subscriptions/{id}/: Unsubscribe.
+      parameters:
+      - in: path
+        name: sub_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - alerts
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/csrf/:
+    get:
+      operationId: auth_csrf_retrieve
+      description: Sets the csrftoken cookie for subsequent state-changing POST/PATCH/DELETE
+        requests.
+      summary: Acquire CSRF Cookie
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Authenticates user with session cookie and optional guest-thread
+        claiming.
+      summary: User Login
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: Flushes the current session cookie.
+      summary: User Logout
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/me/:
+    get:
+      operationId: auth_me_retrieve
+      description: Returns the profile of the currently logged-in user.
+      summary: Current Authenticated User
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/auth/password-change/:
+    post:
+      operationId: auth_password_change_create
+      description: Updates password for authenticated and verified user.
+      summary: Change Password
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/password-reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: Triggers password reset email with anti-enumeration protection.
+      summary: Request Password Reset
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequestRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/password-reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: Resets the password and revokes all active user sessions.
+      summary: Confirm Password Reset
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirmRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/resend-verification/:
+    post:
+      operationId: auth_resend_verification_create
+      description: Resends verification email with anti-enumeration protection.
+      summary: Resend Email Verification
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendVerificationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendVerificationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendVerificationRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/signup/:
+    post:
+      operationId: auth_signup_create
+      description: Registers a new user account with Turnstile verification. Always
+        returns 201 anti-enumeration response.
+      summary: User Registration
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/auth/verify-email/:
+    post:
+      operationId: auth_verify_email_create
+      description: Validates a timestamped verification token.
+      summary: Verify Email Address
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/chat/threads/:
+    get:
+      operationId: chat_threads_retrieve
+      description: |-
+        POST /chat/threads/: Create thread (guest or authenticated).
+        GET /chat/threads/: List threads (authenticated users only).
+      tags:
+      - chat
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreadCreate'
+          description: ''
+    post:
+      operationId: chat_threads_create
+      description: |-
+        POST /chat/threads/: Create thread (guest or authenticated).
+        GET /chat/threads/: List threads (authenticated users only).
+      tags:
+      - chat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreadCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ThreadCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ThreadCreateRequest'
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreadCreate'
+          description: ''
+  /api/v1/chat/threads/{thread_id}/:
+    get:
+      operationId: chat_threads_retrieve_2
+      description: |-
+        GET /chat/threads/{id}/: View thread with messages.
+        DELETE /chat/threads/{id}/: Soft delete thread.
+      parameters:
+      - in: path
+        name: thread_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chat
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreadDetail'
+          description: ''
+    delete:
+      operationId: chat_threads_destroy
+      description: |-
+        GET /chat/threads/{id}/: View thread with messages.
+        DELETE /chat/threads/{id}/: Soft delete thread.
+      parameters:
+      - in: path
+        name: thread_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chat
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/chat/threads/{thread_id}/messages/:
+    post:
+      operationId: chat_threads_messages_create
+      description: |-
+        POST /chat/threads/{id}/messages/
+        Streams SSE events: status, risk, map, token, done, error.
+      parameters:
+      - in: path
+        name: thread_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessagePostRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChatMessagePostRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChatMessagePostRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessagePost'
+          description: ''
+  /api/v1/dashboard/overview/:
+    get:
+      operationId: dashboard_overview_retrieve
+      description: |-
+        GET /dashboard/overview/
+        Returns overview metrics for verified user:
+        - saved locations with current risk level and top contributing factor
+        - active advisories count
+        - active alerts count
+        - data freshness indicators per source
+      tags:
+      - dashboard
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/data-status/:
+    get:
+      operationId: data_status_retrieve
+      description: Returns ingestion freshness and operational status for all configured
+        ocean and weather data sources.
+      summary: Data Freshness Status
+      tags:
+      - data-status
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/health/live/:
+    get:
+      operationId: health_live_retrieve
+      description: Returns 200 if the process is up and running.
+      summary: Liveness Probe
+      tags:
+      - health
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStatus'
+          description: ''
+  /api/v1/health/ready/:
+    get:
+      operationId: health_ready_retrieve
+      description: Checks database and Redis connectivity. Returns 200 if ready, 503
+        if degraded.
+      summary: Readiness Probe
+      tags:
+      - health
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadyStatus'
+          description: ''
+  /api/v1/locations/:
+    get:
+      operationId: locations_retrieve
+      description: |-
+        GET /locations/: List user saved locations.
+        POST /locations/: Create saved location (up to 20).
+      tags:
+      - locations
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+    post:
+      operationId: locations_create
+      description: |-
+        GET /locations/: List user saved locations.
+        POST /locations/: Create saved location (up to 20).
+      tags:
+      - locations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedLocationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SavedLocationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SavedLocationRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+  /api/v1/locations/{location_id}/:
+    get:
+      operationId: locations_retrieve_2
+      description: |-
+        GET /locations/{id}/: Retrieve location.
+        PATCH /locations/{id}/: Update location.
+        DELETE /locations/{id}/: Delete location.
+      parameters:
+      - in: path
+        name: location_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - locations
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+    patch:
+      operationId: locations_partial_update
+      description: |-
+        GET /locations/{id}/: Retrieve location.
+        PATCH /locations/{id}/: Update location.
+        DELETE /locations/{id}/: Delete location.
+      parameters:
+      - in: path
+        name: location_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - locations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedLocationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedLocationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSavedLocationRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedLocation'
+          description: ''
+    delete:
+      operationId: locations_destroy
+      description: |-
+        GET /locations/{id}/: Retrieve location.
+        PATCH /locations/{id}/: Update location.
+        DELETE /locations/{id}/: Delete location.
+      parameters:
+      - in: path
+        name: location_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - locations
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/me/:
+    patch:
+      operationId: me_partial_update
+      description: Updates user display name, preferred units, or vessel class.
+      summary: Update Profile
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: me_destroy
+      description: Permanently deletes the user account and associated personal data.
+      summary: Delete Account
+      tags:
+      - me
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/risk/:
+    get:
+      operationId: risk_retrieve
+      description: Calculates deterministic risk assessment and productive fishing
+        zones for a coastal point.
+      summary: Evaluate Ocean Risk
+      parameters:
+      - in: query
+        name: from
+        schema:
+          type: string
+        description: Window start time (ISO 8601 UTC)
+      - in: query
+        name: lat
+        schema:
+          type: number
+          format: double
+        description: Latitude in decimal degrees
+        required: true
+      - in: query
+        name: lon
+        schema:
+          type: number
+          format: double
+        description: Longitude in decimal degrees
+        required: true
+      - in: query
+        name: to
+        schema:
+          type: string
+        description: Window end time (ISO 8601 UTC)
+      - in: query
+        name: vessel_class
+        schema:
+          type: string
+        description: small_craft or mechanised
+      tags:
+      - risk
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskAssessment'
+          description: ''
+components:
+  schemas:
+    AdvisoryDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        headline:
+          type: string
+          maxLength: 255
+        body:
+          type: string
+        severity:
+          $ref: '#/components/schemas/SeverityEnum'
+        source:
+          type: string
+          readOnly: true
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        source_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 500
+          - type: string
+            maxLength: 0
+        bounds:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - body
+      - bounds
+      - created_at
+      - expires_at
+      - headline
+      - id
+      - issued_at
+      - source
+    AdvisoryList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        headline:
+          type: string
+          maxLength: 255
+        body_excerpt:
+          type: string
+          readOnly: true
+        severity:
+          $ref: '#/components/schemas/SeverityEnum'
+        source:
+          type: string
+          readOnly: true
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+        source_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 500
+          - type: string
+            maxLength: 0
+        area_centroid:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+      required:
+      - area_centroid
+      - body_excerpt
+      - expires_at
+      - headline
+      - id
+      - issued_at
+      - source
+    AlertSubscription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        location:
+          allOf:
+          - $ref: '#/components/schemas/SavedLocation'
+          readOnly: true
+        min_level:
+          $ref: '#/components/schemas/MinLevelEnum'
+        is_active:
+          type: boolean
+        email_notifications:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - location
+    AlertSubscriptionRequest:
+      type: object
+      properties:
+        location_id:
+          type: string
+          format: uuid
+          writeOnly: true
+        min_level:
+          $ref: '#/components/schemas/MinLevelEnum'
+        is_active:
+          type: boolean
+        email_notifications:
+          type: boolean
+      required:
+      - location_id
+    BlankEnum:
+      enum:
+      - ''
+    ChatMessagePost:
+      type: object
+      properties:
+        content:
+          type: string
+          maxLength: 1000
+          minLength: 1
+        location:
+          allOf:
+          - $ref: '#/components/schemas/LocationInput'
+          nullable: true
+        vessel_class:
+          allOf:
+          - $ref: '#/components/schemas/ChatMessagePostVesselClassEnum'
+          default: small_craft
+        turnstile_token:
+          type: string
+      required:
+      - content
+    ChatMessagePostRequest:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1000
+        location:
+          allOf:
+          - $ref: '#/components/schemas/LocationInputRequest'
+          nullable: true
+        vessel_class:
+          allOf:
+          - $ref: '#/components/schemas/ChatMessagePostVesselClassEnum'
+          default: small_craft
+        turnstile_token:
+          type: string
+      required:
+      - content
+    ChatMessagePostVesselClassEnum:
+      enum:
+      - small_craft
+      - mechanised
+      type: string
+      description: |-
+        * `small_craft` - small_craft
+        * `mechanised` - mechanised
+    DefaultVesselClassEnum:
+      enum:
+      - small_craft
+      - mechanised
+      type: string
+      description: |-
+        * `small_craft` - Small Craft (FRP boat, canoe)
+        * `mechanised` - Mechanised (Trawler, gillnetter)
+    FishingZone:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        origin:
+          $ref: '#/components/schemas/OriginEnum'
+        score:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        risk_level:
+          $ref: '#/components/schemas/RiskLevelEnum'
+        geometry:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        factors: {}
+      required:
+      - geometry
+      - id
+      - risk_level
+    KindEnum:
+      enum:
+      - harbour
+      - fishing_ground
+      - coastal_point
+      - custom
+      type: string
+      description: |-
+        * `harbour` - Harbour / Port
+        * `fishing_ground` - Fishing Ground
+        * `coastal_point` - Coastal Point
+        * `custom` - Custom
+    LevelEnum:
+      enum:
+      - safe
+      - caution
+      - unsafe
+      - unknown
+      type: string
+      description: |-
+        * `safe` - Safe
+        * `caution` - Caution
+        * `unsafe` - Unsafe
+        * `unknown` - Unknown
+    LiveStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    LocationInput:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          maximum: 90.0
+          minimum: -90.0
+        lon:
+          type: number
+          format: double
+          maximum: 180.0
+          minimum: -180.0
+      required:
+      - lat
+      - lon
+    LocationInputRequest:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          maximum: 90.0
+          minimum: -90.0
+        lon:
+          type: number
+          format: double
+          maximum: 180.0
+          minimum: -180.0
+      required:
+      - lat
+      - lon
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        turnstile_token:
+          type: string
+          minLength: 1
+        claim_guest_threads:
+          type: boolean
+          default: false
+      required:
+      - email
+      - password
+      - turnstile_token
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        content:
+          type: string
+        payload:
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - content
+      - created_at
+      - id
+      - role
+    MinLevelEnum:
+      enum:
+      - caution
+      - unsafe
+      type: string
+      description: |-
+        * `caution` - Caution or Unsafe
+        * `unsafe` - Unsafe Only
+    NullEnum:
+      enum:
+      - null
+    OriginEnum:
+      enum:
+      - official_pfz
+      - orca_heuristic
+      type: string
+      description: |-
+        * `official_pfz` - Official INCOIS PFZ Bulletin
+        * `orca_heuristic` - ORCA SST/Chlorophyll Front Estimation
+    PaginatedAdvisoryListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvisoryList'
+    PasswordChangeRequest:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 10
+      required:
+      - current_password
+      - new_password
+    PasswordResetConfirmRequest:
+      type: object
+      properties:
+        uid:
+          type: string
+          minLength: 1
+        token:
+          type: string
+          minLength: 1
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 10
+      required:
+      - new_password
+      - token
+      - uid
+    PasswordResetRequestRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        turnstile_token:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - turnstile_token
+    PatchedAlertSubscriptionRequest:
+      type: object
+      properties:
+        location_id:
+          type: string
+          format: uuid
+          writeOnly: true
+        min_level:
+          $ref: '#/components/schemas/MinLevelEnum'
+        is_active:
+          type: boolean
+        email_notifications:
+          type: boolean
+    PatchedProfileUpdateRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        preferred_units:
+          $ref: '#/components/schemas/PreferredUnitsEnum'
+        default_vessel_class:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/DefaultVesselClassEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+    PatchedSavedLocationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+    PreferredUnitsEnum:
+      enum:
+      - metric
+      - knots
+      type: string
+      description: |-
+        * `metric` - Metric (m, km/h, °C)
+        * `knots` - Nautical (knots, m, °C)
+    ReadyStatus:
+      type: object
+      properties:
+        status:
+          type: string
+        checks:
+          type: object
+          additionalProperties: {}
+      required:
+      - checks
+      - status
+    ResendVerificationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        turnstile_token:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - turnstile_token
+    RiskAssessment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        location:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        valid_from:
+          type: string
+          format: date-time
+        valid_to:
+          type: string
+          format: date-time
+        vessel_class:
+          $ref: '#/components/schemas/RiskAssessmentVesselClassEnum'
+        factors: {}
+        advisories:
+          type: array
+          items: {}
+          readOnly: true
+        fishing_zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/FishingZone'
+          readOnly: true
+        missing:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        rules_version:
+          type: string
+          maxLength: 20
+        disclaimer:
+          type: string
+          default: Official warnings override ORCA. Thresholds are development placeholders.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - advisories
+      - created_at
+      - fishing_zones
+      - id
+      - level
+      - location
+      - missing
+      - rules_version
+      - valid_from
+      - valid_to
+    RiskAssessmentVesselClassEnum:
+      enum:
+      - small_craft
+      - mechanised
+      type: string
+      description: |-
+        * `small_craft` - Small Craft
+        * `mechanised` - Mechanised
+    RiskLevelEnum:
+      enum:
+      - safe
+      - caution
+      - unsafe
+      - unknown
+      type: string
+      description: |-
+        * `safe` - Safe
+        * `caution` - Caution
+        * `unsafe` - Unsafe
+        * `unknown` - Unknown
+    RoleEnum:
+      enum:
+      - user
+      - assistant
+      - system
+      type: string
+      description: |-
+        * `user` - User
+        * `assistant` - Assistant
+        * `system` - System
+    SavedLocation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 60
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - lat
+      - lon
+      - name
+    SavedLocationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        lat:
+          type: number
+          format: double
+        lon:
+          type: number
+          format: double
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+      required:
+      - lat
+      - lon
+      - name
+    SeverityEnum:
+      enum:
+      - info
+      - watch
+      - warning
+      - severe
+      type: string
+      description: |-
+        * `info` - Informational
+        * `watch` - Watch
+        * `warning` - Warning
+        * `severe` - Severe Warning
+    SignupRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        password:
+          type: string
+          writeOnly: true
+          minLength: 10
+        turnstile_token:
+          type: string
+          minLength: 1
+        claim_guest_threads:
+          type: boolean
+          default: false
+      required:
+      - display_name
+      - email
+      - password
+      - turnstile_token
+    ThreadCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 120
+    ThreadCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 120
+    ThreadDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 120
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        last_message_at:
+          type: string
+          format: date-time
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - last_message_at
+      - messages
+    User:
+      type: object
+      description: Public representation of an authenticated user.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        display_name:
+          type: string
+          maxLength: 80
+        is_email_verified:
+          type: boolean
+          readOnly: true
+          title: Email verified
+        preferred_units:
+          $ref: '#/components/schemas/PreferredUnitsEnum'
+        default_vessel_class:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/DefaultVesselClassEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - display_name
+      - email
+      - id
+      - is_email_verified
+    VerifyEmailRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+      required:
+      - token
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

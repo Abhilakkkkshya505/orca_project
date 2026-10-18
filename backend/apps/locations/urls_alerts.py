@@ -1,16 +1,10 @@
+"""URLs for alert subscriptions."""
+
 from django.urls import path
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-
-class AlertsPlaceholder(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response({"results": []})
-
+from apps.locations.views import AlertSubscriptionDetailView, AlertSubscriptionListCreateView
 
 urlpatterns = [
-    path("subscriptions/", AlertsPlaceholder.as_view(), name="alerts-subscriptions"),
+    path("subscriptions/", AlertSubscriptionListCreateView.as_view(), name="alert-subscriptions-list-create"),
+    path("subscriptions/<uuid:sub_id>/", AlertSubscriptionDetailView.as_view(), name="alert-subscriptions-detail"),
 ]
