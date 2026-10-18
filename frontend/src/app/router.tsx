@@ -6,11 +6,11 @@ import { VerifyEmailPage } from "@/routes/verify-email";
 import { ForgotPasswordPage } from "@/routes/forgot-password";
 import { ResetPasswordPage } from "@/routes/reset-password";
 import { ExplorePage } from "@/routes/explore";
+import { DashboardPage } from "@/routes/dashboard";
+import { LocationsPage } from "@/routes/locations";
+import { AdvisoriesPage } from "@/routes/advisories";
+import { SettingsPage } from "@/routes/settings";
 import {
-  DashboardPage,
-  LocationsPage,
-  AdvisoriesPage,
-  SettingsPage,
   PrivacyPage,
   TermsPage,
   AccessibilityPage,

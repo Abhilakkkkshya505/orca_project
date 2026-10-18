@@ -63,16 +63,17 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Vitest unit tests for components, schemas, and security (8/8 passing)
   - [x] Commit: `feat(frontend): initialize Vite SPA, design system tokens, API client, and authentication pages`
 
-- [ ] **Phase 6: Interactive Features (Chat, Map, Risk Card, Dashboard, Locations, Advisories)**
-  - [ ] Implement MapLibre GL component with PMTiles / GeoJSON vector sources (`location-marker`, `fishing-zones`, `advisory-areas`)
-  - [ ] Implement text alternatives and accessible keyboard map controls ("Use this point")
-  - [ ] Implement `useChatStream` SSE client with live message rendering
-  - [ ] Build `RiskCard` and `FactorRow` showing data ages, valid window, thresholds, and disclaimer
-  - [ ] Build Dashboard overview with saved locations status and data freshness indicators
-  - [ ] Build Saved Locations CRUD and Alert Subscriptions
-  - [ ] Build Advisories data table with server-side sort, filter, and pagination
-  - [ ] Build Settings page (units toggle, vessel class, password change, account deletion)
-  - [ ] Commit: `feat(frontend): implement map, SSE streaming chat, risk card, dashboard, and advisories table`
+- [x] **Phase 6: Interactive Features (Chat, Map, Risk Card, Dashboard, Locations, Advisories)**
+  - [x] Implement MapLibre GL component with PMTiles / GeoJSON vector sources (`location-marker`, `fishing-zones`, `advisory-areas`)
+  - [x] Implement text alternatives and accessible keyboard map controls ("Use this point")
+  - [x] Implement `useChatStream` SSE client with live message rendering
+  - [x] Build `RiskCard` and `FactorRow` showing data ages, valid window, thresholds, and disclaimer
+  - [x] Build Dashboard overview with saved locations status and data freshness indicators
+  - [x] Build Saved Locations CRUD and Alert Subscriptions
+  - [x] Build Advisories data table with server-side sort, filter, and pagination
+  - [x] Build Settings page (units toggle, vessel class, password change, account deletion)
+  - [x] Unit tests for RiskCard, FactorRow, SSE split parser (20/20 Vitest passing)
+  - [x] Commit: `feat(frontend): implement map, SSE streaming chat, risk card, dashboard, and advisories table`
 
 - [ ] **Phase 7: Public Pages, 404, Privacy, Terms, Accessibility & SEO**
   - [ ] Build Landing Page (left-aligned real sample risk card and map, genuine copy, no banned slop)
