@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { RiskBadge } from "@/components/ui/risk-badge";
+import { Attribution } from "@/components/layout/Attribution";
 import { ShieldCheck, Anchor, Compass } from "lucide-react";
 
 export const LandingPage: React.FC = () => {
@@ -97,6 +98,9 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Required Attribution Credits */}
+      <Attribution />
 
       {/* Footer */}
       <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted">

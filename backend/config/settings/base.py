@@ -262,3 +262,50 @@ CELERY_TASK_SOFT_TIME_LIMIT = 600  # 10 minutes
 # Email
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="alerts@orca.example")
+
+# Development access bypass (Turnstile/JWT bypass, only allowed in local/test mode)
+DEV_BYPASS_ACCESS = env.bool("DEV_BYPASS_ACCESS", default=False)
+
+
+def validate_environment(custom_env=None):
+    """
+    Validates required environment configuration.
+    Reports ALL missing required variables at once and refuses DEV_BYPASS_ACCESS in production.
+    """
+    import os
+    from django.core.exceptions import ImproperlyConfigured
+
+    target_env = custom_env if custom_env is not None else os.environ
+    current_environment = target_env.get("ENVIRONMENT", ENVIRONMENT)
+
+    if custom_env is not None:
+        bypass_access = str(custom_env.get("DEV_BYPASS_ACCESS", "false")).lower() in ("true", "1", "yes")
+    else:
+        bypass_access = str(target_env.get("DEV_BYPASS_ACCESS", DEV_BYPASS_ACCESS)).lower() in ("true", "1", "yes")
+
+    if current_environment == "production" and bypass_access:
+        raise ImproperlyConfigured("DEV_BYPASS_ACCESS=true is strictly forbidden in production mode.")
+
+    if current_environment == "production":
+        required_vars = [
+            "SECRET_KEY",
+            "DATABASE_URL",
+            "REDIS_URL",
+            "CELERY_BROKER_URL",
+            "COOKIE_DOMAIN",
+            "ALLOWED_HOSTS",
+            "CSRF_TRUSTED_ORIGINS",
+            "CORS_ALLOWED_ORIGINS",
+            "FRONTEND_URL",
+        ]
+        missing = [v for v in required_vars if not target_env.get(v)]
+        if missing:
+            raise ImproperlyConfigured(
+                f"Missing required environment variables: {', '.join(missing)}"
+            )
+
+
+# Perform initial validation on import if in production
+if ENVIRONMENT == "production":
+    validate_environment()
+

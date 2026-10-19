@@ -76,42 +76,45 @@ class HealthReadyView(APIView):
 
 
 class DataStatusView(APIView):
-    """Data Freshness Status: reports status and freshness of ingested data sources."""
+    """Data Freshness Status: reports operational status and attribution for all data providers."""
 
     permission_classes = [AllowAny]
 
     @extend_schema(
         summary="Data Freshness Status",
-        description="Returns ingestion freshness and operational status for all configured ocean and weather data sources.",
+        description="Returns operational status, attribution, and freshness for all configured ocean and weather providers.",
     )
     def get(self, request):
-        # Query DataSource model if table exists, or provide safe status
-        sources_data = []
-        try:
-            from apps.geodata.models import DataSource
+        from apps.geodata.providers import ProviderRegistry
+        from apps.geodata.models import DataSource
 
-            for ds in DataSource.objects.filter(is_enabled=True):
-                age_minutes = ds.age_minutes
-                sources_data.append(
-                    {
-                        "slug": ds.slug,
-                        "name": ds.name,
-                        "last_success_at": ds.last_success_at.isoformat() if ds.last_success_at else None,
-                        "age_minutes": age_minutes,
-                        "status": ds.status,
-                    }
-                )
+        # Build map of database-tracked data sources
+        db_sources = {}
+        try:
+            for ds in DataSource.objects.all():
+                db_sources[ds.slug] = ds
         except Exception:
-            # Fallback when running before initial migrations
-            sources_data = [
+            pass
+
+        sources_data = []
+        for provider in ProviderRegistry.get_providers():
+            ds = db_sources.get(provider.slug)
+            last_success = ds.last_success_at.isoformat() if (ds and ds.last_success_at) else None
+            age_min = ds.age_minutes if ds else None
+            current_status = ds.status if ds else provider.status
+
+            sources_data.append(
                 {
-                    "slug": "open_meteo",
-                    "name": "Open-Meteo Marine & Forecast",
-                    "last_success_at": None,
-                    "age_minutes": None,
-                    "status": "ok",
+                    "slug": provider.slug,
+                    "name": provider.name,
+                    "status": current_status,
+                    "last_success_at": last_success,
+                    "age_minutes": age_min,
+                    "attribution": provider.attribution,
+                    "license_url": provider.license_url,
+                    "needs_key": provider.needs_key,
                 }
-            ]
+            )
 
         return Response({"sources": sources_data}, status=status.HTTP_200_OK)
 

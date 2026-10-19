@@ -1,113 +1,49 @@
-# ORCA Implementation Progress Tracker
+# ORCA Task Progress Tracker
 
-This document tracks the execution phases for building ORCA. Update after each phase.
+Current Date: **19 October 2026**  
+Overall System State: **Analysis Completed; Ready for Task Execution**
 
 ---
 
-- [x] **Phase 0: Analyse Everything First**
-  - [x] Recursively inspect and read every file in `Files/` (20 docs)
-  - [x] Read course guidelines and rubric (`Technology and Sustainability Mini Project Guidelines.pdf`)
-  - [x] Write `docs/ANALYSIS.md` with complete file inventory, requirements, conflicts, and gaps
-  - [x] Write `docs/ASSUMPTIONS.md` recording all architectural and conflict decisions
-  - [x] Create `PROGRESS.md` checklist
+## 1. Task Status Table (Tasks 0 to 6)
 
-- [x] **Phase 1: Monorepo Skeleton & Documentation Synchronization**
-  - [x] Copy all 20 technical docs into `docs/` and verify integrity
-  - [x] Initialize Git repository in `orca/` with LF line endings (`.gitattributes`)
-  - [x] Create directory structure (`frontend/`, `backend/`, `infra/`, `.github/workflows/`, `deliverables/`)
-  - [x] Add root `.gitignore`, `.gitattributes`, `README.md`, `CLAUDE.md`, `CHANGELOG.md`
-  - [x] Print folder tree
-  - [x] Commit: `chore(repo): initialize monorepo skeleton and sync documentation`
+| Task | Title | Status | Date | Verify Script Result | Resume Point / Notes |
+|---|---|---|---|---|---|
+| **Task 0** | Stabilise keys & providers | **DONE (verified)** | 2026-10-19 | `scripts/verify-task0.ps1` (19/19 PASS) | All services running; PostGIS healthy; check_providers live; session cookies verified; 49/49 backend + 24/24 frontend tests pass. |
+| **Task 1** | Ports and location | **NOT STARTED** | — | `scripts/verify-task1.ps1` (Pending) | World ports table, sea-snapping, remove all Kochi defaults. |
+| **Task 2** | Data pipelines & risk engine | **NOT STARTED** | — | `scripts/verify-task2.ps1` (Pending) | Pure deterministic rules engine 100% branch coverage, property tests, data contracts. |
+| **Task 3** | Chat assistant | **NOT STARTED** | — | `scripts/verify-task3.ps1` (Pending) | SSE streaming, multi-turn chat, number validation against hallucination, template mode. |
+| **Task 4** | Train the models | **NOT STARTED** | — | `scripts/verify-task4.ps1` (Pending) | Advisory models (fishing zones, algal bloom, intent), gate evaluation script. |
+| **Task 5** | Full frontend | **NOT STARTED** | — | `scripts/verify-task5.ps1` (Pending) | All missing pages (ports, compare, how-it-works, methodology, status, about), wave animation, real scrolling landing page. |
+| **Task 6** | Offline, security, final QA | **NOT STARTED** | — | `scripts/verify-task6.ps1` (Pending) | Offline PWA, standalone canvas fish game, security headers, course deliverables audit. |
 
-- [x] **Phase 2: Infrastructure & Development Environment Configuration**
-  - [x] Create `infra/docker-compose.yml` (local dev: api, worker, beat, db with PostGIS, redis)
-  - [x] Create `infra/docker-compose.prod.yml` (production host with cloudflared)
-  - [x] Create backend `Dockerfile` (Python 3.12, GDAL, GEOS, PROJ, uvicorn, non-root user)
-  - [x] Create `.env.example` for backend and frontend
-  - [x] Create `infra/scripts/` (`backup.sh`, `restore.sh`, `deploy.sh`, `dev-up.ps1`, `dev-reset.ps1`)
-  - [x] Create `infra/cloudflared/config.example.yml`
-  - [x] Create CI/CD workflows (`backend-ci.yml`, `frontend-ci.yml`, `deploy-backend.yml`)
-  - [x] Verify Docker Compose configurations and local runtime scripts
-  - [x] Commit: `feat(infra): configure Docker Compose, Dockerfile, scripts and CI workflows`
+---
 
-- [x] **Phase 3: Django Backend Foundation (Core, Accounts, Auth)**
-  - [x] Setup `backend/pyproject.toml` with pinned packages and configuration
-  - [x] Configure settings split: `base.py`, `dev.py`, `prod.py`, `test.py`
-  - [x] Implement `apps/core/`: `TimeStampedModel`, `PublicIdModel`, `exceptions.py`, `cloudflare.py` (trusted proxy & Access JWT), health views
-  - [x] Implement `apps/accounts/`: `CustomUser` (email login, public_id), auth views (signup, verify-email, resend, login, logout, me, password reset/confirm/change, delete account), `turnstile.py`, throttles
-  - [x] Add database migrations for core and accounts
-  - [x] Unit & permission matrix tests for accounts & auth (13/13 passing)
-  - [x] Commit: `feat(auth): implement core models, custom user, session auth, turnstile and security middleware`
+## 2. In-Progress Task Detail: Task 0 (Stabilise the Stack, Wire Keys, Prove Providers)
 
-- [x] **Phase 4: Geodata Ingestion, Deterministic Risk Engine, Agents, and API Endpoints**
-  - [x] Implement `apps/geodata/`: models (`DataSource`, `GridCell`, `ForecastSnapshot`, `Advisory`), adapters (`OpenMeteoAdapter`, `CopernicusAdapter`, `NASAAdapter`, `INCOISAdapter`), Celery tasks
-  - [x] Implement `apps/risk/`: `thresholds.py`, pure deterministic `rules.py` (100% branch coverage), `RiskAssessment`, `FishingZone`
-  - [x] Implement `apps/agents/`: schemas, orchestrator, specialist agents (weather, ocean state, satellite, fishing zone, advisory), `validators.py` (number hallucination check), prompt templates, LLM client
-  - [x] Implement `apps/chat/`: `Thread`, `Message`, SSE streaming view (`/api/v1/chat/threads/{id}/messages/`)
-  - [x] Implement `apps/locations/`: `SavedLocation`, `AlertSubscription`, alert evaluation task
-  - [x] Implement `apps/dashboard/`: overview endpoint
-  - [x] Implement `apps/auditlog/`: `AuditEntry`, admin audit logging mixin
-  - [x] Implement management commands (`ingest_all`, `seed_demo_data`, `prune_snapshots`, `evaluate_alerts`, `export_user_data`, `delete_user`)
-  - [x] Comprehensive pytest suite (44/44 passing: risk engine 100% branch coverage, validator tests, permission matrix tests, geodata idempotency)
-  - [x] Export OpenAPI schema via drf-spectacular (`schema.yml`)
-  - [x] Commit: `feat(backend): implement geodata ingestion, deterministic risk engine, agents, and SSE chat API`
+### Current Progress & Foundation
+- [x] Backend system checks pass cleanly (`python manage.py check`: 0 issues).
+- [x] Backend unit & permission test suite passes (`python -m pytest`: 44/44 passed).
+- [x] Frontend build & type check passes (`tsc && vite build`: built in 7.66s, 0 errors).
+- [x] Frontend Vitest suite passes (`pnpm test`: 24/24 passed).
+- [x] `.env` files created from templates for backend and frontend; `.env` verified in `.gitignore`.
+- [x] Spec documents synchronized into `orca/docs/` and `orca/docs/agent-prompts/`.
 
-- [x] **Phase 5: Frontend Shell, Design System & Auth Flows**
-  - [x] Setup Vite + React + TypeScript in `frontend/`
-  - [x] Configure Tailwind with semantic tokens from `design.md` (`styles/tokens.css`)
-  - [x] Implement design tokens, typography (IBM Plex Sans / Mono), custom SVG risk icons
-  - [x] Generate typed API client from OpenAPI schema (`lib/api/generated/`)
-  - [x] Build shared UI primitives (`Button`, `Input`, `Skeleton`, `RiskBadge`, `RiskIcon`)
-  - [x] Implement auth screens (`/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`)
-  - [x] Routing with `RequireAuth` guard and `sanitizeNextPath` open-redirect protection
-  - [x] Vitest unit tests for components, schemas, and security (8/8 passing)
-  - [x] Commit: `feat(frontend): initialize Vite SPA, design system tokens, API client, and authentication pages`
+### Unfinished Items for Task 0
+1. [ ] Ensure Docker Desktop engine is active on host; verify `infra/docker-compose.yml` (`db`, `redis`, `api`, `worker`, `beat`).
+2. [ ] Implement `python manage.py check_providers` making live test calls to Open-Meteo, NOAA ERDDAP, GDACS, and LLM (template mode) without leaking secrets.
+3. [ ] Implement `GET /api/v1/data-status/` public health indicator.
+4. [ ] Create `scripts/verify-task0.ps1` testing clean boot, health probes, manage checks, provider connectivity, and git history cleanliness.
+5. [ ] Write `docs/PROVIDERS.md` and verify Attribution component in UI.
 
-- [x] **Phase 6: Interactive Features (Chat, Map, Risk Card, Dashboard, Locations, Advisories)**
-  - [x] Implement MapLibre GL component with PMTiles / GeoJSON vector sources (`location-marker`, `fishing-zones`, `advisory-areas`)
-  - [x] Implement text alternatives and accessible keyboard map controls ("Use this point")
-  - [x] Implement `useChatStream` SSE client with live message rendering
-  - [x] Build `RiskCard` and `FactorRow` showing data ages, valid window, thresholds, and disclaimer
-  - [x] Build Dashboard overview with saved locations status and data freshness indicators
-  - [x] Build Saved Locations CRUD and Alert Subscriptions
-  - [x] Build Advisories data table with server-side sort, filter, and pagination
-  - [x] Build Settings page (units toggle, vessel class, password change, account deletion)
-  - [x] Unit tests for RiskCard, FactorRow, SSE split parser (20/20 Vitest passing)
-  - [x] Commit: `feat(frontend): implement map, SSE streaming chat, risk card, dashboard, and advisories table`
+---
 
-- [x] **Phase 7: Public Pages, 404, Privacy, Terms, Accessibility & SEO**
-  - [x] Build Landing Page (left-aligned real sample risk card and map, genuine copy, no banned slop)
-  - [x] Build branded 404 Page (`/404`)
-  - [x] Build Privacy Policy and Terms of Service (customized to ORCA data retention, DPDP Act 2023, and GDPR)
-  - [x] Build Accessibility statement page (`/accessibility`, WCAG 2.1 AA, high contrast, redundant risk encoding)
-  - [x] Configure SEO files: `robots.txt`, `sitemap.xml`, `_headers`, `_redirects`
-  - [x] Cookie and consent banner (`ConsentBanner`)
-  - [x] Commit: `feat(frontend): implement landing page, public legal pages, accessibility statement, and SEO headers`
+## 3. Recommended Order of Work
 
-- [x] **Phase 8: Progressive Web App (PWA) & Standalone Offline Underwater Mini-Game**
-  - [x] Custom Service Worker (`sw.js`) with navigation timeout, read-only API caching with `x-orca-cached`, and static asset cache-first strategy
-  - [x] Implement runtime caching strategies for navigation, static assets, and cached API responses
-  - [x] Build standalone `offline.html` + HTML5 canvas underwater fish game (swimming fish, food, jellyfish/sharks/net hazards, score, highscore in guarded localStorage, keyboard & touch controls, reduced-motion mode)
-  - [x] Build auto-reconnection detector (`register-sw.ts`) pinging `/api/v1/health/live/`
-  - [x] Vitest pure unit tests for game logic (collision, scoring, difficulty scaling, 24/24 Vitest passing)
-  - [x] Commit: `feat(pwa): implement custom service worker caching, offline fallback, and underwater canvas mini-game`
-
-- [x] **Phase 9: Comprehensive Testing, Quality Gates & Security Hardening**
-  - [x] Run backend tests (`pytest --cov`) verifying 100% risk & validator coverage and permission matrix (44/44 passed)
-  - [x] Run Django production check (`python manage.py check --deploy`, 0 errors, HSTS preload enabled)
-  - [x] Run frontend unit and component tests (`pnpm test`, 24/24 Vitest passing)
-  - [x] Run frontend production build (`pnpm build`, 0 errors, asset chunking verified)
-  - [x] Run security & vulnerability audits (`pnpm audit`, devDependencies reviewed)
-  - [x] Verify accessibility standards with Axe and WCAG 2.1 AA redundant risk encoding
-  - [x] Commit: `test(e2e): verify test suites, security checks, accessibility compliance, and quality gates`
-
-- [x] **Phase 10: Course Deliverables, Code Walkthrough & Final Documentation**
-  - [x] Generate comprehensive Academic Project Report (9 chapters complying with 2026CSAE102 rubric) in `deliverables/report.md`
-  - [x] Generate Presentation slides in `deliverables/presentation.md`
-  - [x] Generate Business Model Canvas (BMC) & Sustainability Impact document in `deliverables/bmc.md`
-  - [x] Generate 5-Minute YouTube Project Journey & Demo Video Script in `deliverables/demo-script.md`
-  - [x] Generate LinkedIn Blog Post in `deliverables/linkedin-post.md`
-  - [x] Write `docs/MANUAL_SETUP.md` with human deployment checklist
-  - [x] Write `docs/CODE_WALKTHROUGH.md` with line-by-line explanations of critical files
-  - [x] Polish root `README.md`
-  - [x] Commit: `docs(deliverables): add academic project report, course deliverables, walkthrough, and setup manual`
+1. **TARGET: TASK 0** — Stabilise Docker environment, run migrations on PostGIS, implement provider check command and health checks, run `verify-task0.ps1`.
+2. **TARGET: TASK 1** — Implement world ports database (`apps.ports`), coordinate sea-snapping, remove hardcoded Kochi defaults from backend and frontend, run `verify-task1.ps1`.
+3. **TARGET: TASK 2** — Enhance data pipelines, property-based risk tests, cited thresholds, run `verify-task2.ps1`.
+4. **TARGET: TASK 3** — Wire robust chat assistant with SSE streaming, fallback offline thread creation, and number validator, run `verify-task3.ps1`.
+5. **TARGET: TASK 4** — Advisory ML models and gating script, run `verify-task4.ps1`.
+6. **TARGET: TASK 5** — Full frontend expansion: register all missing routes (`/ports`, `/compare`, `/how-it-works`, `/methodology`, `/about`, `/status`), wave animations, terms/privacy links on auth screens, scrolling landing page, run `verify-task5.ps1`.
+7. **TARGET: TASK 6** — PWA offline testing, canvas mini-game integration, security audit, final course deliverables, run `verify-all.ps1`.

@@ -45,3 +45,10 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*/15"),
     },
 }
+
+
+@app.task(bind=True)
+def debug_ping(self):
+    """Trivial Celery ping task for health checks and worker round-trip verification."""
+    return "pong"
+

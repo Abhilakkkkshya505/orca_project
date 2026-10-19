@@ -576,8 +576,8 @@ paths:
   /api/v1/data-status/:
     get:
       operationId: data_status_retrieve
-      description: Returns ingestion freshness and operational status for all configured
-        ocean and weather data sources.
+      description: Returns operational status, attribution, and freshness for all
+        configured ocean and weather providers.
       summary: Data Freshness Status
       tags:
       - data-status
@@ -1033,9 +1033,8 @@ components:
           $ref: '#/components/schemas/OriginEnum'
         score:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
+          maximum: 2147483647
+          minimum: -2147483648
         risk_level:
           $ref: '#/components/schemas/RiskLevelEnum'
         geometry:
