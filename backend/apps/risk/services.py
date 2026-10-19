@@ -166,9 +166,12 @@ def evaluate_and_record_risk(
 
     max_wave = None
     min_period = None
+    max_swell = None
     max_wind = None
     max_gust = None
     max_rain = None
+    min_vis = None
+    max_cur = None
     latest_snapshot_time = None
     snapshot_source = "open_meteo"
 
@@ -186,6 +189,10 @@ def evaluate_and_record_risk(
         if p is not None:
             min_period = min(min_period, float(p)) if min_period is not None else float(p)
 
+        sw = vals.get("swell_wave_height_m")
+        if sw is not None:
+            max_swell = max(max_swell, float(sw)) if max_swell is not None else float(sw)
+
         ws = vals.get("wind_speed_kmh")
         if ws is not None:
             max_wind = max(max_wind, float(ws)) if max_wind is not None else float(ws)
@@ -194,9 +201,17 @@ def evaluate_and_record_risk(
         if wg is not None:
             max_gust = max(max_gust, float(wg)) if max_gust is not None else float(wg)
 
-        r = vals.get("rain_mm")
+        r = vals.get("precipitation_mm_h") if vals.get("precipitation_mm_h") is not None else vals.get("rain_mm")
         if r is not None:
             max_rain = max(max_rain, float(r)) if max_rain is not None else float(r)
+
+        vis = vals.get("visibility_m")
+        if vis is not None:
+            min_vis = min(min_vis, float(vis)) if min_vis is not None else float(vis)
+
+        cur = vals.get("current_speed_ms")
+        if cur is not None:
+            max_cur = max(max_cur, float(cur)) if max_cur is not None else float(cur)
 
     # Compute data age
     age_hours = None
@@ -243,15 +258,52 @@ def evaluate_and_record_risk(
             age_hours=age_hours,
         ),
         FactorInput(
-            key="rain_mm",
+            key="precipitation_mm_h",
             label="Precipitation",
             value=max_rain,
-            unit="mm",
+            unit="mm/h",
             source=snapshot_source,
             observed_at=observed_at_str,
             age_hours=age_hours,
         ),
     ])
+
+    if max_swell is not None:
+        factors_input.append(
+            FactorInput(
+                key="swell_wave_height_m",
+                label="Swell Wave Height",
+                value=max_swell,
+                unit="m",
+                source=snapshot_source,
+                observed_at=observed_at_str,
+                age_hours=age_hours,
+            )
+        )
+    if min_vis is not None:
+        factors_input.append(
+            FactorInput(
+                key="visibility_m",
+                label="Visibility",
+                value=min_vis,
+                unit="m",
+                source=snapshot_source,
+                observed_at=observed_at_str,
+                age_hours=age_hours,
+            )
+        )
+    if max_cur is not None:
+        factors_input.append(
+            FactorInput(
+                key="current_speed_ms",
+                label="Ocean Current Speed",
+                value=max_cur,
+                unit="m/s",
+                source=snapshot_source,
+                observed_at=observed_at_str,
+                age_hours=age_hours,
+            )
+        )
 
     # Convert active official advisories
     advisories_input: list[AdvisoryInput] = []
@@ -269,11 +321,17 @@ def evaluate_and_record_risk(
             )
         )
 
+    from apps.geodata.models import DataSource
+
+    advisory_ds = DataSource.objects.filter(slug__in=["gdacs_events", "manual_advisories", "advisories", "incois"]).first()
+    advisory_healthy = (advisory_ds.status != "failing") if advisory_ds else True
+
     # 8. Deterministic Evaluation
     risk_in = RiskInput(
         vessel_class=vessel_class,
         factors=factors_input,
         active_advisories=advisories_input,
+        advisory_feed_healthy=advisory_healthy,
     )
     result = compute_risk(risk_in)
 

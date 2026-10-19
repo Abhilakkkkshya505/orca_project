@@ -233,7 +233,7 @@ def test_compute_risk_active_watch_does_not_force_unsafe():
         active_advisories=advisories,
     )
     result = compute_risk(risk_in)
-    assert result.level == "safe"
+    assert result.level == "caution"  # Task 2: watch forces at least caution (does not force unsafe)
 
 
 def test_compute_risk_stale_advisory_flagged():

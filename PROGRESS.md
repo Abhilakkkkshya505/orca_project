@@ -11,7 +11,7 @@ Overall System State: **Analysis Completed; Ready for Task Execution**
 |---|---|---|---|---|---|
 | **Task 0** | Stabilise keys & providers | **DONE (verified)** | 2026-10-19 | `scripts/verify-task0.ps1` (19/19 PASS) | All services running; PostGIS healthy; check_providers live; session cookies verified; 49/49 backend + 24/24 frontend tests pass. |
 | **Task 1** | Ports and location | **DONE (verified)** | 2026-10-19 | `scripts/verify-task1.ps1` (9/9 PASS) | World ports table seeded (3,875 ports), sea-snapping, nearest ports, reverse geocoding, dynamic snapping, inland suggestions, zero Kochi defaults, 62/62 backend tests pass. |
-| **Task 2** | Data pipelines & risk engine | **NOT STARTED** | — | `scripts/verify-task2.ps1` (Pending) | Pure deterministic rules engine 100% branch coverage, property tests, data contracts. |
+| **Task 2** | Data pipelines & risk engine | **DONE (verified)** | 2026-10-19 | `scripts/verify-task2.ps1` (11/11 PASS) | Data contracts, adapters for all providers, 100% branch coverage on rules engine, property tests, 98/98 backend tests pass. |
 | **Task 3** | Chat assistant | **NOT STARTED** | — | `scripts/verify-task3.ps1` (Pending) | SSE streaming, multi-turn chat, number validation against hallucination, template mode. |
 | **Task 4** | Train the models | **NOT STARTED** | — | `scripts/verify-task4.ps1` (Pending) | Advisory models (fishing zones, algal bloom, intent), gate evaluation script. |
 | **Task 5** | Full frontend | **NOT STARTED** | — | `scripts/verify-task5.ps1` (Pending) | All missing pages (ports, compare, how-it-works, methodology, status, about), wave animation, real scrolling landing page. |

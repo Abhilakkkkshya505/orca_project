@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 import requests
 import structlog
 
-from apps.geodata.sources.base import NormalisedRecord, RawRecord
+from apps.geodata.sources.base import BaseAdapter, NormalisedRecord, RawRecord
 
 logger = structlog.get_logger(__name__)
 
@@ -11,7 +11,7 @@ OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
 OPEN_METEO_FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
 
-class OpenMeteoAdapter:
+class OpenMeteoAdapter(BaseAdapter):
     slug = "open_meteo"
     name = "Open-Meteo Marine & Forecast"
 

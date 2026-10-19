@@ -1,0 +1,13 @@
+{
+  "table": {
+    "columnNames": ["time", "latitude", "longitude", "chlorophyll"],
+    "columnTypes": ["String", "float", "float", "float"],
+    "columnUnits": ["UTC", "degrees_north", "degrees_east", "mg m^-3"],
+    "rows": [
+      ["2026-10-18T09:00:00Z", 18.9, 72.8, 1.45],
+      ["2026-10-18T09:00:00Z", 19.0, 72.8, 0.85],
+      ["2026-10-18T09:00:00Z", 18.9, 72.9, null],
+      ["2026-10-18T09:00:00Z", 19.0, 72.9, 2.15]
+    ]
+  }
+}
