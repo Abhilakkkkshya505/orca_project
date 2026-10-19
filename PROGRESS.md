@@ -75,14 +75,14 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Unit tests for RiskCard, FactorRow, SSE split parser (20/20 Vitest passing)
   - [x] Commit: `feat(frontend): implement map, SSE streaming chat, risk card, dashboard, and advisories table`
 
-- [ ] **Phase 7: Public Pages, 404, Privacy, Terms, Accessibility & SEO**
-  - [ ] Build Landing Page (left-aligned real sample risk card and map, genuine copy, no banned slop)
-  - [ ] Build branded 404 Page
-  - [ ] Build Privacy Policy and Terms of Service (customized to ORCA data retention and Indian DPDP Act)
-  - [ ] Build Accessibility statement page (`/accessibility`)
-  - [ ] Configure SEO files: `robots.txt`, `sitemap.xml`, `_headers`, `_redirects`
-  - [ ] Cookie and consent banner (`ConsentBanner`)
-  - [ ] Commit: `feat(frontend): implement landing page, public legal pages, accessibility statement, and SEO headers`
+- [x] **Phase 7: Public Pages, 404, Privacy, Terms, Accessibility & SEO**
+  - [x] Build Landing Page (left-aligned real sample risk card and map, genuine copy, no banned slop)
+  - [x] Build branded 404 Page (`/404`)
+  - [x] Build Privacy Policy and Terms of Service (customized to ORCA data retention, DPDP Act 2023, and GDPR)
+  - [x] Build Accessibility statement page (`/accessibility`, WCAG 2.1 AA, high contrast, redundant risk encoding)
+  - [x] Configure SEO files: `robots.txt`, `sitemap.xml`, `_headers`, `_redirects`
+  - [x] Cookie and consent banner (`ConsentBanner`)
+  - [x] Commit: `feat(frontend): implement landing page, public legal pages, accessibility statement, and SEO headers`
 
 - [ ] **Phase 8: Progressive Web App (PWA) & Standalone Offline Underwater Mini-Game**
   - [ ] Configure `vite-plugin-pwa` with custom service worker (`sw.ts`)

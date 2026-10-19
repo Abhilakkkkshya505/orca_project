@@ -10,12 +10,10 @@ import { DashboardPage } from "@/routes/dashboard";
 import { LocationsPage } from "@/routes/locations";
 import { AdvisoriesPage } from "@/routes/advisories";
 import { SettingsPage } from "@/routes/settings";
-import {
-  PrivacyPage,
-  TermsPage,
-  AccessibilityPage,
-  NotFoundPage,
-} from "@/routes/index";
+import { PrivacyPage } from "@/routes/privacy";
+import { TermsPage } from "@/routes/terms";
+import { AccessibilityPage } from "@/routes/accessibility";
+import { NotFoundPage } from "@/routes/not-found";
 import { RequireAuth } from "@/features/auth/RequireAuth";
 
 export const router = createBrowserRouter([
