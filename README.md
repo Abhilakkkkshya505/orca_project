@@ -162,6 +162,9 @@ Full steps: `docs/deployment.md`.
 | `docs/accessibility.md` | accessibility requirements |
 | `docs/seo.md` | SEO scope |
 | `docs/performance.md` | budgets |
+| `docs/MANUAL_SETUP.md` | Human deployment checklist and external service configuration |
+| `docs/CODE_WALKTHROUGH.md` | Line-by-line explanation of critical files and architecture |
+| `deliverables/` | Academic project report, presentation, BMC, video demo script, LinkedIn post |
 | `docs/contributing.md` | workflow and code style |
 | `docs/roadmap.md` | MVP, v1, later |
 

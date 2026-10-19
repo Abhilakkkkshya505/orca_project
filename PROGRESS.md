@@ -101,13 +101,13 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Verify accessibility standards with Axe and WCAG 2.1 AA redundant risk encoding
   - [x] Commit: `test(e2e): verify test suites, security checks, accessibility compliance, and quality gates`
 
-- [ ] **Phase 10: Course Deliverables, Code Walkthrough & Final Documentation**
-  - [ ] Generate comprehensive Academic Project Report (9 chapters complying with 2026CSAE102 rubric) in `deliverables/`
-  - [ ] Generate Presentation slides / creatives in `deliverables/`
-  - [ ] Generate Business Model Canvas (BMC) & Sustainability Impact document in `deliverables/`
-  - [ ] Generate 5-Minute YouTube Project Journey & Demo Video Script in `deliverables/`
-  - [ ] Generate LinkedIn Blog Post in `deliverables/`
-  - [ ] Write `docs/MANUAL_SETUP.md` with human deployment checklist
-  - [ ] Write `docs/CODE_WALKTHROUGH.md` with line-by-line explanations of critical files
-  - [ ] Polish root `README.md`
-  - [ ] Commit: `docs(deliverables): add academic project report, course deliverables, walkthrough, and setup manual`
+- [x] **Phase 10: Course Deliverables, Code Walkthrough & Final Documentation**
+  - [x] Generate comprehensive Academic Project Report (9 chapters complying with 2026CSAE102 rubric) in `deliverables/report.md`
+  - [x] Generate Presentation slides in `deliverables/presentation.md`
+  - [x] Generate Business Model Canvas (BMC) & Sustainability Impact document in `deliverables/bmc.md`
+  - [x] Generate 5-Minute YouTube Project Journey & Demo Video Script in `deliverables/demo-script.md`
+  - [x] Generate LinkedIn Blog Post in `deliverables/linkedin-post.md`
+  - [x] Write `docs/MANUAL_SETUP.md` with human deployment checklist
+  - [x] Write `docs/CODE_WALKTHROUGH.md` with line-by-line explanations of critical files
+  - [x] Polish root `README.md`
+  - [x] Commit: `docs(deliverables): add academic project report, course deliverables, walkthrough, and setup manual`
