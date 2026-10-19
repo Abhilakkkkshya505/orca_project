@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline • ORCA Marine Assistant</title>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <style>
+    :root {
+      --bg: #09121a;
+      --surface: #101e2b;
+      --surface-raised: #16283a;
+      --border: #233b52;
+      --ink: #eaf1f7;
+      --ink-muted: #8da4b8;
+      --primary: #38bdf8;
+      --safe: #22c55e;
+      --caution: #f59e0b;
+      --unsafe: #ef4444;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1rem;
+      text-align: center;
+    }
+    header {
+      width: 100%;
+      max-width: 680px;
+      padding: 1rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+    }
+    .sdg-tag {
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      padding: 0.15rem 0.4rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      font-family: monospace;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--unsafe);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    main {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.25rem;
+      text-align: left;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+    p.lead {
+      color: var(--ink-muted);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .advisory-box {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: var(--surface-raised);
+      border-left: 3px solid var(--caution);
+      border-radius: 2px;
+      font-size: 0.8rem;
+    }
+    .advisory-title {
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+    .advisory-meta {
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      font-family: monospace;
+    }
+    .reconnect-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-raised);
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .btn {
+      background: var(--primary);
+      color: #041018;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 2px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    /* Mini-game container */
+    .game-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .game-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+    canvas {
+      background: #06111c;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      width: 100%;
+      max-width: 600px;
+      height: 260px;
+      touch-action: none;
+    }
+    .game-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+    }
+    .dpad {
+      display: none;
+      gap: 0.25rem;
+    }
+    @media (hover: none) and (pointer: coarse) {
+      .dpad {
+        display: flex;
+      }
+    }
+    .dpad-btn {
+      background: var(--surface-raised);
+      border: 1px solid var(--border);
+      color: var(--ink);
+      width: 36px;
+      height: 36px;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      touch-action: manipulation;
+    }
+    .legend {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-badge">
+      <span>ORCA</span>
+      <span class="sdg-tag">SDG 14</span>
+    </div>
+    <div class="status-pill" id="connStatus">
+      <span class="status-dot"></span>
+      <span id="connLabel">Offline</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <h1>Radar Telemetry Disconnected</h1>
+      <p class="lead">
+        You are currently operating beyond shore network range. ORCA continues caching your navigational preferences, saved waypoints, and the latest coastal broadcasts locally.
+      </p>
+
+      <div class="advisory-box" id="cachedAdvisoryBox">
+        <div class="advisory-title" id="advisoryTitle">Last Cached Coastal Advisory: Maharashtra & Goa Belt</div>
+        <p style="color: var(--ink); margin-bottom: 0.35rem;" id="advisoryContent">
+          Moderate swell (1.6m - 2.1m) observed offshore. Small craft advisories active for shallow sandbars. Official warnings override ORCA.
+        </p>
+        <div class="advisory-meta" id="advisoryMeta">CACHED: 2 HOURS AGO • DATA SOURCE: INCOIS</div>
+      </div>
+    </div>
+
+    <div class="reconnect-bar">
+      <span id="reconnectHint">Auto-reconnection monitoring active...</span>
+      <button class="btn" id="retryBtn">Test Link</button>
+    </div>
+
+    <!-- Offline Underwater Sea Game -->
+    <div class="game-section">
+      <div class="game-header">
+        <div>SCORE: <span id="scoreVal" style="color:var(--primary); font-weight:bold;">0</span></div>
+        <div>HIGH: <span id="highVal">0</span></div>
+        <div>LEVEL: <span id="diffVal">1</span></div>
+      </div>
+
+      <canvas id="gameCanvas" width="600" height="260"></canvas>
+
+      <div class="legend">
+        <div class="legend-item"><span style="color:var(--safe)">●</span> Plankton (+10)</div>
+        <div class="legend-item"><span style="color:var(--primary)">○</span> Bubble (+25)</div>
+        <div class="legend-item"><span style="color:#d946ef">▲</span> Jellyfish (Hazard)</div>
+        <div class="legend-item"><span style="color:#f59e0b">◆</span> Net (Hazard)</div>
+        <div class="legend-item"><span style="color:var(--unsafe)">◀</span> Shark (Hazard)</div>
+      </div>
+
+      <div class="game-controls">
+        <span>Controls: Arrow keys / WASD to swim • Space to Pause • R to Restart</span>
+        <div class="dpad">
+          <button class="dpad-btn" id="btnUp">▲</button>
+          <button class="dpad-btn" id="btnDown">▼</button>
+          <button class="dpad-btn" id="btnPause">⏸</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // -------------------------------------------------------------
+    // Reconnection and Cached Advisory Telemetry
+    // -------------------------------------------------------------
+    const connLabel = document.getElementById('connLabel');
+    const connStatus = document.getElementById('connStatus');
+    const retryBtn = document.getElementById('retryBtn');
+    const reconnectHint = document.getElementById('reconnectHint');
+
+    async function checkReconnection() {
+      reconnectHint.textContent = 'Pinging shore station...';
+      try {
+        const res = await fetch('/api/v1/health/live/', { method: 'GET', cache: 'no-store' });
+        if (res.ok) {
+          connLabel.textContent = 'Online';
+          connStatus.style.color = 'var(--safe)';
+          connStatus.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+          connStatus.style.background = 'rgba(34, 197, 94, 0.15)';
+          reconnectHint.textContent = 'Link restored! Navigating back...';
+          setTimeout(() => {
+            window.location.href = '/explore';
+          }, 800);
+          return true;
+        }
+      } catch (err) {
+        // Still offline
+      }
+      reconnectHint.textContent = 'Operating in autonomous offline mode.';
+      return false;
+    }
+
+    retryBtn.addEventListener('click', () => {
+      checkReconnection();
+    });
+
+    window.addEventListener('online', () => {
+      checkReconnection();
+    });
+
+    // Background health ping interval
+    setInterval(() => {
+      if (navigator.onLine) {
+        checkReconnection();
+      }
+    }, 8000);
+
+    // Retrieve cached advisory if present in localStorage
+    try {
+      const savedAdv = localStorage.getItem('orca_last_advisory');
+      if (savedAdv) {
+        const parsed = JSON.parse(savedAdv);
+        if (parsed.headline) {
+          document.getElementById('advisoryTitle').textContent = parsed.headline;
+        }
+        if (parsed.summary) {
+          document.getElementById('advisoryContent').textContent = parsed.summary;
+        }
+        if (parsed.cached_at) {
+          const ageMin = Math.round((Date.now() - new Date(parsed.cached_at).getTime()) / 60000);
+          document.getElementById('advisoryMeta').textContent =
+            `CACHED: ${ageMin} MIN AGO • DATA SOURCE: ${parsed.source || 'INCOIS'}`;
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+
+    // -------------------------------------------------------------
+    // Underwater Sea Game (60fps fixed timestep, zero per-frame allocation)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreVal = document.getElementById('scoreVal');
+    const highVal = document.getElementById('highVal');
+    const diffVal = document.getElementById('diffVal');
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let highScore = 0;
+    try {
+      highScore = parseInt(localStorage.getItem('orca_fish_highscore') || '0', 10);
+      if (isNaN(highScore)) highScore = 0;
+    } catch (e) {
+      highScore = 0;
+    }
+    highVal.textContent = highScore.toString();
+
+    // Fish player
+    const fish = {
+      x: 60,
+      y: 130,
+      targetY: 130,
+      radius: 12,
+      speed: 3.5,
+      alive: true
+    };
+
+    // Object pools
+    const MAX_ITEMS = 6;
+    const MAX_HAZARDS = 5;
+
+    // Items (food & bubbles)
+    const items = [];
+    for (let i = 0; i < MAX_ITEMS; i++) {
+      items.push({ active: false, x: 0, y: 0, type: 'plankton', radius: 6, speed: 2 });
+    }
+
+    // Hazards (jellyfish, net, shark)
+    const hazards = [];
+    for (let i = 0; i < MAX_HAZARDS; i++) {
+      hazards.push({ active: false, x: 0, y: 0, type: 'jellyfish', width: 22, height: 22, speed: 2.2 });
+    }
+
+    let score = 0;
+    let level = 1;
+    let isPaused = false;
+    let gameOver = false;
+    let spawnTimer = 0;
+
+    function resetGame() {
+      fish.y = canvas.height / 2;
+      fish.targetY = canvas.height / 2;
+      fish.alive = true;
+      score = 0;
+      level = 1;
+      gameOver = false;
+      scoreVal.textContent = '0';
+      diffVal.textContent = '1';
+
+      for (let i = 0; i < MAX_ITEMS; i++) items[i].active = false;
+      for (let i = 0; i < MAX_HAZARDS; i++) hazards[i].active = false;
+    }
+
+    function spawnEntity() {
+      // Spawn collectible
+      for (let i = 0; i < MAX_ITEMS; i++) {
+        if (!items[i].active) {
+          items[i].active = true;
+          items[i].x = canvas.width + 20;
+          items[i].y = 25 + Math.random() * (canvas.height - 50);
+          items[i].type = Math.random() > 0.4 ? 'plankton' : 'bubble';
+          items[i].radius = items[i].type === 'plankton' ? 5 : 8;
+          items[i].speed = 1.8 + level * 0.2;
+          break;
+        }
+      }
+
+      // Spawn hazard
+      for (let i = 0; i < MAX_HAZARDS; i++) {
+        if (!hazards[i].active && Math.random() < (0.45 + level * 0.08)) {
+          hazards[i].active = true;
+          hazards[i].x = canvas.width + 30;
+          hazards[i].y = 30 + Math.random() * (canvas.height - 60);
+          const r = Math.random();
+          if (r < 0.35) {
+            hazards[i].type = 'jellyfish';
+            hazards[i].width = 20;
+            hazards[i].height = 20;
+          } else if (r < 0.7) {
+            hazards[i].type = 'net';
+            hazards[i].width = 24;
+            hazards[i].height = 24;
+          } else {
+            hazards[i].type = 'shark';
+            hazards[i].width = 30;
+            hazards[i].height = 18;
+          }
+          hazards[i].speed = 2.0 + level * 0.35;
+          break;
+        }
+      }
+    }
+
+    // Input handlers
+    const keys = {};
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+      if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
+        isPaused = !isPaused;
+        e.preventDefault();
+      }
+      if (e.key === 'r' || e.key === 'R') {
+        resetGame();
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+    });
+
+    // Touch controls
+    document.getElementById('btnUp').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      fish.targetY -= 30;
+    });
+    document.getElementById('btnDown').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      fish.targetY += 30;
+    });
+    document.getElementById('btnPause').addEventListener('click', () => {
+      isPaused = !isPaused;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      const scaleY = canvas.height / rect.height;
+      fish.targetY = (touch.clientY - rect.top) * scaleY;
+    }, { passive: false });
+
+    // Drawing functions with shape-distinct hazards
+    function drawFish(x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Body
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tail
+      ctx.fillStyle = '#0284c7';
+      ctx.beginPath();
+      ctx.moveTo(-12, 0);
+      ctx.lineTo(-20, -7);
+      ctx.lineTo(-20, 7);
+      ctx.closePath();
+      ctx.fill();
+
+      // Eye
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(7, -2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#09121a';
+      ctx.beginPath();
+      ctx.arc(8, -2, 1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawHazard(h) {
+      ctx.save();
+      ctx.translate(h.x, h.y);
+
+      if (h.type === 'jellyfish') {
+        // Umbrella dome + wavy tentacles
+        ctx.fillStyle = '#d946ef';
+        ctx.beginPath();
+        ctx.arc(0, -2, 9, Math.PI, 0, false);
+        ctx.fill();
+        ctx.strokeStyle = '#f0abfc';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(-6, -2); ctx.lineTo(-6, 9);
+        ctx.moveTo(0, -2); ctx.lineTo(0, 11);
+        ctx.moveTo(6, -2); ctx.lineTo(6, 9);
+        ctx.stroke();
+      } else if (h.type === 'net') {
+        // Diamond mesh pattern
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-10, -10, 20, 20);
+        ctx.beginPath();
+        ctx.moveTo(-10, 0); ctx.lineTo(0, -10); ctx.lineTo(10, 0); ctx.lineTo(0, 10); ctx.closePath();
+        ctx.stroke();
+      } else if (h.type === 'shark') {
+        // Sleek body + prominent triangular dorsal fin
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(-16, 0);
+        ctx.lineTo(-4, -9); // Fin
+        ctx.lineTo(2, 0);
+        ctx.lineTo(14, 0); // Snout
+        ctx.lineTo(4, 5);
+        ctx.lineTo(-14, 4);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawItem(it) {
+      if (it.type === 'plankton') {
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.arc(it.x, it.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Bubble
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(it.x, it.y, 6, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    // Main Game Loop
+    function updateGame() {
+      if (isPaused || gameOver) return;
+
+      // Handle movement
+      if (keys['ArrowUp'] || keys['w'] || keys['W']) {
+        fish.targetY -= fish.speed * 1.5;
+      }
+      if (keys['ArrowDown'] || keys['s'] || keys['S']) {
+        fish.targetY += fish.speed * 1.5;
+      }
+
+      // Smooth interpolation toward targetY
+      fish.y += (fish.targetY - fish.y) * 0.15;
+      fish.y = Math.max(15, Math.min(canvas.height - 15, fish.y));
+      fish.targetY = Math.max(15, Math.min(canvas.height - 15, fish.targetY));
+
+      // Spawner
+      spawnTimer++;
+      if (spawnTimer > (reducedMotion ? 90 : 65)) {
+        spawnEntity();
+        spawnTimer = 0;
+      }
+
+      // Update collectibles
+      for (let i = 0; i < MAX_ITEMS; i++) {
+        const it = items[i];
+        if (it.active) {
+          it.x -= it.speed;
+          // Collision check
+          const dist = Math.hypot(fish.x - it.x, fish.y - it.y);
+          if (dist < fish.radius + it.radius) {
+            it.active = false;
+            score += it.type === 'plankton' ? 10 : 25;
+            scoreVal.textContent = score.toString();
+            if (score > highScore) {
+              highScore = score;
+              highVal.textContent = highScore.toString();
+              try {
+                localStorage.setItem('orca_fish_highscore', highScore.toString());
+              } catch (e) {}
+            }
+            if (score >= level * 100) {
+              level++;
+              diffVal.textContent = level.toString();
+            }
+          }
+          if (it.x < -20) it.active = false;
+        }
+      }
+
+      // Update hazards
+      for (let i = 0; i < MAX_HAZARDS; i++) {
+        const h = hazards[i];
+        if (h.active) {
+          h.x -= h.speed;
+          // Collision check
+          const dist = Math.hypot(fish.x - h.x, fish.y - h.y);
+          if (dist < fish.radius + 10) {
+            gameOver = true;
+          }
+          if (h.x < -30) h.active = false;
+        }
+      }
+    }
+
+    function renderGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Subtle water grid background
+      ctx.strokeStyle = '#0e2338';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      // Render collectibles
+      for (let i = 0; i < MAX_ITEMS; i++) {
+        if (items[i].active) drawItem(items[i]);
+      }
+
+      // Render hazards
+      for (let i = 0; i < MAX_HAZARDS; i++) {
+        if (hazards[i].active) drawHazard(hazards[i]);
+      }
+
+      // Render fish
+      drawFish(fish.x, fish.y);
+
+      // Overlays
+      if (isPaused) {
+        ctx.fillStyle = 'rgba(6, 17, 28, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#eaf1f7';
+        ctx.font = '16px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('PAUSED (PRESS SPACE TO RESUME)', canvas.width / 2, canvas.height / 2);
+      } else if (gameOver) {
+        ctx.fillStyle = 'rgba(6, 17, 28, 0.8)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 18px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('HAZARD CONTACT • FISH TANGLED', canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillStyle = '#8da4b8';
+        ctx.font = '13px monospace';
+        ctx.fillText('PRESS R TO RETRY • LINK MONITORING ACTIVE', canvas.width / 2, canvas.height / 2 + 18);
+      }
+    }
+
+    function loop() {
+      updateGame();
+      renderGame();
+      requestAnimationFrame(loop);
+    }
+
+    resetGame();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

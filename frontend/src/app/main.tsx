@@ -4,6 +4,9 @@ import { RouterProvider } from "react-router-dom";
 import { Providers } from "./providers";
 import { router } from "./router";
 import "@/styles/globals.css";
+import { registerServiceWorker } from "@/lib/pwa/register-sw";
+
+registerServiceWorker();
 
 const rootEl = document.getElementById("root");
 

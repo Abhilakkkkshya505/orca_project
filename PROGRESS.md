@@ -84,12 +84,13 @@ This document tracks the execution phases for building ORCA. Update after each p
   - [x] Cookie and consent banner (`ConsentBanner`)
   - [x] Commit: `feat(frontend): implement landing page, public legal pages, accessibility statement, and SEO headers`
 
-- [ ] **Phase 8: Progressive Web App (PWA) & Standalone Offline Underwater Mini-Game**
-  - [ ] Configure `vite-plugin-pwa` with custom service worker (`sw.ts`)
-  - [ ] Implement runtime caching strategies for navigation, static assets, and cached API responses
-  - [ ] Build standalone `offline.html` + HTML5 canvas underwater fish game (swimming fish, food, jellyfish/sharks hazards, score, highscore in guarded localStorage, keyboard & touch controls, reduced-motion mode)
-  - [ ] Build auto-reconnection detector (`reconnect.ts`) pinging `/api/v1/health/live/`
-  - [ ] Commit: `feat(pwa): implement custom service worker caching, offline fallback, and underwater canvas mini-game`
+- [x] **Phase 8: Progressive Web App (PWA) & Standalone Offline Underwater Mini-Game**
+  - [x] Custom Service Worker (`sw.js`) with navigation timeout, read-only API caching with `x-orca-cached`, and static asset cache-first strategy
+  - [x] Implement runtime caching strategies for navigation, static assets, and cached API responses
+  - [x] Build standalone `offline.html` + HTML5 canvas underwater fish game (swimming fish, food, jellyfish/sharks/net hazards, score, highscore in guarded localStorage, keyboard & touch controls, reduced-motion mode)
+  - [x] Build auto-reconnection detector (`register-sw.ts`) pinging `/api/v1/health/live/`
+  - [x] Vitest pure unit tests for game logic (collision, scoring, difficulty scaling, 24/24 Vitest passing)
+  - [x] Commit: `feat(pwa): implement custom service worker caching, offline fallback, and underwater canvas mini-game`
 
 - [ ] **Phase 9: Comprehensive Testing, Quality Gates & Security Hardening**
   - [ ] Run backend tests (`pytest --cov`) verifying 100% risk & validator coverage and permission matrix
