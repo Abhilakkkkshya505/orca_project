@@ -1,12 +1,17 @@
 from datetime import datetime
-
 import structlog
 from django.conf import settings
+from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone as dj_timezone
 
-from apps.core.exceptions import OutOfCoverage, RiskOutputPaused
+from apps.core.exceptions import DomainError, OutOfCoverage, RiskOutputPaused
+from apps.geodata.models import GridCell
+from apps.geodata.on_demand import fetch_on_demand_snapshots
 from apps.geodata.services import get_active_advisories_for_point, get_snapshots_for_point_window
+from apps.ports.models import Port
+from apps.ports.normalisation import haversine_km, validate_coordinates
+from apps.ports.snapping import snap_port_coordinate
 from apps.risk.models import FishingZone, RiskAssessment
 from apps.risk.rules import AdvisoryInput, FactorInput, RiskInput, compute_risk
 from apps.risk.thresholds import RULES_VERSION
@@ -14,11 +19,32 @@ from apps.risk.thresholds import RULES_VERSION
 logger = structlog.get_logger(__name__)
 
 
-def is_point_in_coverage(lat: float, lon: float) -> bool:
-    """Checks whether the coordinates fall within the supported coastal bounding box."""
-    bbox = getattr(settings, "COVERAGE_BBOX", [68.0, 6.0, 89.0, 24.0])
-    min_lon, min_lat, max_lon, max_lat = bbox
-    return min_lat <= lat <= max_lat and min_lon <= lon <= max_lon
+def find_nearest_coastal_port_suggestion(lat: float, lon: float) -> dict | None:
+    """Finds nearest coastal port suggestion when a query hits an inland or unsupported point."""
+    ports = Port.objects.filter(is_active=True, is_coastal=True).only(
+        "public_id", "slug", "name", "country_code", "lat", "lon"
+    )[:500]
+    best = None
+    min_d = float("inf")
+    for p in ports:
+        d = haversine_km(lat, lon, p.lat, p.lon)
+        if d < min_d:
+            min_d = d
+            best = p
+
+    if best:
+        return {
+            "slug": best.slug,
+            "name": best.name,
+            "country_code": best.country_code,
+            "distance_km": round(min_d, 1),
+        }
+    return {
+        "slug": "mumbai-bombay-in",
+        "name": "Mumbai (Bombay)",
+        "country_code": "IN",
+        "distance_km": round(haversine_km(lat, lon, 18.93, 72.84), 1),
+    }
 
 
 def evaluate_and_record_risk(
@@ -29,6 +55,7 @@ def evaluate_and_record_risk(
     vessel_class: str = "small_craft",
     user=None,
     thread_message_id: str | None = None,
+    port_slug: str | None = None,
 ) -> RiskAssessment:
     """
     Computes deterministic risk assessment for a coastal location and time window,
@@ -39,16 +66,100 @@ def evaluate_and_record_risk(
             "ORCA risk ratings are temporarily paused. Please consult official INCOIS/IMD advisories."
         )
 
-    if not is_point_in_coverage(lat, lon):
-        raise OutOfCoverage("Requested location is outside supported Indian coastal waters.")
+    # 1. Validate coordinate ranges
+    is_valid_coord, coord_err = validate_coordinates(lat, lon)
+    if not is_valid_coord:
+        raise DomainError(f"Invalid coordinates: {coord_err}", code="invalid_coordinates")
 
-    # 1. Fetch already ingested snapshots
-    snapshots = get_snapshots_for_point_window(lat, lon, valid_from, valid_to)
+    # 2. Port resolution & sea-point snapping
+    port_obj = None
+    if port_slug:
+        port_obj = Port.objects.filter(slug__iexact=port_slug).first()
+        if not port_obj:
+            port_obj = Port.objects.filter(public_id__iexact=port_slug).first()
 
-    # 2. Fetch active official advisories covering point
+    # If explicitly marked as an inland/non-coastal port
+    if port_obj and not port_obj.is_coastal:
+        suggestion = find_nearest_coastal_port_suggestion(port_obj.lat, port_obj.lon)
+        raise DomainError(
+            f"Port '{port_obj.name}' is an inland or river port with no marine forecast data.",
+            code="inland_point",
+            details={"suggestion": suggestion},
+        )
+
+    # Determine marine sea coordinates
+    sea_lat = lat
+    sea_lon = lon
+    marine_offset_km = None
+
+    if port_obj and port_obj.marine_lat is not None and port_obj.marine_lon is not None:
+        sea_lat = port_obj.marine_lat
+        sea_lon = port_obj.marine_lon
+        marine_offset_km = port_obj.marine_offset_km
+    else:
+        # Check if coordinates need marine snapping (e.g. on land cell or quay)
+        # First check if we have a nearby coastal port within 15 km
+        nearby_port = Port.objects.filter(
+            is_active=True,
+            is_coastal=True,
+            lat__gte=lat - 0.15,
+            lat__lte=lat + 0.15,
+            lon__gte=lon - 0.15,
+            lon__lte=lon + 0.15,
+        ).first()
+
+        if nearby_port and nearby_port.marine_lat is not None:
+            sea_lat = nearby_port.marine_lat
+            sea_lon = nearby_port.marine_lon
+            marine_offset_km = haversine_km(lat, lon, sea_lat, sea_lon)
+        else:
+            # Probe Open-Meteo marine grid
+            m_lat, m_lon, offset, is_coastal = snap_port_coordinate(lat, lon)
+            if not is_coastal or m_lat is None:
+                if port_obj:
+                    port_obj.is_coastal = False
+                    port_obj.save(update_fields=["is_coastal"])
+                suggestion = find_nearest_coastal_port_suggestion(lat, lon)
+                raise DomainError(
+                    f"Location ({lat:.2f}, {lon:.2f}) is an inland or unsupported point with no marine model data.",
+                    code="inland_point",
+                    details={"suggestion": suggestion},
+                )
+            sea_lat = m_lat
+            sea_lon = m_lon
+            marine_offset_km = offset
+            if port_obj:
+                port_obj.marine_lat = m_lat
+                port_obj.marine_lon = m_lon
+                port_obj.marine_offset_km = offset
+                port_obj.save(update_fields=["marine_lat", "marine_lon", "marine_offset_km"])
+
+    # 3. Cache Check (Part A3 & F7: cache keys include rounded lat, lon, vessel class, window, rules version)
+    cache_key = (
+        f"orca:risk:{round(lat, 2)}:{round(lon, 2)}:{vessel_class}:"
+        f"{int(valid_from.timestamp())}:{int(valid_to.timestamp())}:{RULES_VERSION}"
+    )
+    cached_assessment_id = cache.get(cache_key)
+    if cached_assessment_id:
+        cached_obj = RiskAssessment.objects.filter(public_id=cached_assessment_id).first()
+        if cached_obj:
+            return cached_obj
+
+    # 4. Fetch already ingested snapshots at sea coordinate
+    snapshots = get_snapshots_for_point_window(sea_lat, sea_lon, valid_from, valid_to)
+    source_mode = "grid_snapshot"
+
+    # 5. On-Demand Fetch (Part E3) if snapshots are missing or insufficient
+    if not snapshots or len(snapshots) < 2:
+        ingested = fetch_on_demand_snapshots(lat, lon, sea_lat, sea_lon, valid_from, valid_to)
+        if ingested > 0:
+            snapshots = get_snapshots_for_point_window(sea_lat, sea_lon, valid_from, valid_to)
+            source_mode = "on_demand"
+
+    # 6. Fetch active official advisories covering point
     advisories = get_active_advisories_for_point(lat, lon)
 
-    # 3. Assemble factors across the window (aggregate worst/max condition)
+    # 7. Assemble factors across the window
     now = dj_timezone.now()
     factors_input: list[FactorInput] = []
     data_ages: dict[str, int] = {}
@@ -93,64 +204,72 @@ def evaluate_and_record_risk(
         age_hours = (now - latest_snapshot_time).total_seconds() / 3600.0
         data_ages["snapshots"] = int(age_hours * 60)
 
-    factors_input.extend(
-        [
-            FactorInput(
-                key="wave_height_m",
-                label="Significant Wave Height",
-                value=max_wave,
-                unit="m",
-                source=snapshot_source,
-                observed_at=latest_snapshot_time.isoformat() if latest_snapshot_time else None,
-                age_hours=age_hours,
-            ),
-            FactorInput(
-                key="wave_period_s",
-                label="Wave Period",
-                value=min_period,
-                unit="s",
-                source=snapshot_source,
-                observed_at=latest_snapshot_time.isoformat() if latest_snapshot_time else None,
-                age_hours=age_hours,
-            ),
-            FactorInput(
-                key="wind_speed_kmh",
-                label="Sustained Wind Speed",
-                value=max_wind,
-                unit="km/h",
-                source=snapshot_source,
-                observed_at=latest_snapshot_time.isoformat() if latest_snapshot_time else None,
-                age_hours=age_hours,
-            ),
-            FactorInput(
-                key="wind_gust_kmh",
-                label="Maximum Wind Gusts",
-                value=max_gust,
-                unit="km/h",
-                source=snapshot_source,
-                observed_at=latest_snapshot_time.isoformat() if latest_snapshot_time else None,
-                age_hours=age_hours,
-            ),
-        ]
-    )
+    observed_at_str = latest_snapshot_time.isoformat() if latest_snapshot_time else None
+    factors_input.extend([
+        FactorInput(
+            key="wave_height_m",
+            label="Significant Wave Height",
+            value=max_wave,
+            unit="m",
+            source=snapshot_source,
+            observed_at=observed_at_str,
+            age_hours=age_hours,
+        ),
+        FactorInput(
+            key="wave_period_s",
+            label="Peak Wave Period",
+            value=min_period,
+            unit="s",
+            source=snapshot_source,
+            observed_at=observed_at_str,
+            age_hours=age_hours,
+        ),
+        FactorInput(
+            key="wind_speed_kmh",
+            label="Sustained Wind Speed",
+            value=max_wind,
+            unit="km/h",
+            source=snapshot_source,
+            observed_at=observed_at_str,
+            age_hours=age_hours,
+        ),
+        FactorInput(
+            key="wind_gust_kmh",
+            label="Peak Wind Gust",
+            value=max_gust,
+            unit="km/h",
+            source=snapshot_source,
+            observed_at=observed_at_str,
+            age_hours=age_hours,
+        ),
+        FactorInput(
+            key="rain_mm",
+            label="Precipitation",
+            value=max_rain,
+            unit="mm",
+            source=snapshot_source,
+            observed_at=observed_at_str,
+            age_hours=age_hours,
+        ),
+    ])
 
-    # Advisories input
+    # Convert active official advisories
     advisories_input: list[AdvisoryInput] = []
-    advisory_ids: list[str] = []
+    advisory_ids = []
     for adv in advisories:
-        adv_age = (now - adv.issued_at).total_seconds() / 3600.0
         advisory_ids.append(str(adv.public_id))
+        adv_age = (now - adv.issued_at).total_seconds() / 3600.0 if adv.issued_at else None
         advisories_input.append(
             AdvisoryInput(
-                id=str(adv.public_id),
+                id=str(adv.external_id or adv.public_id),
                 headline=adv.headline,
                 severity=adv.severity,
-                source=adv.source.slug,
+                source=adv.source.slug if hasattr(adv.source, "slug") else str(adv.source),
                 age_hours=adv_age,
             )
         )
 
-    # 4. Pure deterministic evaluation
+    # 8. Deterministic Evaluation
     risk_in = RiskInput(
         vessel_class=vessel_class,
         factors=factors_input,
@@ -158,7 +277,7 @@ def evaluate_and_record_risk(
     )
     result = compute_risk(risk_in)
 
-    # 5. Immutable record creation in database
+    # 9. Immutable record creation in database
     with transaction.atomic():
         factors_data = [
             {
@@ -180,6 +299,11 @@ def evaluate_and_record_risk(
             user=user if user and user.is_authenticated else None,
             lat=lat,
             lon=lon,
+            marine_lat=sea_lat,
+            marine_lon=sea_lon,
+            marine_offset_km=marine_offset_km,
+            source_mode=source_mode,
+            port_slug=port_slug or (port_obj.slug if port_obj else ""),
             vessel_class=vessel_class,
             valid_from=valid_from,
             valid_to=valid_to,
@@ -191,7 +315,7 @@ def evaluate_and_record_risk(
             thread_message_id=thread_message_id,
         )
 
-        # 6. Generate indicative fishing zones
+        # Generate indicative fishing zone
         FishingZone.objects.create(
             assessment=assessment,
             lat=round(lat + 0.05, 3),
@@ -202,10 +326,16 @@ def evaluate_and_record_risk(
             origin=FishingZone.OriginChoice.ORCA_HEURISTIC,
         )
 
+    # Cache assessment id for 15 minutes
+    cache.set(cache_key, assessment.public_id, timeout=900)
+
     logger.info(
         "risk_assessment_computed",
         level=result.level,
         vessel_class=vessel_class,
         assessment_id=str(assessment.public_id),
+        source_mode=source_mode,
+        lat=lat,
+        lon=lon,
     )
     return assessment

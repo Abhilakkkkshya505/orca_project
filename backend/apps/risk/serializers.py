@@ -28,6 +28,8 @@ class FishingZoneSerializer(serializers.ModelSerializer):
 class RiskAssessmentSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source="public_id", read_only=True)
     location = serializers.SerializerMethodField()
+    marine_location = serializers.SerializerMethodField()
+    offset_message = serializers.SerializerMethodField()
     fishing_zones = FishingZoneSerializer(many=True, read_only=True)
     advisories = serializers.SerializerMethodField()
     missing = serializers.SerializerMethodField()
@@ -41,6 +43,11 @@ class RiskAssessmentSerializer(serializers.ModelSerializer):
             "id",
             "level",
             "location",
+            "marine_location",
+            "marine_offset_km",
+            "offset_message",
+            "source_mode",
+            "port_slug",
             "valid_from",
             "valid_to",
             "vessel_class",
@@ -55,6 +62,16 @@ class RiskAssessmentSerializer(serializers.ModelSerializer):
 
     def get_location(self, obj) -> dict:
         return {"lat": obj.lat, "lon": obj.lon}
+
+    def get_marine_location(self, obj) -> dict | None:
+        if obj.marine_lat is not None and obj.marine_lon is not None:
+            return {"lat": obj.marine_lat, "lon": obj.marine_lon}
+        return None
+
+    def get_offset_message(self, obj) -> str | None:
+        if obj.marine_offset_km is not None and obj.marine_offset_km > 5.0:
+            return f"Sea conditions measured {obj.marine_offset_km:.1f} km from the port"
+        return None
 
     def get_advisories(self, obj) -> list:
         from apps.geodata.models import Advisory

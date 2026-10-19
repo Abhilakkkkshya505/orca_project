@@ -10,7 +10,7 @@ Overall System State: **Analysis Completed; Ready for Task Execution**
 | Task | Title | Status | Date | Verify Script Result | Resume Point / Notes |
 |---|---|---|---|---|---|
 | **Task 0** | Stabilise keys & providers | **DONE (verified)** | 2026-10-19 | `scripts/verify-task0.ps1` (19/19 PASS) | All services running; PostGIS healthy; check_providers live; session cookies verified; 49/49 backend + 24/24 frontend tests pass. |
-| **Task 1** | Ports and location | **NOT STARTED** | — | `scripts/verify-task1.ps1` (Pending) | World ports table, sea-snapping, remove all Kochi defaults. |
+| **Task 1** | Ports and location | **DONE (verified)** | 2026-10-19 | `scripts/verify-task1.ps1` (9/9 PASS) | World ports table seeded (3,875 ports), sea-snapping, nearest ports, reverse geocoding, dynamic snapping, inland suggestions, zero Kochi defaults, 62/62 backend tests pass. |
 | **Task 2** | Data pipelines & risk engine | **NOT STARTED** | — | `scripts/verify-task2.ps1` (Pending) | Pure deterministic rules engine 100% branch coverage, property tests, data contracts. |
 | **Task 3** | Chat assistant | **NOT STARTED** | — | `scripts/verify-task3.ps1` (Pending) | SSE streaming, multi-turn chat, number validation against hallucination, template mode. |
 | **Task 4** | Train the models | **NOT STARTED** | — | `scripts/verify-task4.ps1` (Pending) | Advisory models (fishing zones, algal bloom, intent), gate evaluation script. |

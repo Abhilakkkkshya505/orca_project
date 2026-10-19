@@ -39,33 +39,24 @@ class LLMClient:
         Parses intent from user question. If template/offline, uses pattern matching
         against known Indian coastal ports.
         """
-        q = user_query.lower()
-
-        # Known port coordinates dictionary
-        PORTS = {
-            "kochi": (9.97, 76.24),
-            "cochin": (9.97, 76.24),
-            "mumbai": (18.92, 72.83),
-            "bombay": (18.92, 72.83),
-            "chennai": (13.08, 80.27),
-            "madras": (13.08, 80.27),
-            "visakhapatnam": (17.68, 83.21),
-            "vizag": (17.68, 83.21),
-            "goa": (15.49, 73.82),
-            "panaji": (15.49, 73.82),
-            "kanyakumari": (8.08, 77.55),
-            "veraval": (20.95, 70.36),
-            "mangalore": (12.87, 74.84),
-            "puri": (19.81, 85.83),
-        }
+        from apps.ports.models import Port
+        from apps.ports.normalisation import to_ascii
 
         matched_port = None
-        for port, (plat, plon) in PORTS.items():
-            if port in q:
-                matched_port = (port.capitalize(), plat, plon)
+        # First check database for matching port names / aliases
+        q_ascii = to_ascii(user_query)
+        # Tokenize query words (3+ chars)
+        words = [w for w in q_ascii.split() if len(w) >= 3]
+        for w in words:
+            p = Port.objects.filter(name_ascii__iexact=w).first()
+            if not p:
+                p = Port.objects.filter(alt_names__icontains=w).first()
+            if p:
+                matched_port = (p.name, p.lat, p.lon)
                 break
 
-        vessel_class = "mechanised" if any(w in q for w in ["trawler", "mechanised", "inboard"]) else "small_craft"
+        q_lower = user_query.lower()
+        vessel_class = "mechanised" if any(w in q_lower for w in ["trawler", "mechanised", "inboard"]) else "small_craft"
 
         if matched_port:
             name, lat, lon = matched_port
@@ -78,17 +69,17 @@ class LLMClient:
 
         if default_location and "lat" in default_location and "lon" in default_location:
             return IntentExtractionResult(
-                location_name="Current Location",
+                location_name=default_location.get("name", "Current Location"),
                 lat=float(default_location["lat"]),
                 lon=float(default_location["lon"]),
                 vessel_class=vessel_class,
             )
 
-        # Default fallback to Kochi, Kerala
+        # No hardcoded location default - require clarification
         return IntentExtractionResult(
-            location_name="Kochi",
-            lat=9.97,
-            lon=76.24,
+            location_name=None,
+            lat=None,
+            lon=None,
             vessel_class=vessel_class,
         )
 

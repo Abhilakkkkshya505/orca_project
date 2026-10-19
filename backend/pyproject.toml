@@ -63,6 +63,9 @@ DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py", "*_test.py"]
 addopts = "--strict-markers -p no:warnings"
 testpaths = ["tests", "apps"]
+markers = [
+    "live: marks tests calling live external APIs (deselect with '-m \"not live\"')",
+]
 
 [tool.mypy]
 python_version = "3.12"

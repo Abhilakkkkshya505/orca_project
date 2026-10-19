@@ -1,0 +1,80 @@
+name,state,lat,lon,source_url,verified
+Cochin Fisheries Harbour,Kerala,9.9392,76.2625,https://cicef.gov.in/operational-harbours,true
+Munambam Fishing Harbour,Kerala,10.1819,76.1722,https://fisheries.kerala.gov.in/harbours,true
+Neendakara Fishing Harbour,Kerala,8.9372,76.5367,https://fisheries.kerala.gov.in/harbours,true
+Beypore Fishing Harbour,Kerala,11.1614,75.8039,https://fisheries.kerala.gov.in/harbours,true
+Vizhinjam Fishing Harbour,Kerala,8.3761,76.9950,https://fisheries.kerala.gov.in/harbours,true
+Thangassery Fishing Harbour,Kerala,8.8828,76.5647,https://fisheries.kerala.gov.in/harbours,true
+Mopla Bay Fishing Harbour,Kerala,11.8544,75.3725,https://fisheries.kerala.gov.in/harbours,true
+Kayamkulam Fishing Harbour,Kerala,9.1333,76.4667,https://fisheries.kerala.gov.in/harbours,true
+Ponnani Fishing Harbour,Kerala,10.7833,75.9167,https://fisheries.kerala.gov.in/harbours,true
+Koyilandy Fishing Harbour,Kerala,11.4333,75.6833,https://fisheries.kerala.gov.in/harbours,true
+Sassoon Dock Fishing Harbour,Maharashtra,18.9161,72.8258,https://mumbaiport.gov.in/sassoon-dock,true
+New Ferry Wharf Fishing Harbour,Maharashtra,18.9567,72.8533,https://mumbaiport.gov.in/wharf-marine,true
+Mirkarwada Fishing Harbour,Maharashtra,16.9911,73.2778,https://fisheries.maharashtra.gov.in,true
+Agardanda Fishing Harbour,Maharashtra,18.2736,72.9867,https://fisheries.maharashtra.gov.in,true
+Karanja Fishing Harbour,Maharashtra,18.8667,72.9333,https://fisheries.maharashtra.gov.in,true
+Arnala Fishing Harbour,Maharashtra,19.4500,72.7667,https://fisheries.maharashtra.gov.in,true
+Dahanu Fishing Harbour,Maharashtra,19.9667,72.7167,https://fisheries.maharashtra.gov.in,true
+Satpati Fishing Harbour,Maharashtra,19.7333,72.7000,https://fisheries.maharashtra.gov.in,true
+Malpe Fishing Harbour,Karnataka,13.3522,74.7006,https://fisheries.karnataka.gov.in,true
+Mangalore Old Port Fishing Harbour,Karnataka,12.8589,74.8333,https://fisheries.karnataka.gov.in,true
+Karwar Baithkol Fishing Harbour,Karnataka,14.8031,74.1206,https://fisheries.karnataka.gov.in,true
+Honnavar Fishing Harbour,Karnataka,14.2811,74.4444,https://fisheries.karnataka.gov.in,true
+Gangolli Fishing Harbour,Karnataka,13.6381,74.6739,https://fisheries.karnataka.gov.in,true
+Tadri Fishing Harbour,Karnataka,14.5219,74.3517,https://fisheries.karnataka.gov.in,true
+Bhatkal Fishing Harbour,Karnataka,13.9833,74.5500,https://fisheries.karnataka.gov.in,true
+Chennai Kasimedu Fishing Harbour,Tamil Nadu,13.1167,80.2981,https://chennaiport.gov.in/kasimedu-harbour,true
+Thoothukudi Fishing Harbour,Tamil Nadu,8.7892,78.1625,https://vocport.gov.in/fishing-harbour,true
+Nagapattinam Fishing Harbour,Tamil Nadu,10.7606,79.8483,https://fisheries.tn.gov.in,true
+Cuddalore Fishing Harbour,Tamil Nadu,11.7289,79.7711,https://fisheries.tn.gov.in,true
+Chinnamuttam Fishing Harbour,Tamil Nadu,8.0967,77.5622,https://fisheries.tn.gov.in,true
+Colachel Fishing Harbour,Tamil Nadu,8.1750,77.2583,https://fisheries.tn.gov.in,true
+Pazhayar Fishing Harbour,Tamil Nadu,11.3619,79.8272,https://fisheries.tn.gov.in,true
+Rameswaram Fishing Jetty,Tamil Nadu,9.2881,79.3144,https://fisheries.tn.gov.in,true
+Mallipattinam Fishing Harbour,Tamil Nadu,10.2833,79.3167,https://fisheries.tn.gov.in,true
+Muttom Fishing Harbour,Tamil Nadu,8.1167,77.3167,https://fisheries.tn.gov.in,true
+Visakhapatnam Fishing Harbour,Andhra Pradesh,17.6961,83.2989,https://vizagport.com/fishing-harbour,true
+Nizampatnam Fishing Harbour,Andhra Pradesh,15.9083,80.6722,https://fisheries.ap.gov.in,true
+Bhavanapadu Fishing Harbour,Andhra Pradesh,18.5667,84.3472,https://fisheries.ap.gov.in,true
+Kakinada Fishing Harbour,Andhra Pradesh,16.9739,82.2533,https://fisheries.ap.gov.in,true
+Machilipatnam Gilakaladindi Fishing Harbour,Andhra Pradesh,16.1558,81.1683,https://fisheries.ap.gov.in,true
+Juvvaladinne Fishing Harbour,Andhra Pradesh,14.9333,80.0833,https://fisheries.ap.gov.in,true
+Paradip Fishing Harbour,Odisha,20.2783,86.6717,https://paradipport.gov.in/fishing-harbour,true
+Dhamra Fishing Harbour,Odisha,20.8017,86.9533,https://fisheries.odisha.gov.in,true
+Gopalpur Aryapalli Fishing Harbour,Odisha,19.2983,84.9667,https://fisheries.odisha.gov.in,true
+Chandipur Fishing Centre,Odisha,21.4683,87.0183,https://fisheries.odisha.gov.in,true
+Astaranga Fishing Harbour,Odisha,19.9833,86.2667,https://fisheries.odisha.gov.in,true
+Petuaghat Fishing Harbour,West Bengal,21.7978,87.8939,https://wbfisheries.gov.in/petuaghat,true
+Shankarpur Fishing Harbour,West Bengal,21.6367,87.5733,https://wbfisheries.gov.in/shankarpur,true
+Fraserganj Fishing Harbour,West Bengal,21.5833,88.2500,https://wbfisheries.gov.in/fraserganj,true
+Sultanpur Fishing Harbour,West Bengal,22.1833,88.1917,https://wbfisheries.gov.in,true
+Kakdwip Fishing Centre,West Bengal,21.8667,88.1833,https://wbfisheries.gov.in,true
+Veraval Fishing Harbour,Gujarat,20.9011,70.3667,https://gmbports.org/veraval-harbour,true
+Mangrol Fishing Harbour,Gujarat,21.1167,70.1111,https://gmbports.org/mangrol,true
+Porbandar Fishing Harbour,Gujarat,21.6333,69.5889,https://gmbports.org/porbandar,true
+Okha Fishing Harbour,Gujarat,22.4694,69.0733,https://gmbports.org/okha,true
+Jakhau Fishing Harbour,Gujarat,23.2389,68.6189,https://gmbports.org/jakhau,true
+Dholai Fishing Harbour,Gujarat,20.7639,72.9361,https://gmbports.org/dholai,true
+Navabandar Fishing Port,Gujarat,20.7500,71.0500,https://gmbports.org/navabandar,true
+Madhwad Fishing Port,Gujarat,20.7833,70.8333,https://gmbports.org/madhwad,true
+Betul Fishing Harbour,Goa,15.1433,73.9556,https://fisheries.goa.gov.in/betul,true
+Malim Fishing Jetty,Goa,15.5067,73.8322,https://fisheries.goa.gov.in/malim,true
+Cutbona Fishing Jetty,Goa,15.1611,73.9639,https://fisheries.goa.gov.in/cutbona,true
+Chapora Fishing Jetty,Goa,15.6033,73.7417,https://fisheries.goa.gov.in/chapora,true
+Talpona Fishing Jetty,Goa,14.9833,74.0500,https://fisheries.goa.gov.in/talpona,true
+Thengaithittu Fishing Harbour,Puducherry,11.9167,79.8250,https://fish.py.gov.in,true
+Karaikal Fishing Harbour,Puducherry,10.9133,79.8450,https://karaikal.gov.in/fisheries,true
+Mahe Fishing Jetty,Puducherry,11.7000,75.5333,https://mahe.gov.in/fisheries,true
+Junglighat Fishing Harbour,Andaman and Nicobar Islands,11.6606,92.7247,https://andaman.gov.in/fisheries,true
+Campbell Bay Fishing Jetty,Andaman and Nicobar Islands,7.0042,93.9297,https://andaman.gov.in/fisheries,true
+Diglipur Aerial Bay Jetty,Andaman and Nicobar Islands,13.2667,93.0500,https://andaman.gov.in/fisheries,true
+Hut Bay Fishing Jetty,Andaman and Nicobar Islands,10.6000,92.5500,https://andaman.gov.in/fisheries,true
+Agatti Island Fishing Jetty,Lakshadweep,10.8533,72.1817,https://lakshadweep.gov.in/fisheries,true
+Kavaratti Island Harbour,Lakshadweep,10.5658,72.6358,https://lakshadweep.gov.in/fisheries,true
+Andrott Island Jetty,Lakshadweep,10.8167,73.6667,https://lakshadweep.gov.in/fisheries,true
+Minicoy Island Harbour,Lakshadweep,8.2833,73.0500,https://lakshadweep.gov.in/fisheries,true
+Moti Daman Fishing Jetty,Dadra and Nagar Haveli and Daman and Diu,20.4139,72.8331,https://daman.nic.in/fisheries,true
+Vanakbara Fishing Harbour,Dadra and Nagar Haveli and Daman and Diu,20.7183,70.8867,https://diu.gov.in/fisheries,true
+Ghoghla Fishing Port,Dadra and Nagar Haveli and Daman and Diu,20.7167,70.9833,https://diu.gov.in/fisheries,true
+Nani Daman Jetty,Dadra and Nagar Haveli and Daman and Diu,20.4200,72.8350,https://daman.nic.in/fisheries,true

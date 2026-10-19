@@ -68,8 +68,8 @@ export const LandingPage: React.FC = () => {
         <div className="bg-surface border border-border rounded-lg p-6 shadow-card text-left flex flex-col gap-4">
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div>
-              <span className="text-xs font-mono text-ink-muted">SAMPLE STATION • KOCHI, KERALA</span>
-              <h2 className="text-xl font-semibold">Fort Kochi Anchorage (9.97°N, 76.24°E)</h2>
+              <span className="text-xs font-mono text-ink-muted">FEATURED COASTAL STATION • MAHARASHTRA</span>
+              <h2 className="text-xl font-semibold">Mumbai Harbour (18.93°N, 72.84°E)</h2>
             </div>
             <RiskBadge level="caution" size="md" />
           </div>

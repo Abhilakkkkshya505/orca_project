@@ -13,7 +13,7 @@ interface MapViewProps {
 
 export const MapView: React.FC<MapViewProps> = ({
   mapData,
-  selectedLocation = { lat: 9.97, lon: 76.24 },
+  selectedLocation = { lat: 18.93, lon: 72.84 },
   onSelectLocation,
   className = "",
 }) => {

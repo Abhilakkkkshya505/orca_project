@@ -1,15 +1,46 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Anchor, ArrowLeft, Sun, Moon } from "lucide-react";
 import { api } from "@/lib/api/client";
 import { ChatPanel } from "@/features/chat/ChatPanel";
 import { MapView } from "@/features/map/MapView";
 
 export const ExplorePage: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [threadId, setThreadId] = useState<string | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState({ lat: 9.97, lon: 76.24 });
+  const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lon: number; name?: string }>(() => {
+    const latParam = searchParams.get("lat");
+    const lonParam = searchParams.get("lon");
+    if (latParam && lonParam) {
+      const lat = parseFloat(latParam);
+      const lon = parseFloat(lonParam);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        return { lat, lon };
+      }
+    }
+    return { lat: 18.93, lon: 72.84, name: "Mumbai Harbour" };
+  });
   const [vesselClass, setVesselClass] = useState<"small_craft" | "mechanised">("small_craft");
   const [isDark, setIsDark] = useState(false);
+
+  // Load port metadata from URL if ?port=<slug> is present
+  useEffect(() => {
+    const portSlug = searchParams.get("port");
+    if (portSlug) {
+      api
+        .get<{ lat: number; lon: number; name: string }>(`/ports/${portSlug}/`)
+        .then((port) => {
+          setSelectedLocation({
+            lat: port.lat,
+            lon: port.lon,
+            name: port.name,
+          });
+        })
+        .catch(() => {
+          // If port not found, keep current location
+        });
+    }
+  }, [searchParams]);
 
   // Initialize or fetch conversation thread
   useEffect(() => {

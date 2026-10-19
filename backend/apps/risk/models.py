@@ -29,6 +29,11 @@ class RiskAssessment(TimeStampedModel, PublicIdModel):
     )
     lat = models.FloatField(db_index=True)
     lon = models.FloatField(db_index=True)
+    marine_lat = models.FloatField(null=True, blank=True, db_index=True)
+    marine_lon = models.FloatField(null=True, blank=True, db_index=True)
+    marine_offset_km = models.FloatField(null=True, blank=True)
+    source_mode = models.CharField(max_length=30, default="grid_snapshot")
+    port_slug = models.CharField(max_length=255, blank=True, default="")
     vessel_class = models.CharField(max_length=20, choices=VesselChoice.choices, default=VesselChoice.SMALL_CRAFT)
 
     valid_from = models.DateTimeField(db_index=True)
@@ -52,6 +57,12 @@ class RiskAssessment(TimeStampedModel, PublicIdModel):
 
     def __str__(self):
         return f"RiskAssessment({self.public_id}, level={self.level}, vessel={self.vessel_class})"
+
+    @property
+    def is_currently_valid(self) -> bool:
+        from django.utils import timezone
+        now = timezone.now()
+        return self.valid_from <= now <= self.valid_to
 
 
 class FishingZone(TimeStampedModel, PublicIdModel):

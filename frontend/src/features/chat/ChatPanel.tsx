@@ -77,7 +77,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
             <div>
               <p className="font-semibold text-sm text-ink">Coastal Safety & Marine Assistant</p>
               <p className="text-xs mt-1 max-w-sm">
-                Ask about conditions off Kochi, wave forecasts, or likely fishing zones. The reasoning engine evaluates deterministic safety limits.
+                Ask about conditions off any coastal port, wave forecasts, or likely fishing zones. The reasoning engine evaluates deterministic safety limits.
               </p>
             </div>
           </div>

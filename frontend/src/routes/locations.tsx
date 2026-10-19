@@ -37,7 +37,7 @@ export const LocationsPage: React.FC = () => {
   });
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<NewLocationForm>({
-    defaultValues: { kind: "harbour", lat: 9.97, lon: 76.24 },
+    defaultValues: { kind: "harbour" },
   });
 
   // 2. Create mutation
@@ -108,7 +108,7 @@ export const LocationsPage: React.FC = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Location Name"
-                placeholder="e.g. Fort Kochi Outer Anchorage"
+                placeholder="e.g. Sassoon Dock, Mumbai or Custom Anchorage"
                 error={errors.name?.message}
                 {...register("name", { required: "Name is required", maxLength: 60 })}
               />
@@ -130,7 +130,7 @@ export const LocationsPage: React.FC = () => {
                 label="Latitude (°N)"
                 type="number"
                 step="0.0001"
-                placeholder="9.97"
+                placeholder="e.g. 18.9161"
                 {...register("lat", { required: true })}
               />
 
@@ -138,7 +138,7 @@ export const LocationsPage: React.FC = () => {
                 label="Longitude (°E)"
                 type="number"
                 step="0.0001"
-                placeholder="76.24"
+                placeholder="e.g. 72.8258"
                 {...register("lon", { required: true })}
               />
 

@@ -71,6 +71,7 @@ LOCAL_APPS = [
     "apps.core.apps.CoreConfig",
     "apps.accounts.apps.AccountsConfig",
     "apps.geodata.apps.GeodataConfig",
+    "apps.ports.apps.PortsConfig",
     "apps.risk.apps.RiskConfig",
     "apps.agents.apps.AgentsConfig",
     "apps.chat.apps.ChatConfig",
@@ -121,6 +122,11 @@ ASGI_APPLICATION = "config.asgi.application"
 # Database setup
 DATABASES = {"default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")}
 
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    db_name = DATABASES["default"].get("NAME")
+    if db_name and db_name != ":memory:" and not Path(db_name).is_absolute():
+        DATABASES["default"]["NAME"] = str(BASE_DIR / db_name)
+
 # Fix dialect if postgis is specified but running on sqlite
 if not HAS_GDAL and DATABASES["default"]["ENGINE"] == "django.contrib.gis.db.backends.postgis":
     # If GDAL library is not available on host system, fall back to standard postgresql or sqlite
@@ -168,18 +174,26 @@ CACHES = {
         "LOCATION": "orca-local-cache",
     }
 }
-REDIS_URL = env("REDIS_URL")
+REDIS_URL = env("REDIS_URL", default="")
 if REDIS_URL and not env("TESTING", default=False):
+    import socket
     try:
-        CACHES["default"] = {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": REDIS_URL,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                "IGNORE_EXCEPTIONS": True,
-            },
-            "KEY_PREFIX": "orca:v1",
-        }
+        host_port = REDIS_URL.split("://")[1].split("/")[0]
+        host = host_port.split(":")[0]
+        port = int(host_port.split(":")[1]) if ":" in host_port else 6379
+        sock = socket.socket()
+        sock.settimeout(0.2)
+        if sock.connect_ex((host, port)) == 0:
+            CACHES["default"] = {
+                "BACKEND": "django_redis.cache.RedisCache",
+                "LOCATION": REDIS_URL,
+                "OPTIONS": {
+                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                    "IGNORE_EXCEPTIONS": True,
+                },
+                "KEY_PREFIX": "orca:v1",
+            }
+        sock.close()
     except Exception:
         pass
 

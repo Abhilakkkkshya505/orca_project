@@ -80,7 +80,7 @@ export const SignupPage: React.FC = () => {
             label="Display name / Vessel Name"
             type="text"
             autoComplete="name"
-            placeholder="Kochi Trawler 4"
+            placeholder="e.g. Sagar Kanya 1"
             error={errors.display_name?.message}
             {...register("display_name")}
           />
