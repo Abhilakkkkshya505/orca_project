@@ -1,0 +1,86 @@
+{
+  "model_id": "fishing_zone",
+  "all_passed": false,
+  "status": "unfinished",
+  "checks": [
+    {
+      "criterion": "pr_auc_improvement",
+      "required": ">= +0.10",
+      "actual": "+0.0623 (Model: 0.6532, Best Baseline: 0.5909)",
+      "passed": false
+    },
+    {
+      "criterion": "top_20_hit_rate_improvement",
+      "required": ">= +0.05",
+      "actual": "+0.0758 (Model: 0.7274, B2: 0.6516)",
+      "passed": true
+    },
+    {
+      "criterion": "max_ece",
+      "required": "<= 0.08",
+      "actual": "0.0322",
+      "passed": true
+    }
+  ],
+  "model_metrics": {
+    "roc_auc": 0.7346710831695064,
+    "pr_auc": 0.6531765791151585,
+    "brier_score": 0.20496249189879234,
+    "ece": 0.032216716516601206,
+    "top_10_hit_rate": 0.7806451612903226,
+    "top_20_hit_rate": 0.7274193548387097,
+    "port100km_top_20_hit_rate": 0.7597765363128491,
+    "port100km_pr_auc": 0.6905848652044899,
+    "bootstrap_95ci": {
+      "pr_auc": [
+        0.6261,
+        0.6763
+      ],
+      "roc_auc": [
+        0.7213,
+        0.7485
+      ],
+      "top_20_hit_rate": [
+        0.6945,
+        0.7564
+      ],
+      "ece": [
+        0.027,
+        0.0511
+      ]
+    }
+  },
+  "baseline_metrics": {
+    "b1_climatology": {
+      "roc_auc": 0.5471555110719747,
+      "pr_auc": 0.4529238482258261,
+      "brier_score": 0.2512861316653713,
+      "ece": 0.07100716369184916,
+      "top_10_hit_rate": 0.46774193548387094,
+      "top_20_hit_rate": 0.47419354838709676,
+      "port100km_top_20_hit_rate": 0.4860335195530726,
+      "port100km_pr_auc": 0.48150182629489285
+    },
+    "b2_heuristic": {
+      "roc_auc": 0.6932749017038008,
+      "pr_auc": 0.5908725720617355,
+      "brier_score": 0.25935887096774196,
+      "ece": 0.20688709677419348,
+      "top_10_hit_rate": 0.7258064516129032,
+      "top_20_hit_rate": 0.6516129032258065,
+      "port100km_top_20_hit_rate": 0.723463687150838,
+      "port100km_pr_auc": 0.6331026040798109
+    },
+    "b3_distance": {
+      "roc_auc": 0.595625051195937,
+      "pr_auc": 0.5051727108295025,
+      "brier_score": 0.2807224053821069,
+      "ece": 0.17610058126037936,
+      "top_10_hit_rate": 0.5870967741935483,
+      "top_20_hit_rate": 0.5274193548387097,
+      "port100km_top_20_hit_rate": 0.5670391061452514,
+      "port100km_pr_auc": 0.5305548788451542
+    }
+  },
+  "reason": "GFW_API_ACCESS_TOKEN is not set in environment. Model marked UNFINISHED per Task 4 specification."
+}

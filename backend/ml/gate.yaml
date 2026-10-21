@@ -1,0 +1,55 @@
+# ==============================================================================
+# ORCA Machine Learning Adoption Gate Specification (gate.yaml)
+# Written down BEFORE model evaluation and strictly frozen.
+# Models ship (status: active) ONLY if all conditions pass on held-out tests.
+# Otherwise, models remain not_adopted and ORCA falls back to deterministic heuristics.
+# ==============================================================================
+
+version: "2026.1"
+
+models:
+  fishing_zone:
+    description: "Fishing-activity suitability model based on historical AIS effort"
+    advisory_only: true
+    metric_rules:
+      pr_auc_relative_improvement_min: 0.10   # Beat best baseline by at least 10% relative
+      top20_hit_rate_improvement_pp_min: 0.05 # Beat best baseline by at least 5 percentage points
+      bootstrap_ci_above_baseline: true       # Block-bootstrap 95% lower bound must exceed baseline
+      ece_max: 0.08                          # Expected Calibration Error must be below 0.08
+    action_if_pass: "active"
+    action_if_fail: "not_adopted"
+    fallback_agent: "orca_heuristic"
+
+  chl_anomaly:
+    description: "Chlorophyll-a statistical anomaly flag relative to seasonal climatology"
+    advisory_only: true
+    metric_rules:
+      z_score_threshold: 2.5                  # Robust z-score threshold
+      min_adjacent_cells: 4                   # Minimum spatial cluster size
+      max_cloud_gap_fraction: 0.50            # Must not be mostly cloud-masked
+      qualitative_events_backtested: 3        # Must backtest against at least 3 historical bloom citations
+    action_if_pass: "active"
+    action_if_fail: "not_adopted"
+    fallback_agent: "standard_observation"
+
+  intent:
+    description: "NLU query task classifier (safety, fishing_zones, weather, waves, advisories, compare, explain_term, other)"
+    advisory_only: false
+    metric_rules:
+      macro_f1_improvement_points_min: 0.03   # Macro-F1 at least 3 points above rule-based scorer
+      min_class_recall: 0.80                 # No individual class recall below 0.80
+      max_inference_ms: 5.0                  # Sub-5ms inference latency budget
+      max_artifact_size_mb: 20.0             # Serialized artifact under 20MB
+    action_if_pass: "active"
+    action_if_fail: "not_adopted"
+    fallback_agent: "rule_based_parser"
+
+  wave_error:
+    description: "Wave forecast error quantile range (10th, 50th, 90th percentile)"
+    advisory_only: true
+    metric_rules:
+      interval_80_coverage_min: 0.75         # 80% prediction interval must cover between 75% and 85%
+      interval_80_coverage_max: 0.85
+    action_if_pass: "active"
+    action_if_fail: "skipped"
+    fallback_agent: "deterministic_single_value"

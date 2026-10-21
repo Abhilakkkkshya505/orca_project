@@ -1,0 +1,45 @@
+{
+  "model_id": "intent",
+  "all_passed": true,
+  "status": "active",
+  "checks": [
+    {
+      "criterion": "max_inference_ms",
+      "required": "<= 5.0ms",
+      "actual": "1.02ms",
+      "passed": true
+    },
+    {
+      "criterion": "macro_f1_improvement",
+      "required": ">= +0.03",
+      "actual": "+0.1566 (Model: 1.0000, Rules: 0.8434)",
+      "passed": true
+    },
+    {
+      "criterion": "min_class_recall",
+      "required": ">= 0.80",
+      "actual": "1.0000",
+      "passed": true
+    },
+    {
+      "criterion": "max_artifact_size_mb",
+      "required": "<= 20.0 MB",
+      "actual": "0.19 MB",
+      "passed": true
+    }
+  ],
+  "model_metrics": {
+    "macro_f1": 1.0,
+    "min_class_recall": 1.0,
+    "p95_inference_ms": 1.02,
+    "artifact_size_mb": 0.19,
+    "n_train_samples": 5320,
+    "n_test_samples": 1330
+  },
+  "baseline_metrics": {
+    "rules": {
+      "macro_f1": 0.8434,
+      "min_class_recall": 0.7019
+    }
+  }
+}

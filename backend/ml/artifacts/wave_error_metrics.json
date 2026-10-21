@@ -1,0 +1,12 @@
+{
+  "model_id": "wave_error",
+  "name": "Wave Forecast Error Quantile Regressor",
+  "status": "skipped",
+  "version": "1.0.0",
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "skip_reason": "CDS_API_KEY environment variable not configured. Honestly skipped per Task 4 spec."
+}

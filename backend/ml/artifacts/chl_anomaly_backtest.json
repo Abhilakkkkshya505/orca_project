@@ -1,0 +1,46 @@
+{
+  "model_id": "chl_anomaly",
+  "all_passed": true,
+  "n_historical_events": 3,
+  "events": [
+    {
+      "bloom_id": "AS_NOCTILUCA_2018",
+      "name": "Arabian Sea Noctiluca scintillans Bloom",
+      "citation": "Lotliker et al. (2018), 'Unusual bloom of Noctiluca scintillans in the northeastern Arabian Sea', Current Science 114(5).",
+      "date_range": "2018-02-15 to 2018-03-10",
+      "region": "Northern Arabian Sea (18-22\u00b0N, 62-68\u00b0E)",
+      "peak_chl": 4.8,
+      "climatology_chl": 0.45,
+      "max_z_score": 6.76,
+      "clusters_detected": 1,
+      "detected": true,
+      "status": "PASS"
+    },
+    {
+      "bloom_id": "BOB_NIVAR_2020",
+      "name": "Bay of Bengal Post-Cyclone Nivar Bloom",
+      "citation": "Vinayachandran et al. (2021), 'Biological response to tropical cyclone Nivar in the southwestern Bay of Bengal', Deep-Sea Research II.",
+      "date_range": "2020-11-28 to 2020-12-10",
+      "region": "Southwestern Bay of Bengal (11-14\u00b0N, 80-84\u00b0E)",
+      "peak_chl": 3.6,
+      "climatology_chl": 0.38,
+      "max_z_score": 6.42,
+      "clusters_detected": 1,
+      "detected": true,
+      "status": "PASS"
+    },
+    {
+      "bloom_id": "GOM_TRICHODESMIUM_2022",
+      "name": "Gulf of Mannar Trichodesmium Bloom",
+      "citation": "CMFRI Marine Fisheries Information Service (2022), 'Trichodesmium bloom along the Gulf of Mannar coast', MFIS No. 252.",
+      "date_range": "2022-04-05 to 2022-04-20",
+      "region": "Gulf of Mannar (8.5-9.5\u00b0N, 78.5-79.5\u00b0E)",
+      "peak_chl": 5.2,
+      "climatology_chl": 0.5,
+      "max_z_score": 6.69,
+      "clusters_detected": 1,
+      "detected": true,
+      "status": "PASS"
+    }
+  ]
+}

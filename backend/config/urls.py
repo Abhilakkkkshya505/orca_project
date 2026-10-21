@@ -30,6 +30,8 @@ api_v1_patterns = [
     path("alerts/", include("apps.locations.urls_alerts")),
     # Dashboard
     path("dashboard/", include("apps.dashboard.urls")),
+    # Models & ML Cards
+    path("models/", include("apps.agents.urls_models")),
     # OpenAPI Schema & Docs
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
