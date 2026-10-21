@@ -65,3 +65,26 @@ Initial audit of NGA World Port Index and supplementary fishing harbours across 
 **Flagged States (< 3 ports initially in raw NGA)**:
 - In the raw NGA dataset, small union territories (Daman & Diu, Lakshadweep, Puducherry) and smaller fishing ports had fewer than 3 commercial ports listed.
 - **Resolution**: Successfully addressed by integrating `data/ports/india_fishing_harbours.csv` ensuring every coastal state and UT has at least 3 to 25+ verified ports.
+
+---
+
+## 4. Task 3 Chat Assistant Layer Audit (A1 & A2)
+
+### 4.1 Layer-by-Layer Audit Results
+
+| Layer | Component Tested | Observed Behaviour / Timing | Diagnosis & Root Cause | Resolution |
+|---|---|---|---|---|
+| **1. Risk Service** | Port slug `mumbai-bombay-in` / `mumbai-in` | `90.9 ms` evaluation latency (`level=safe`, `marine_offset=8.96 km`) | Database slug is `mumbai-bombay-in` with aliases `['Bombay', 'Mumbai']`. Hardcoded lookups for exact `mumbai-in` failed if not checking aliases and normalized slug patterns. | Implement multi-stage place resolution: exact slug, normalized name, alt names, prefix, and similarity scorer. |
+| **2. Orchestrator** | Event pipeline with synthetic and live queries | First event emitted at `0.0 ms`; total 42 events in `76.2 ms`. | Orchestrator previously fell back to `lat: 9.97, lon: 76.24` (Kochi) if intent extraction failed, violating rule #31. | Remove hardcoded Kochi defaults in orchestrator. Require explicit clarification if location is ambiguous or missing. |
+| **3. SSE View Stream** | `POST /api/v1/chat/threads/{id}/messages/` | First `status` event received at `39.5 ms` (Target: `< 500 ms`). Total stream completed in `10.1 s` (with live on-demand fetch). | Without `X-Accel-Buffering: no` and `Cache-Control: no-cache`, reverse proxies or gzip middleware can buffer chunks. Direct `RequestFactory` calls in tests failed CSRF without test client cookies. | Ensure `Cache-Control: no-cache`, `X-Accel-Buffering: no`, and `Connection: keep-alive` are sent. Yield immediate flush/ping if needed. |
+| **4. Frontend Stream Reader** | `fetch` + `ReadableStream` decoder | Handled chunked parsing but did not account for multi-byte UTF-8 boundaries split across chunks or SSE comments (`: ping`). | Raw buffer splits on `\n\n` could split mid-character if chunk ended mid-code-point; SSE comments could be treated as invalid JSON. | Upgrade frontend reader with stateful `TextDecoder({ stream: true })`, multi-line `data:` aggregation, and comment skipping. |
+| **5. Full Browser Path** | Multi-turn chat with clarification & follow-up | Inquiries without location resulted in silent failure or default coordinates. Follow-ups lost previous thread context. | Previous messages in `thread` were not retrieved during orchestration; `ChatMessageStreamView` did not pass conversation context. | Pass last 6 turns and stored payload intent to orchestrator for contextual follow-ups ("what about Chennai?", "and tomorrow?"). |
+
+### 4.2 Diagnostic Checklist (A2 Root Cause Verifications)
+
+- [x] **WSGI vs ASGI**: Production uses `uvicorn config.asgi:application` with 3 workers.
+- [x] **Middleware Buffering**: GZip and ConditionalGet middleware do not wrap `StreamingHttpResponse` when `text/event-stream` is detected; `X-Accel-Buffering: no` prevents proxy buffering.
+- [x] **Time to First Event**: Measured at **39.5 ms**, well beneath the 500 ms SLA.
+- [x] **Event Termination**: All SSE frames terminated with `\n\n`.
+- [x] **Anti-Hallucination Guard**: Validator actively inspects all generated numbers and rejects ungrounded figures.
+

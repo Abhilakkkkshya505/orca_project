@@ -2,11 +2,29 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { ensureCsrfToken } from "@/lib/api/client";
 import type { RiskAssessmentData } from "./RiskCard";
 
+export interface ClarificationOptionData {
+  name: string;
+  slug?: string;
+  state?: string;
+  country: string;
+  lat?: number;
+  lon?: number;
+  distance_hint?: string;
+}
+
+export interface ClarificationData {
+  reason: string;
+  options: ClarificationOptionData[];
+  message?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   riskAssessment?: RiskAssessmentData;
+  comparisonAssessments?: RiskAssessmentData[];
+  clarification?: ClarificationData;
   isStreaming?: boolean;
   error?: string;
 }
@@ -32,15 +50,22 @@ export function useChatStream(threadId: string | null) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isStalled, setIsStalled] = useState(false);
   const [mapData, setMapData] = useState<MapPayload | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const stallTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const cancelStream = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
+    if (stallTimerRef.current) {
+      clearTimeout(stallTimerRef.current);
+      stallTimerRef.current = null;
+    }
     setIsStreaming(false);
+    setIsStalled(false);
     setCurrentStatus(null);
   }, []);
 
@@ -60,7 +85,7 @@ export function useChatStream(threadId: string | null) {
 
       cancelStream();
 
-      // Add user message immediately
+      // Add user message and pending assistant message
       const userMsgId = `user-${Date.now()}`;
       const assistantMsgId = `assistant-${Date.now()}`;
 
@@ -71,7 +96,13 @@ export function useChatStream(threadId: string | null) {
       ]);
 
       setIsStreaming(true);
+      setIsStalled(false);
       setCurrentStatus("Contacting coastal reasoning agents...");
+
+      // 20-second stall timer (Part G3)
+      stallTimerRef.current = setTimeout(() => {
+        setIsStalled(true);
+      }, 20000);
 
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
@@ -121,6 +152,9 @@ export function useChatStream(threadId: string | null) {
             let dataStr = "";
 
             for (const line of lines) {
+              // Ignore SSE comments like ': ping'
+              if (line.startsWith(":")) continue;
+
               if (line.startsWith("event: ")) {
                 eventName = line.slice(7).trim();
               } else if (line.startsWith("data: ")) {
@@ -135,13 +169,32 @@ export function useChatStream(threadId: string | null) {
 
               if (eventName === "status") {
                 setCurrentStatus(data.label || "Evaluating marine conditions...");
-              } else if (eventName === "risk") {
+              } else if (eventName === "clarification") {
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantMsgId
-                      ? { ...m, riskAssessment: data as RiskAssessmentData }
+                      ? { ...m, clarification: data as ClarificationData }
                       : m,
                   ),
+                );
+              } else if (eventName === "risk") {
+                setMessages((prev) =>
+                  prev.map((m) => {
+                    if (m.id !== assistantMsgId) return m;
+                    // If multiple risk cards come in (compare mode)
+                    if (m.riskAssessment && !m.comparisonAssessments) {
+                      return {
+                        ...m,
+                        comparisonAssessments: [m.riskAssessment, data as RiskAssessmentData],
+                      };
+                    } else if (m.comparisonAssessments) {
+                      return {
+                        ...m,
+                        comparisonAssessments: [...m.comparisonAssessments, data as RiskAssessmentData],
+                      };
+                    }
+                    return { ...m, riskAssessment: data as RiskAssessmentData };
+                  }),
                 );
               } else if (eventName === "map") {
                 setMapData(data as MapPayload);
@@ -160,7 +213,9 @@ export function useChatStream(threadId: string | null) {
                   ),
                 );
                 setIsStreaming(false);
+                setIsStalled(false);
                 setCurrentStatus(null);
+                if (stallTimerRef.current) clearTimeout(stallTimerRef.current);
               } else if (eventName === "error") {
                 setMessages((prev) =>
                   prev.map((m) =>
@@ -174,7 +229,9 @@ export function useChatStream(threadId: string | null) {
                   ),
                 );
                 setIsStreaming(false);
+                setIsStalled(false);
                 setCurrentStatus(null);
+                if (stallTimerRef.current) clearTimeout(stallTimerRef.current);
               }
             } catch {
               // Ignore partial JSON parse errors
@@ -197,7 +254,12 @@ export function useChatStream(threadId: string | null) {
         }
       } finally {
         setIsStreaming(false);
+        setIsStalled(false);
         setCurrentStatus(null);
+        if (stallTimerRef.current) {
+          clearTimeout(stallTimerRef.current);
+          stallTimerRef.current = null;
+        }
         abortControllerRef.current = null;
       }
     },
@@ -210,6 +272,7 @@ export function useChatStream(threadId: string | null) {
     sendMessage,
     cancelStream,
     isStreaming,
+    isStalled,
     currentStatus,
     mapData,
   };
