@@ -38,8 +38,26 @@ describe("Zod Validation: Auth Schemas", () => {
       email: "captain@example.com",
       display_name: "Captain Ahab",
       password: "StrongPassword123!",
+      accepted_terms: true,
     });
     expect(valid.success).toBe(true);
+  });
+
+  it("strictly requires accepted_terms checkbox to be true on signup", () => {
+    const missingTerms = signupSchema.safeParse({
+      email: "captain@example.com",
+      display_name: "Captain Ahab",
+      password: "StrongPassword123!",
+    });
+    expect(missingTerms.success).toBe(false);
+
+    const falseTerms = signupSchema.safeParse({
+      email: "captain@example.com",
+      display_name: "Captain Ahab",
+      password: "StrongPassword123!",
+      accepted_terms: false,
+    });
+    expect(falseTerms.success).toBe(false);
   });
 
   it("validates email formats strictly", () => {

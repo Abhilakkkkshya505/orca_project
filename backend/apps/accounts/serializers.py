@@ -28,7 +28,14 @@ class SignupSerializer(serializers.Serializer):
     display_name = serializers.CharField(min_length=1, max_length=80)
     password = serializers.CharField(write_only=True, min_length=10)
     turnstile_token = serializers.CharField(required=True)
+    accepted_terms = serializers.BooleanField(required=True)
+    terms_version = serializers.CharField(required=False, default="2026.1")
     claim_guest_threads = serializers.BooleanField(required=False, default=False)
+
+    def validate_accepted_terms(self, value):
+        if not value:
+            raise serializers.ValidationError("You must accept the Terms and Conditions and Privacy Policy.")
+        return value
 
     def validate_password(self, value):
         password_validation.validate_password(value)

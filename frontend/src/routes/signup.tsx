@@ -95,6 +95,43 @@ export const SignupPage: React.FC = () => {
             {...register("password")}
           />
 
+          <div className="flex flex-col gap-1 mt-1">
+            <label className="flex items-start gap-2.5 cursor-pointer text-xs text-ink-muted leading-relaxed">
+              <input
+                type="checkbox"
+                id="accepted_terms"
+                className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary focus:ring-offset-bg"
+                {...register("accepted_terms")}
+              />
+              <span>
+                I agree to the{" "}
+                <Link
+                  to="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:text-primary-hover font-medium"
+                >
+                  Terms and Conditions
+                </Link>{" "}
+                and{" "}
+                <Link
+                  to="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:text-primary-hover font-medium"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
+            {errors.accepted_terms && (
+              <span className="text-xs text-risk-unsafe" role="alert">
+                {errors.accepted_terms.message}
+              </span>
+            )}
+          </div>
+
           <Button type="submit" variant="primary" className="w-full mt-2" isLoading={isSubmitting}>
             Create Account
           </Button>

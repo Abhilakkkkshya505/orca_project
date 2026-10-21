@@ -68,9 +68,33 @@ export const NotFoundPage: React.FC = () => {
           </div>
         </div>
 
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const input = (e.currentTarget.elements.namedItem("search") as HTMLInputElement).value;
+            if (input.trim()) {
+              window.location.href = `/ports?q=${encodeURIComponent(input.trim())}`;
+            } else {
+              window.location.href = "/ports";
+            }
+          }}
+          className="flex gap-2 max-w-md mx-auto w-full pt-2"
+        >
+          <input
+            type="text"
+            name="search"
+            placeholder="Search port or harbour (e.g. Mumbai, Cochin)..."
+            className="flex-1 h-10 px-3 rounded bg-surface border border-border text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:ring-1 focus:ring-primary"
+            aria-label="Search port from 404 page"
+          />
+          <Button type="submit" size="sm" variant="primary">
+            Find Port
+          </Button>
+        </form>
+
         <div className="pt-2">
           <Link to="/">
-            <Button size="md" className="gap-2">
+            <Button size="md" variant="secondary" className="gap-2">
               <Home className="h-4 w-4" /> Return to Safe Port (Home)
             </Button>
           </Link>

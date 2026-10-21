@@ -48,11 +48,15 @@ def register_user(validated_data: dict, ip: str | None = None) -> dict:
         return {"detail": "Check your email to verify your account."}
 
     with transaction.atomic():
+        from django.utils import timezone
         user = User.objects.create_user(
             email=email,
             password=validated_data["password"],
             display_name=validated_data["display_name"],
             is_email_verified=False,
+            accepted_terms=validated_data.get("accepted_terms", True),
+            terms_version=validated_data.get("terms_version", "2026.1"),
+            accepted_terms_at=timezone.now(),
         )
 
         token = generate_email_verification_token(user)

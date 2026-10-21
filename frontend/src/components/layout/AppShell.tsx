@@ -4,6 +4,7 @@ import {
   Anchor,
   LayoutDashboard,
   MapPin,
+  Bell,
   AlertTriangle,
   Compass,
   Settings,
@@ -23,6 +24,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const navItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Saved Locations", href: "/locations", icon: MapPin },
+    { label: "Alert Rules", href: "/alerts", icon: Bell },
     { label: "Official Advisories", href: "/advisories", icon: AlertTriangle },
     { label: "Explore Map & Chat", href: "/explore", icon: Compass },
     { label: "Settings", href: "/settings", icon: Settings },

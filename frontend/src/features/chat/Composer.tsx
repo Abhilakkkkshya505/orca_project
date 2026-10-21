@@ -74,17 +74,26 @@ export const Composer: React.FC<ComposerProps> = ({
         </Button>
       </div>
 
-      <div className="flex items-center justify-between px-1 text-[11px] text-ink-muted">
-        <span className="flex items-center gap-1 font-mono">
-          <CornerDownLeft className="h-3 w-3 inline" /> Press Enter to send, Shift+Enter for newline
-        </span>
-        <span
-          className={`font-mono font-medium ${
-            isNearLimit ? "text-amber-500 font-semibold" : ""
-          }`}
-        >
-          {content.length}/{maxLength}
-        </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-1 text-[11px] text-ink-muted gap-1">
+        <div className="flex items-center gap-2">
+          <span>Official warnings override ORCA.</span>
+          <span>•</span>
+          <a href="/terms" target="_blank" rel="noopener noreferrer" className="hover:underline text-primary">
+            Terms of Service
+          </a>
+        </div>
+        <div className="flex items-center justify-between sm:justify-end gap-3 font-mono">
+          <span className="hidden sm:inline">
+            <CornerDownLeft className="h-3 w-3 inline mr-0.5" /> Enter to send
+          </span>
+          <span
+            className={`${
+              isNearLimit ? "text-amber-500 font-semibold" : ""
+            }`}
+          >
+            {content.length}/{maxLength}
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ Every human and every AI agent working in this repo follows these rules. A pull 
 
 - MUST NOT use purple-to-blue (or any) gradients on backgrounds, headings, buttons or cards. The only gradient allowed is a data legend ramp.
 - MUST NOT use glassmorphism, frosted blur panels, or backdrop-filter as decoration.
-- MUST NOT use random blob, wave or mesh backgrounds.
+- MUST NOT use random blob, wave or mesh backgrounds. Exception: Data-driven sea-state animation is allowed when it reflects real forecast values, is labelled, and respects reduced motion.
 - MUST NOT use emoji as icons or bullets. Use the icon set in `design.md`.
 - MUST NOT use stock rocket, sparkle, brain, shield-with-checkmark or "AI chip" illustrations. No generic fish or whale clip art in the app UI either.
 - MUST NOT use an identical three-card feature grid. Landing sections vary in structure and content.

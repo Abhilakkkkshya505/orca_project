@@ -6,29 +6,37 @@ import type { MapPayload } from "@/features/chat/useChatStream";
 
 interface MapViewProps {
   mapData?: MapPayload | null;
-  selectedLocation?: { lat: number; lon: number };
+  selectedLocation?: { lat: number; lon: number } | null;
   onSelectLocation?: (loc: { lat: number; lon: number }) => void;
+  cooperativeGestures?: boolean;
   className?: string;
 }
 
 export const MapView: React.FC<MapViewProps> = ({
   mapData,
-  selectedLocation = { lat: 18.93, lon: 72.84 },
+  selectedLocation = null,
   onSelectLocation,
+  cooperativeGestures = false,
   className = "",
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markerRef = useRef<maplibregl.Marker | null>(null);
-  const [currentZoom, setCurrentZoom] = useState(9);
+  const [currentZoom, setCurrentZoom] = useState(selectedLocation ? 9 : 4.5);
 
   // Initialize MapLibre GL instance
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
+    const initialCenter: [number, number] = selectedLocation
+      ? [selectedLocation.lon, selectedLocation.lat]
+      : [78.96, 20.59]; // Regional India / Indian Ocean overview
+    const initialZoom = selectedLocation ? 9 : 4.5;
+
     // Admiralty chart style: high-contrast paper and water styling
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
+      cooperativeGestures: cooperativeGestures,
       style: {
         version: 8,
         sources: {
@@ -51,8 +59,8 @@ export const MapView: React.FC<MapViewProps> = ({
           },
         ],
       },
-      center: [selectedLocation.lon, selectedLocation.lat],
-      zoom: 9,
+      center: initialCenter,
+      zoom: initialZoom,
       attributionControl: false,
     });
 
@@ -72,14 +80,15 @@ export const MapView: React.FC<MapViewProps> = ({
       }
     });
 
-    // Custom marker
-    const el = document.createElement("div");
-    el.className = "w-6 h-6 rounded-full bg-primary border-2 border-white shadow-md cursor-pointer";
-    const marker = new maplibregl.Marker({ element: el })
-      .setLngLat([selectedLocation.lon, selectedLocation.lat])
-      .addTo(map);
+    // Custom marker if location provided
+    if (selectedLocation) {
+      const el = document.createElement("div");
+      el.className = "w-6 h-6 rounded-full bg-primary border-2 border-white shadow-md cursor-pointer";
+      markerRef.current = new maplibregl.Marker({ element: el })
+        .setLngLat([selectedLocation.lon, selectedLocation.lat])
+        .addTo(map);
+    }
 
-    markerRef.current = marker;
     mapRef.current = map;
 
     return () => {
@@ -90,13 +99,13 @@ export const MapView: React.FC<MapViewProps> = ({
 
   // Sync selected location marker
   useEffect(() => {
-    if (!mapRef.current || !markerRef.current) return;
+    if (!mapRef.current || !markerRef.current || !selectedLocation) return;
     markerRef.current.setLngLat([selectedLocation.lon, selectedLocation.lat]);
     mapRef.current.easeTo({
       center: [selectedLocation.lon, selectedLocation.lat],
       duration: 800,
     });
-  }, [selectedLocation.lat, selectedLocation.lon]);
+  }, [selectedLocation?.lat, selectedLocation?.lon]);
 
   // Sync GeoJSON layers when mapData updates from chat events
   useEffect(() => {
@@ -189,22 +198,25 @@ export const MapView: React.FC<MapViewProps> = ({
       </div>
 
       {/* "Use this point" Overlay Control */}
-      <div className="absolute bottom-6 left-4 z-10 flex items-center gap-2 bg-surface-raised/95 backdrop-blur-sm border border-border px-3 py-2 rounded shadow-card text-xs">
-        <span className="font-mono text-ink">
-          {selectedLocation.lat.toFixed(2)}°N, {selectedLocation.lon.toFixed(2)}°E
-        </span>
-        <button
-          onClick={() => onSelectLocation && onSelectLocation(selectedLocation)}
-          className="text-primary font-semibold hover:underline px-1 py-0.5"
-        >
-          Use this point
-        </button>
-      </div>
+      {selectedLocation && (
+        <div className="absolute bottom-6 left-4 z-10 flex items-center gap-2 bg-surface-raised/95 backdrop-blur-sm border border-border px-3 py-2 rounded shadow-card text-xs">
+          <span className="font-mono text-ink">
+            {selectedLocation.lat.toFixed(2)}°N, {selectedLocation.lon.toFixed(2)}°E
+          </span>
+          <button
+            onClick={() => onSelectLocation && onSelectLocation(selectedLocation)}
+            className="text-primary font-semibold hover:underline px-1 py-0.5"
+          >
+            Use this point
+          </button>
+        </div>
+      )}
 
       {/* Accessible Text Alternative for Screen Readers */}
       <div className="sr-only" aria-live="polite">
-        Interactive nautical map focused on latitude {selectedLocation.lat.toFixed(2)}, longitude{" "}
-        {selectedLocation.lon.toFixed(2)} at zoom level {currentZoom}.
+        {selectedLocation
+          ? `Interactive nautical map focused on latitude ${selectedLocation.lat.toFixed(2)}, longitude ${selectedLocation.lon.toFixed(2)} at zoom level ${currentZoom}.`
+          : `Interactive nautical map showing regional coastal overview at zoom level ${currentZoom}. No waypoint currently selected.`}
       </div>
     </div>
   );

@@ -25,6 +25,7 @@ class TestAuthenticationFlows:
             "email": "fisherman1@orca.example",
             "display_name": "Ramesh",
             "password": "StrongPassword123!",
+            "accepted_terms": True,
             "turnstile_token": self.valid_turnstile,
         }
 
@@ -35,6 +36,9 @@ class TestAuthenticationFlows:
 
         user = User.objects.get(email="fisherman1@orca.example")
         assert user.is_email_verified is False
+        assert user.accepted_terms is True
+        assert user.terms_version == "2026.1"
+        assert user.accepted_terms_at is not None
 
         # Second signup with same email -> identical response, no duplicate created
         res2 = self.client.post(url, payload, format="json")
@@ -42,12 +46,27 @@ class TestAuthenticationFlows:
         assert res2.json() == {"detail": "Check your email to verify your account."}
         assert User.objects.filter(email="fisherman1@orca.example").count() == 1
 
+    def test_signup_requires_accepted_terms(self):
+        """Signup must reject if accepted_terms is false or omitted."""
+        url = reverse("auth-signup")
+        payload = {
+            "email": "noterms@orca.example",
+            "display_name": "No Terms",
+            "password": "StrongPassword123!",
+            "accepted_terms": False,
+            "turnstile_token": self.valid_turnstile,
+        }
+        res = self.client.post(url, payload, format="json")
+        assert res.status_code == 400
+        assert "accepted_terms" in res.json()["error"]["details"]
+
     def test_turnstile_fail_blocks_signup(self):
         url = reverse("auth-signup")
         payload = {
             "email": "bot@orca.example",
             "display_name": "Bot",
             "password": "StrongPassword123!",
+            "accepted_terms": True,
             "turnstile_token": self.failing_turnstile,
         }
         res = self.client.post(url, payload, format="json")

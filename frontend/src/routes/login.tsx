@@ -105,6 +105,18 @@ export const LoginPage: React.FC = () => {
           <Button type="submit" variant="primary" className="w-full mt-2" isLoading={isSubmitting}>
             Sign In
           </Button>
+
+          <p className="text-center text-xs text-ink-muted mt-2">
+            By signing in you agree to the{" "}
+            <Link to="/terms" className="text-primary hover:underline">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link to="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </form>
 
         <div className="mt-6 pt-6 border-t border-border text-center text-xs text-ink-muted">

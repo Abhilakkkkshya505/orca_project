@@ -202,3 +202,34 @@ Examples:
 | Offline | "You are offline. The last advisory for Kochi was saved 3 hours ago." | "Oops! No connection." |
 | Empty table | "No active advisories for your saved places." | "Nothing to see here." |
 | Guest limit | "You have used 10 free questions this hour. Sign in to ask more, or try again in 32 minutes." | "Limit reached." |
+
+## 12. Data-Driven Sea-State Animation (`<SeaState />`)
+
+*Exception to general animation restriction:* Data-driven sea-state animation is allowed when it reflects real forecast values, is labelled, and respects reduced motion.
+
+### WMO Sea State (Douglas Scale) Class Boundaries
+
+The descriptive sea state label is derived strictly from significant wave height ($H_s$) using the World Meteorological Organization (WMO) Code Table 3700 (Douglas Sea Scale):
+
+| Douglas Degree | Significant Wave Height ($H_s$) | WMO Sea State Description |
+|---|---|---|
+| 0 | 0.0 m | Calm (glassy) |
+| 1 | 0.0 – 0.1 m | Calm (rippled) |
+| 2 | 0.1 – 0.5 m | Smooth |
+| 3 | 0.5 – 1.25 m | Slight |
+| 4 | 1.25 – 2.5 m | Moderate |
+| 5 | 2.5 – 4.0 m | Rough |
+| 6 | 4.0 – 6.0 m | Very rough |
+| 7 | 6.0 – 9.0 m | High |
+| 8 | 9.0 – 14.0 m | Very high |
+| 9 | > 14.0 m | Phenomenal |
+
+*Source citation:* World Meteorological Organization (WMO), *Guide to Meteorological Instruments and Methods of Observation* (WMO-No. 8), Part II, Chapter 4: Marine Observations.
+
+### Animation Physics & Accessibility Rules
+- **Amplitude Formula:** `ampPx = clamp(containerHeight * 0.08 * (H^0.7), 2, containerHeight * 0.35)`.
+- **Period / Duration:** Derives from forecast peak wave period $T_p$: `duration = clamp(period, 3, 14)` seconds.
+- **Layers:** 3 layered SVG paths (back swell, mid wave, front wind wave) using GPU-accelerated CSS transforms.
+- **Reduced Motion:** If `prefers-reduced-motion` is active or user pauses, freezes into a static vector wave with exact same amplitude. Pauses automatically when off-screen or tab is backgrounded.
+- **Data Gap Handling:** When data is missing, renders calm horizontal line with label *"No recent data"*.
+

@@ -63,6 +63,9 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel, PublicIdModel):
         null=True,
         blank=True,
     )
+    accepted_terms = models.BooleanField(_("accepted terms"), default=False)
+    terms_version = models.CharField(_("terms version"), max_length=20, default="2026.1")
+    accepted_terms_at = models.DateTimeField(_("accepted terms at"), null=True, blank=True)
 
     is_active = models.BooleanField(_("active"), default=True)
     is_staff = models.BooleanField(_("staff status"), default=False)
