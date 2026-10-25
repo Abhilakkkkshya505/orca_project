@@ -55,14 +55,13 @@ export function computeWaveDuration(periodS: number | null | undefined): number 
 /**
  * Generates an SVG cubic bezier path string representing sinusoidal wave crests.
  */
-function generateWavePath(width: number, height: number, amplitude: number, wavelength: number): string {
+export function generateWavePath(width: number, height: number, amplitude: number, wavelength: number): string {
+  const baseline = height * 0.55;
   if (amplitude <= 0) {
-    return `M 0,${height / 2} L ${width},${height / 2} L ${width},${height} L 0,${height} Z`;
+    return `M 0,${baseline} L ${width},${baseline} L ${width},${height} L 0,${height} Z`;
   }
 
-  const baseline = height * 0.55;
   let d = `M 0,${baseline}`;
-
   let x = 0;
   while (x < width) {
     const half = wavelength / 2;
@@ -80,6 +79,31 @@ function generateWavePath(width: number, height: number, amplitude: number, wave
   return d;
 }
 
+/**
+ * Generates an SVG path string for the crisp white wave crest / foam line.
+ */
+export function generateWaveCrestPath(width: number, height: number, amplitude: number, wavelength: number): string {
+  const baseline = height * 0.55;
+  if (amplitude <= 0) {
+    return `M 0,${baseline} L ${width},${baseline}`;
+  }
+
+  let d = `M 0,${baseline}`;
+  let x = 0;
+  while (x < width) {
+    const half = wavelength / 2;
+    const cp1x = x + half / 2;
+    const cp1y = baseline - amplitude;
+    const cp2x = x + half / 2;
+    const cp2y = baseline + amplitude;
+    const endX = Math.min(x + wavelength, width);
+
+    d += ` Q ${cp1x},${cp1y} ${x + half},${baseline} Q ${cp2x},${cp2y} ${endX},${baseline}`;
+    x += wavelength;
+  }
+  return d;
+}
+
 export const SeaState: React.FC<SeaStateProps> = ({
   waveHeightM,
   wavePeriodS,
@@ -89,6 +113,7 @@ export const SeaState: React.FC<SeaStateProps> = ({
   portName = "Sample Port",
   validWindow = "Current",
   dataAge = "1 h old",
+  height,
   compact = false,
   className = "",
 }) => {
@@ -138,12 +163,12 @@ export const SeaState: React.FC<SeaStateProps> = ({
   const hasData = waveHeightM != null && !isNaN(waveHeightM);
   const seaStateLabel = getWmoSeaState(waveHeightM);
 
-  const containerHeight = compact ? 80 : 160;
+  const containerHeight = height ?? (compact ? 80 : 160);
   const containerWidth = 600;
 
   const ampMid = computeWaveAmplitude(containerHeight, waveHeightM);
   const ampBack = computeWaveAmplitude(containerHeight, swellHeightM ?? (waveHeightM ? waveHeightM * 0.7 : null));
-  const ampFront = Math.max(0, ampMid * 0.7);
+  const ampFront = Math.max(0, ampMid * 0.75);
 
   const durationMid = computeWaveDuration(wavePeriodS);
   const durationBack = computeWaveDuration(swellPeriodS ?? (wavePeriodS ? wavePeriodS * 1.3 : 10));
@@ -155,12 +180,26 @@ export const SeaState: React.FC<SeaStateProps> = ({
     () => generateWavePath(containerWidth * 2, containerHeight, ampBack, 160),
     [containerHeight, ampBack]
   );
+  const crestBack = useMemo(
+    () => generateWaveCrestPath(containerWidth * 2, containerHeight, ampBack, 160),
+    [containerHeight, ampBack]
+  );
+
   const pathMid = useMemo(
     () => generateWavePath(containerWidth * 2, containerHeight, ampMid, 120),
     [containerHeight, ampMid]
   );
+  const crestMid = useMemo(
+    () => generateWaveCrestPath(containerWidth * 2, containerHeight, ampMid, 120),
+    [containerHeight, ampMid]
+  );
+
   const pathFront = useMemo(
     () => generateWavePath(containerWidth * 2, containerHeight, ampFront, 90),
+    [containerHeight, ampFront]
+  );
+  const crestFront = useMemo(
+    () => generateWaveCrestPath(containerWidth * 2, containerHeight, ampFront, 90),
     [containerHeight, ampFront]
   );
 
@@ -194,8 +233,36 @@ export const SeaState: React.FC<SeaStateProps> = ({
         )}
       </div>
 
-      {/* SVG Canvas Container */}
-      <div className="relative w-full overflow-hidden" style={{ height: `${containerHeight}px` }}>
+      {/* SVG Canvas Container with Sky & Deep Ocean Backdrop */}
+      <div
+        className="relative w-full overflow-hidden bg-gradient-to-b from-[#EBF5FB] via-[#D4E6F1] to-[#A9CCE3] dark:from-[#091524] dark:via-[#0D2036] dark:to-[#102A45]"
+        style={{ height: `${containerHeight}px` }}
+      >
+        {/* SVG Definition Gradients for Blue & White Marine Wave Palette */}
+        <svg className="absolute w-0 h-0" aria-hidden="true">
+          <defs>
+            {/* Swell Layer: Deep Atlantic Indigo */}
+            <linearGradient id="swellBlueGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#1E3A8A" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#0F172A" stopOpacity="0.95" />
+            </linearGradient>
+
+            {/* Mid Wave Layer: Vibrant Marine Cerulean */}
+            <linearGradient id="midWaveBlueGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#0284C7" stopOpacity="0.88" />
+              <stop offset="60%" stopColor="#0369A1" stopOpacity="0.95" />
+              <stop offset="100%" stopColor="#1E3A8A" stopOpacity="0.98" />
+            </linearGradient>
+
+            {/* Front Wave Layer: Luminous Azure Blue */}
+            <linearGradient id="frontWaveBlueGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.96" />
+              <stop offset="35%" stopColor="#0EA5E9" stopOpacity="0.98" />
+              <stop offset="100%" stopColor="#0284C7" stopOpacity="1" />
+            </linearGradient>
+          </defs>
+        </svg>
+
         {!hasData ? (
           // Calm flat line for missing data
           <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -208,10 +275,10 @@ export const SeaState: React.FC<SeaStateProps> = ({
             >
               <line
                 x1="0"
-                y1={containerHeight / 2}
+                y1={containerHeight * 0.55}
                 x2={containerWidth}
-                y2={containerHeight / 2}
-                stroke="var(--color-border-strong)"
+                y2={containerHeight * 0.55}
+                stroke="#38BDF8"
                 strokeWidth="1.5"
                 strokeDasharray="4 4"
               />
@@ -220,7 +287,7 @@ export const SeaState: React.FC<SeaStateProps> = ({
           </div>
         ) : (
           <div className="relative h-full w-full">
-            {/* Swell layer (back) */}
+            {/* Swell layer (back) with soft white crest highlight */}
             <svg
               className="absolute left-0 top-0 h-full w-[200%]"
               data-layer="back-swell"
@@ -228,14 +295,14 @@ export const SeaState: React.FC<SeaStateProps> = ({
               preserveAspectRatio="none"
               style={{
                 animation: shouldAnimate ? `orca-wave-pan ${durationBack}s linear infinite` : "none",
-                opacity: 0.45,
               }}
               aria-hidden="true"
             >
-              <path d={pathBack} fill="var(--color-water)" />
+              <path d={pathBack} fill="url(#swellBlueGrad)" />
+              <path d={crestBack} fill="none" stroke="#FFFFFF" strokeWidth="1" strokeOpacity="0.35" />
             </svg>
 
-            {/* Mid wave layer */}
+            {/* Mid wave layer with medium white crest foam */}
             <svg
               className="absolute left-0 top-0 h-full w-[200%]"
               data-layer="mid-wave"
@@ -243,14 +310,14 @@ export const SeaState: React.FC<SeaStateProps> = ({
               preserveAspectRatio="none"
               style={{
                 animation: shouldAnimate ? `orca-wave-pan ${durationMid}s linear infinite reverse` : "none",
-                opacity: 0.65,
               }}
               aria-hidden="true"
             >
-              <path d={pathMid} fill="var(--color-water)" />
+              <path d={pathMid} fill="url(#midWaveBlueGrad)" />
+              <path d={crestMid} fill="none" stroke="#FFFFFF" strokeWidth="1.6" strokeOpacity="0.6" />
             </svg>
 
-            {/* Front wind-wave layer */}
+            {/* Front wind-wave layer with crisp, bright white foam crest */}
             <svg
               className="absolute left-0 top-0 h-full w-[200%]"
               data-layer="front-wind"
@@ -258,34 +325,71 @@ export const SeaState: React.FC<SeaStateProps> = ({
               preserveAspectRatio="none"
               style={{
                 animation: shouldAnimate ? `orca-wave-pan ${durationFront}s linear infinite` : "none",
-                opacity: 0.85,
               }}
               aria-hidden="true"
             >
-              <path d={pathFront} fill="var(--color-water)" />
+              <path d={pathFront} fill="url(#frontWaveBlueGrad)" />
+              <path
+                d={crestFront}
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="2.75"
+                strokeLinecap="round"
+                strokeOpacity="0.95"
+              />
             </svg>
 
-            {/* Bobbing Vessel / Buoy locked to front wave phase */}
+            {/* Bobbing Red & White Coastal Fishing Vessel locked to wave phase */}
             <div
-              className="absolute left-1/3 top-[50%] -translate-x-1/2 -translate-y-1/2 transition-transform pointer-events-none"
+              className="absolute left-1/3 top-[54%] -translate-x-1/2 -translate-y-1/2 transition-transform pointer-events-none z-10"
               style={{
                 animation: shouldAnimate
                   ? `orca-bob ${durationFront}s ease-in-out infinite`
                   : "none",
-                transform: `translateY(${ampMid * 0.3}px)`,
+                transform: `translateY(${ampMid * 0.28}px)`,
               }}
               aria-hidden="true"
             >
-              <svg width="24" height="20" viewBox="0 0 24 20" fill="none">
-                {/* Minimalist coastal fishing vessel / buoy */}
+              <svg width="42" height="34" viewBox="0 0 42 34" fill="none" className="drop-shadow-md">
+                {/* Slender Rigging Mast */}
+                <line x1="20" y1="3" x2="20" y2="21" stroke="#E2E8F0" strokeWidth="1.75" strokeLinecap="round" />
+                <line x1="8" y1="21" x2="20" y2="7" stroke="#CBD5E1" strokeWidth="0.8" strokeOpacity="0.75" />
+                <line x1="34" y1="21" x2="20" y2="7" stroke="#CBD5E1" strokeWidth="0.8" strokeOpacity="0.75" />
+
+                {/* Bright Red Maritime Pennant */}
+                <polygon points="20,3 28,6 20,9" fill="#EF4444" stroke="#DC2626" strokeWidth="0.5" />
+
+                {/* Arctic White Deck Wheelhouse */}
+                <rect x="14" y="12" width="12" height="9" rx="1.5" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="0.8" />
+                {/* Tinted Wheelhouse Windows */}
+                <rect x="16" y="14" width="3.2" height="4" rx="0.5" fill="#0F172A" />
+                <rect x="20.8" y="14" width="3.2" height="4" rx="0.5" fill="#0F172A" />
+
+                {/* Vibrant Maritime Red Hull */}
                 <path
-                  d="M4 14 L20 14 L17 18 L7 18 Z"
-                  fill="var(--color-surface-raised)"
-                  stroke="var(--color-border-strong)"
-                  strokeWidth="1.2"
+                  d="M5 21 L37 21 C35.5 26.5 31 30 26 30 L16 30 C11 30 6.5 26.5 5 21 Z"
+                  fill="#EF4444"
+                  stroke="#DC2626"
+                  strokeWidth="1"
                 />
-                <rect x="11" y="7" width="3" height="7" fill="var(--color-border-strong)" />
-                <polygon points="14,8 18,10 14,12" fill="var(--color-focus)" />
+
+                {/* Crisp White Deck Sheer / Waterline Stripe */}
+                <path
+                  d="M5 21 L37 21"
+                  stroke="#FFFFFF"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+
+                {/* Lower Hull Crimson Shadow */}
+                <path
+                  d="M10 26 L32 26 C30 28.5 27 30 24 30 L18 30 C15 30 12 28.5 10 26 Z"
+                  fill="#B91C1C"
+                  opacity="0.75"
+                />
+
+                {/* White & Red Safety Life Ring on Wheelhouse Wall */}
+                <circle cx="23" cy="19.5" r="2" fill="#FFFFFF" stroke="#EF4444" strokeWidth="1" />
               </svg>
             </div>
           </div>
@@ -293,7 +397,7 @@ export const SeaState: React.FC<SeaStateProps> = ({
       </div>
 
       {/* Caption Footnote */}
-      <div className="border-t border-border/60 bg-surface/80 px-3 py-1 text-[11px] text-ink-muted">
+      <div className="border-t border-border/60 bg-surface/80 px-3 py-1.5 text-[11px] text-ink-muted">
         {hasData ? (
           <span>
             Illustrative, not to scale. Forecast:{" "}
@@ -314,8 +418,8 @@ export const SeaState: React.FC<SeaStateProps> = ({
           100% { transform: translate3d(-50%, 0, 0); }
         }
         @keyframes orca-bob {
-          0%, 100% { transform: translate3d(-50%, -${Math.max(2, ampMid * 0.4)}px, 0) rotate(-4deg); }
-          50% { transform: translate3d(-50%, ${Math.max(2, ampMid * 0.4)}px, 0) rotate(4deg); }
+          0%, 100% { transform: translate3d(-50%, -${Math.max(3, ampMid * 0.45)}px, 0) rotate(-6deg); }
+          50% { transform: translate3d(-50%, ${Math.max(3, ampMid * 0.45)}px, 0) rotate(6deg); }
         }
       `}</style>
     </div>
