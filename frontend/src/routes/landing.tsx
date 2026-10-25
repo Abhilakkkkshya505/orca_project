@@ -28,6 +28,7 @@ import { useTheme } from "@/lib/theme/ThemeContext";
 import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 import TerraDusk from "@/components/originkit/ui/terra-dusk";
 import PlinthTally from "@/components/originkit/ui/plinth-tally";
+import Lightfall from "@/components/originkit/ui/lightfall";
 
 interface SamplePortSummary {
   slug: string;
@@ -321,10 +322,29 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Live Harbour Telemetry Card */}
+            {/* Right Column: Live Harbour Telemetry Card with Originkit Lightfall */}
             <div className="lg:col-span-5 flex flex-col gap-3">
-              <div className="ocean-card p-5 sm:p-6 flex flex-col gap-4 border border-border bg-surface shadow-xs">
-                <div className="flex items-start justify-between gap-3 pb-3 border-b border-border">
+              <div className="ocean-card relative overflow-hidden p-5 sm:p-6 flex flex-col gap-4 border border-border bg-surface shadow-xs">
+                {/* Originkit Lightfall Streaming Light Ray Cascade */}
+                <div
+                  className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-25 dark:opacity-40"
+                  aria-hidden="true"
+                >
+                  <Lightfall
+                    speed={24}
+                    density={30}
+                    color={resolvedTheme === "dark" ? "#38BDF8" : "#0284C7"}
+                    secondaryColor={resolvedTheme === "dark" ? "#2DD4BF" : "#0D9488"}
+                    intensity={0.8}
+                    warp={1.1}
+                    interactive={true}
+                    className="w-full h-full"
+                  />
+                  {/* Subtle surface overlay ensuring full contrast for telemetry */}
+                  <div className="absolute inset-0 bg-surface/75 dark:bg-[#131926]/75 pointer-events-none" />
+                </div>
+
+                <div className="relative z-10 flex items-start justify-between gap-3 pb-3 border-b border-border">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
@@ -348,7 +368,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* SeaState Live Animated Wave Display */}
-                <div className="rounded-lg overflow-hidden border border-border bg-surface-raised">
+                <div className="relative z-10 rounded-lg overflow-hidden border border-border bg-surface-raised">
                   <SeaState
                     waveHeightM={activePort.waveHeightM}
                     wavePeriodS={activePort.wavePeriodS}
@@ -363,7 +383,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Metric Capsules */}
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="relative z-10 grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 rounded-lg bg-surface-raised border border-border flex flex-col gap-0.5">
                     <span className="text-ink-muted text-[11px] font-medium">Significant Wave</span>
                     <span className="font-mono text-ink font-semibold text-xs">
@@ -379,7 +399,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Station Selector Chips */}
-                <div className="pt-2 border-t border-border">
+                <div className="relative z-10 pt-2 border-t border-border">
                   <p className="text-[11px] text-ink-muted mb-1.5 font-medium">Switch sample harbour:</p>
                   <div className="flex flex-wrap gap-1.5">
                     {SAMPLE_PORTS_FALLBACK.map((port, idx) => (
@@ -401,7 +421,7 @@ export const LandingPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-1 text-right">
+                <div className="relative z-10 pt-1 text-right">
                   <Link
                     to={`/ports/${activePort.slug}`}
                     className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1 transition-colors"
