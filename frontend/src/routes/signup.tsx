@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { useTheme } from "@/lib/theme/ThemeContext";
-import LightBloom from "@/components/originkit/ui/light-bloom";
+import BeamSweep from "@/components/originkit/ui/beam-sweep";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -100,22 +100,26 @@ export const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20 overflow-hidden">
-      {/* Originkit Light Bloom Atmospheric WebGL Background */}
-      <div className="absolute inset-0 z-0 pointer-events-auto" aria-hidden="true">
-        <LightBloom
-          edge="bottom"
-          styleVariant="both"
-          color={resolvedTheme === "dark" ? "#4DA3FF" : "#1E88E5"}
-          secondaryColor={resolvedTheme === "dark" ? "#0B2447" : "#B2EBF2"}
-          background={resolvedTheme === "dark" ? "#071A2F" : "#F2F8FC"}
-          intensity={resolvedTheme === "dark" ? 85 : 55}
-          spread={resolvedTheme === "dark" ? 65 : 50}
-          speed={40}
-          grain={resolvedTheme === "dark" ? 18 : 10}
-          className="w-full h-full"
+      {/* Originkit Beam Sweep Atmospheric WebGL Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <BeamSweep
+          speed={35}
+          density={40}
+          background={resolvedTheme === "dark" ? "#071A2F" : "#F4F1EA"}
+          baseColor={resolvedTheme === "dark" ? "#0F5C6E" : "#5A6CB8"}
+          accentColor={resolvedTheme === "dark" ? "#5FB4C7" : "#0F5C6E"}
+          highlight={resolvedTheme === "dark" ? "#E6EEF2" : "#FFFFFF"}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            minWidth: 0,
+            minHeight: 0,
+          }}
         />
         {/* Soft radial overlay ensuring high contrast readability */}
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-bg/50 dark:to-[#071A2F]/60 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/85 to-bg/50 dark:from-[#071A2F] dark:via-[#071A2F]/85 dark:to-[#071A2F]/40 pointer-events-none" />
       </div>
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
@@ -137,7 +141,7 @@ export const SignupPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="w-full bg-surface border border-border rounded-xl p-6 sm:p-7 shadow-xs">
+        <div className="w-full bg-surface/90 backdrop-blur-md border border-border/80 rounded-xl p-6 sm:p-7 shadow-lg">
         {serverError && (
           <div
             className="flex items-center gap-2.5 p-3 mb-4 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs"
