@@ -28,6 +28,8 @@ import {
   FloatingOceanBubbles,
   MarineIllustrations,
 } from "@/components/ui/OceanIllustrations";
+import { useTheme } from "@/lib/theme/ThemeContext";
+import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 
 
 interface SamplePortSummary {
@@ -158,6 +160,7 @@ interface DataStatusResponse {
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { resolvedTheme } = useTheme();
   const [heroSearch, setHeroSearch] = useState("");
   const [activePortIndex, setActivePortIndex] = useState(0);
   const [userInteracted, setUserInteracted] = useState(false);
@@ -207,8 +210,34 @@ export const LandingPage: React.FC = () => {
       </a>
 
       <main id="main-content" className="flex-1 w-full flex flex-col gap-16 sm:gap-20 pb-20">
-        {/* SECTION 1: OCEAN-INSPIRED HERO */}
+        {/* SECTION 1: OCEAN-INSPIRED HERO WITH ORIGINKIT GLIMMER VALE */}
         <section className="relative w-full bg-gradient-to-b from-surface via-surface-raised to-water/40 dark:from-[#071A2F] dark:via-[#0B2447] dark:to-[#102A43] pt-10 sm:pt-16 pb-0 overflow-hidden border-b border-border">
+          {/* Originkit Glimmer Vale 3D Shimmering Vale Backdrop */}
+          <div
+            className="absolute inset-0 overflow-hidden z-0 transition-opacity duration-700 opacity-45 dark:opacity-65"
+            aria-hidden="true"
+          >
+            <GlimmerVale
+              speed={resolvedTheme === "dark" ? 35 : 45}
+              sparkle={resolvedTheme === "dark" ? 75 : 55}
+              density={resolvedTheme === "dark" ? 65 : 55}
+              scale={95}
+              background="transparent"
+              skyTop={resolvedTheme === "dark" ? "#071A2F" : "#3A6FA8"}
+              skyHorizon={resolvedTheme === "dark" ? "#102A43" : "#8EC5EC"}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                minWidth: 0,
+                minHeight: 0,
+              }}
+            />
+            {/* Subtle atmospheric overlay protecting text contrast */}
+            <div className="absolute inset-0 bg-gradient-to-b from-surface/80 via-surface/65 to-surface/90 dark:from-[#071A2F]/80 dark:via-[#0B2447]/65 dark:to-[#071A2F]/90 pointer-events-none" />
+          </div>
+
           {/* Subtle Ambient Ocean Bubbles */}
           <FloatingOceanBubbles count={7} />
 
