@@ -35,6 +35,8 @@ htmlcov/
 venv/
 .venv/
 ENV/
+.cache/
+*.cache.sqlite
 
 # Node.js
 node_modules/
