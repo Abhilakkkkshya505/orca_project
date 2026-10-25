@@ -21,6 +21,7 @@ import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
 interface SamplePortSummary {
   slug: string;
   name: string;
+  shortName: string;
   admin1: string;
   lat: number;
   lon: number;
@@ -38,6 +39,7 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
   {
     slug: "mumbai-in",
     name: "Mumbai Harbour",
+    shortName: "Mumbai",
     admin1: "Maharashtra",
     lat: 18.93,
     lon: 72.84,
@@ -53,6 +55,7 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
   {
     slug: "chennai-in",
     name: "Chennai Port",
+    shortName: "Chennai",
     admin1: "Tamil Nadu",
     lat: 13.08,
     lon: 80.28,
@@ -68,6 +71,7 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
   {
     slug: "visakhapatnam-in",
     name: "Visakhapatnam",
+    shortName: "Visakhapatnam",
     admin1: "Andhra Pradesh",
     lat: 17.68,
     lon: 83.22,
@@ -83,6 +87,7 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
   {
     slug: "mangalore-in",
     name: "New Mangalore",
+    shortName: "Mangalore",
     admin1: "Karnataka",
     lat: 12.92,
     lon: 74.82,
@@ -98,6 +103,7 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
   {
     slug: "kandla-in",
     name: "Kandla (Deendayal)",
+    shortName: "Kandla",
     admin1: "Gujarat",
     lat: 23.0,
     lon: 70.22,
@@ -314,7 +320,7 @@ export const LandingPage: React.FC = () => {
                               : "bg-surface-raised hover:bg-border text-ink-secondary"
                           }`}
                         >
-                          {port.name.split(" ")[0]}
+                          {port.shortName}
                         </button>
                       ))}
                     </div>
