@@ -19,10 +19,14 @@ const queryClient = new QueryClient({
 });
 
 
+import { ToastProvider } from "@/components/ui/toast";
+
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </QueryClientProvider>
   );
 };

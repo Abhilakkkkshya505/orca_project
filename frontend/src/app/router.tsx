@@ -23,6 +23,11 @@ import { AdvisoriesPage } from "@/routes/advisories";
 import { SettingsPage } from "@/routes/settings";
 import { PrivacyPage } from "@/routes/privacy";
 import { TermsPage } from "@/routes/terms";
+import { CookiePolicyPage } from "@/routes/cookies";
+import { ContactPage } from "@/routes/contact";
+import { HelpPage } from "@/routes/help";
+import { CareersPage } from "@/routes/careers";
+import { BlogPage } from "@/routes/blog";
 import { AccessibilityPage } from "@/routes/accessibility";
 import { NotFoundPage } from "@/routes/not-found";
 import { RequireAuth } from "@/features/auth/RequireAuth";
@@ -44,6 +49,12 @@ export const router = createBrowserRouter([
       { path: "/status", element: <StatusPage /> },
       { path: "/privacy", element: <PrivacyPage /> },
       { path: "/terms", element: <TermsPage /> },
+      { path: "/cookies", element: <CookiePolicyPage /> },
+      { path: "/contact", element: <ContactPage /> },
+      { path: "/faq", element: <HelpPage /> },
+      { path: "/help", element: <HelpPage /> },
+      { path: "/careers", element: <CareersPage /> },
+      { path: "/blog", element: <BlogPage /> },
       { path: "/accessibility", element: <AccessibilityPage /> },
       { path: "/game", element: <GamePage /> },
       { path: "/offline-preview", element: <OfflinePreviewPage /> },

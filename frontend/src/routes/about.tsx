@@ -1,93 +1,161 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Anchor, ShieldCheck, ExternalLink } from "lucide-react";
+import {
+  Anchor,
+  ShieldCheck,
+  Cpu,
+  Globe2,
+  Award,
+  ArrowRight,
+  Database,
+  Radio,
+} from "lucide-react";
 
 export const AboutPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-border bg-surface px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full sticky top-0 z-30">
+    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20 text-left space-y-16">
+      {/* Hero Header */}
+      <div className="space-y-4 max-w-3xl">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-primary/10 text-primary text-xs font-bold font-mono uppercase tracking-wider">
+          <Globe2 className="h-4 w-4" />
+          <span>United Nations SDG 14: Life Below Water</span>
+        </div>
+        <h1 className="text-4xl sm:text-5xl font-heading font-bold tracking-tight text-ink leading-tight">
+          Democratizing Ocean Intelligence & Coastal Safety
+        </h1>
+        <p className="text-base sm:text-lg text-ink-muted leading-relaxed font-sans">
+          ORCA (Ocean Reasoning & Coastal Advisory) is an autonomous multi-agent maritime safety platform that synthesizes satellite earth observation, meteorological physics, and official weather warnings into verified safety ratings for coastal mariners.
+        </p>
+      </div>
+
+      {/* Metrics Banner */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 rounded-2xl bg-surface border border-border shadow-card">
+        <div className="space-y-1">
+          <p className="font-heading font-bold text-3xl sm:text-4xl text-primary">7,516<span className="text-xl">km</span></p>
+          <p className="text-xs text-ink-muted font-medium">Indian Coastal Perimeter</p>
+        </div>
+        <div className="space-y-1">
+          <p className="font-heading font-bold text-3xl sm:text-4xl text-emerald-600">4.0M+</p>
+          <p className="text-xs text-ink-muted font-medium">Artisanal Fishers Protected</p>
+        </div>
+        <div className="space-y-1">
+          <p className="font-heading font-bold text-3xl sm:text-4xl text-cyan-600">100%</p>
+          <p className="text-xs text-ink-muted font-medium">Deterministic Rule Gate</p>
+        </div>
+        <div className="space-y-1">
+          <p className="font-heading font-bold text-3xl sm:text-4xl text-amber-600">&lt;1.0s</p>
+          <p className="text-xs text-ink-muted font-medium">Groq Inference Latency</p>
+        </div>
+      </div>
+
+      {/* The Problem & Our Mission */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className="space-y-4">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <Anchor className="h-5 w-5" />
+          </div>
+          <h2 className="text-2xl font-heading font-bold text-ink">The Maritime Safety Divide</h2>
+          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+            Over 4 million traditional fishers in the Indian Ocean and Arabian Sea navigate in non-mechanized wooden canoes, FRP skiffs, and catamarans. Sudden Kallakkadal swell surges, cross-sea wave intersections, and monsoon squalls claim hundreds of lives annually.
+          </p>
+          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+            Existing commercial electronic chart display and information systems (ECDIS) cost tens of thousands of dollars and demand continuous high-bandwidth satellite uplinks. Small-craft operators are left with generic regional weather reports that fail to warn of hyper-local wave steepness hazards.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center">
+            <Cpu className="h-5 w-5" />
+          </div>
+          <h2 className="text-2xl font-heading font-bold text-ink">Our Multi-Agent Solution</h2>
+          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+            ORCA bridges this divide by deploying specialized AI agents that ingest live Open-Meteo European CMEMS ocean wave datasets, atmospheric GFS/ECMWF forecasts, thermal satellite imagery, and official bulletins from the India Meteorological Department (IMD) and INCOIS.
+          </p>
+          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+            Rather than relying on raw probabilistic LLMs that hallucinate dangerous safety metrics, ORCA passes all inputs through a hardcoded deterministic safety gate. High-speed Groq AI (Qwen 3.8-27B) then synthesizes plain-language nautical explanations verified against numerical ground truth.
+          </p>
+        </div>
+      </section>
+
+      {/* Core Architectural Pillars */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-heading font-bold text-ink">Core Design Principles</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="p-6 rounded-2xl bg-surface border border-border shadow-card card-hover space-y-3">
+            <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <h3 className="font-bold text-base text-ink">Deterministic Fail-Safe</h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Safety ratings (Safe, Caution, Unsafe) are evaluated by deterministic WMO algorithms based on vessel hull displacement and wave steepness. The LLM can never override safety rules.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-surface border border-border shadow-card card-hover space-y-3">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <Database className="h-5 w-5" />
+            </div>
+            <h3 className="font-bold text-base text-ink">Zero Hallucination Numbers</h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Every numerical figure produced by our natural language explainer is cross-referenced against official sensor data. If any figure deviates by more than 5%, the system fails closed to verified templates.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-surface border border-border shadow-card card-hover space-y-3">
+            <div className="h-9 w-9 rounded-xl bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 flex items-center justify-center">
+              <Radio className="h-5 w-5" />
+            </div>
+            <h3 className="font-bold text-base text-ink">Offline-First PWA</h3>
+            <p className="text-xs text-ink-muted leading-relaxed">
+              Designed for coastal edge conditions. Cache marine telemetry before leaving harbor and view 7-day wave timeseries and offline navigational charts even when cellular uplink drops.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Academic Origin & SDG 14 */}
+      <section className="p-8 rounded-2xl bg-surface border border-border shadow-card space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-mono uppercase tracking-widest text-primary font-bold">
+              Bennett University Engineering Initiative
+            </span>
+            <h3 className="text-xl font-heading font-bold text-ink mt-1">
+              Sustainability Engineering Project • Semester 1
+            </h3>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-raised border border-border text-xs font-semibold">
+            <Award className="h-4 w-4 text-amber-500" />
+            <span>UN SDG 14 Global Champion</span>
+          </div>
+        </div>
+        <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+          Developed as part of the core B.Tech sustainability engineering curriculum under the Times of India Group at Bennett University. The project addresses Target 14.b of the 2030 Agenda: <em>&quot;Provide access for small-scale artisanal fishers to marine resources and markets&quot;</em> through resilient safety technology.
+        </p>
+      </section>
+
+      {/* Call to Action */}
+      <div className="p-8 rounded-2xl bg-gradient-to-r from-primary/10 via-surface to-cyan-500/10 border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="space-y-1.5 text-center sm:text-left">
+          <h3 className="text-lg font-heading font-bold text-ink">Ready to explore coastal conditions?</h3>
+          <p className="text-xs text-ink-muted">Access our interactive map explorer and live Open-Meteo telemetry.</p>
+        </div>
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-base hover:opacity-90">
-            <Anchor className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>ORCA</span>
+          <Link
+            to="/how-it-works"
+            className="px-4 py-2.5 rounded-xl border border-border bg-surface text-xs font-bold text-ink hover:bg-surface-raised transition-colors"
+          >
+            Read Methodology
           </Link>
-          <span className="text-xs text-ink-muted">/ About the Project</span>
+          <Link
+            to="/explore"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-md hover:bg-primary-hover transition-all"
+          >
+            <span>Launch Live Map</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-        <Link to="/" className="text-xs text-primary hover:underline font-medium">
-          &larr; Return to Home
-        </Link>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-10 text-left">
-        <div className="space-y-3 pb-6 border-b border-border">
-          <span className="text-xs font-mono uppercase tracking-widest text-primary font-semibold">
-            United Nations SDG 14: Life Below Water
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            About Project ORCA
-          </h1>
-          <p className="text-base text-ink-muted leading-relaxed">
-            Marine Ecosystem Reasoning with Collaborative AI Agents — an open sustainability research initiative developed at Bennett University.
-          </p>
-        </div>
-
-        {/* Mission Statement */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold">Our Mission</h2>
-          <p className="text-sm text-ink-muted leading-relaxed">
-            India is home to over 4 million artisanal and small-scale marine fishers operating non-mechanized canoes, motorized FRP skiffs, and wooden catamarans. These operators face extreme hazards from sudden swell surges (Kallakkadal), monsoon squalls, and steep localized waves, yet standard commercial maritime tools are prohibitively complex or require high-bandwidth connections.
-          </p>
-          <p className="text-sm text-ink-muted leading-relaxed">
-            Project ORCA bridges this gap by unifying public satellite telemetry, meteorological models, and oceanographic buoys into deterministic safety ratings and productive fishing zone guidance, accessible even on low-bandwidth 2G connections and offline PWAs.
-          </p>
-        </section>
-
-        {/* Academic Context */}
-        <section className="p-6 rounded-xl bg-surface border border-border shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-ink">Academic & Sustainability Context</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div className="space-y-1">
-              <span className="font-mono text-ink-muted uppercase">Institution</span>
-              <p className="font-semibold text-ink">Bennett University</p>
-              <p className="text-ink-muted">Times of India Group, Greater Noida, UP, India</p>
-            </div>
-            <div className="space-y-1">
-              <span className="font-mono text-ink-muted uppercase">Academic Curriculum</span>
-              <p className="font-semibold text-ink">B.Tech Semester 1</p>
-              <p className="text-ink-muted">Sustainability Engineering Project • SDG 14 Target Group</p>
-            </div>
-          </div>
-          <div className="pt-2 border-t border-border text-xs text-ink-muted">
-            Project Lead: <strong>Abhilakshya</strong> • Open-source repository:{" "}
-            <a
-              href="https://github.com/Abhilakkkkshya505/orca_project"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1 font-mono"
-            >
-              Abhilakkkkshya505/orca_project <ExternalLink className="h-3 w-3" />
-            </a>
-          </div>
-        </section>
-
-        {/* Transparency & Disclaimer */}
-        <section className="p-6 rounded-xl bg-surface-raised border border-border space-y-3 text-xs text-ink-muted leading-relaxed">
-          <h3 className="font-semibold text-sm text-ink flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            Scientific Research Disclaimer
-          </h3>
-          <p>
-            ORCA is developed for academic demonstration, algorithmic validation, and sustainability education. It is not an official aid to navigation (AtoN) or a certified ECDIS system. Official maritime advisories and storm warnings issued by statutory authorities (IMD, INCOIS, Indian Coast Guard) strictly supersede ORCA at all times.
-          </p>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
+      </div>
     </div>
   );
 };

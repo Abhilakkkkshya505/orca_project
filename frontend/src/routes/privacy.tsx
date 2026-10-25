@@ -1,24 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Shield, ArrowLeft, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 export const PrivacyPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      <header className="border-b border-border bg-surface px-6 py-4 flex items-center justify-between max-w-5xl mx-auto w-full">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Return to Home
-        </Link>
-        <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary" />
-          <span className="font-semibold text-sm tracking-tight">ORCA Legal</span>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto w-full px-6 py-12 text-left space-y-8">
+    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full text-left space-y-8">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center gap-2 text-xs text-ink-muted">
+        <Link to="/" className="hover:text-ink transition-colors">Home</Link>
+        <span>/</span>
+        <span className="text-ink font-medium">Privacy Policy</span>
+      </div>
         {/* Lawyer Review Alert */}
         <div className="p-4 rounded-sm border border-risk-caution/40 bg-risk-caution-bg text-ink flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-risk-caution shrink-0 mt-0.5" />
@@ -180,11 +172,6 @@ export const PrivacyPage: React.FC = () => {
             <p>Bennett University, Greater Noida, UP, India</p>
           </div>
         </section>
-      </main>
-
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
     </div>
   );
 };

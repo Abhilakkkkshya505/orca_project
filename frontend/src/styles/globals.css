@@ -14,8 +14,9 @@
     color-scheme: light dark;
     background-color: var(--color-bg);
     color: var(--color-ink);
-    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-    scroll-padding-top: 4rem;
+    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+    scroll-padding-top: 5rem;
+    scroll-behavior: smooth;
     overflow-x: hidden;
   }
 
@@ -26,6 +27,12 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
+    letter-spacing: -0.02em;
   }
 
   /* Accessible focus ring */
@@ -37,6 +44,40 @@
   /* Tabular numbers for numerical values */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Custom sleek scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-strong);
+  }
+}
+
+@layer utilities {
+  .card-hover {
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tw-shadow-card-hover, 0 12px 28px -4px rgba(14, 34, 49, 0.12));
+  }
+  .glass-surface {
+    background-color: rgba(251, 250, 246, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  [data-theme="dark"] .glass-surface {
+    background-color: rgba(16, 36, 47, 0.85);
   }
 }
 

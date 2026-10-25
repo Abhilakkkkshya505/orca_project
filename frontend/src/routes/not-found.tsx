@@ -1,109 +1,72 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Compass, Anchor, MapPin, AlertCircle, Home } from "lucide-react";
+import { Compass, Anchor, MapPin, AlertCircle, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      <header className="border-b border-border bg-surface px-6 py-4 flex items-center justify-between max-w-5xl mx-auto w-full">
-        <div className="flex items-center gap-2">
-          <Anchor className="h-5 w-5 text-primary" />
-          <span className="font-semibold text-sm tracking-tight">ORCA Marine</span>
-        </div>
-        <Link to="/" className="text-xs font-mono text-ink-muted hover:text-ink">
+    <div className="w-full max-w-xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center space-y-8 flex-1 flex flex-col justify-center">
+      <div className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto shadow-md">
+        <Compass className="h-10 w-10 text-primary animate-pulse" />
+      </div>
+
+      <div className="space-y-3">
+        <span className="text-xs font-mono uppercase tracking-widest text-primary bg-primary/10 px-3 py-1 rounded-full font-bold">
           Beacon ID: ERR_404_OFF_CHART
-        </Link>
-      </header>
+        </span>
+        <h1 className="text-4xl sm:text-5xl font-heading font-bold tracking-tight text-ink">
+          Off-Chart Waters
+        </h1>
+        <p className="text-sm text-ink-muted leading-relaxed max-w-md mx-auto">
+          The maritime coordinate, depth contour, or URL you requested does not exist on this navigational grid or has drifted outside surveyed bounds.
+        </p>
+      </div>
 
-      <main className="max-w-xl mx-auto w-full px-6 py-16 text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-water flex items-center justify-center mx-auto border border-border">
-          <Compass className="h-8 w-8 text-primary animate-pulse" />
-        </div>
-
-        <div className="space-y-2">
-          <span className="text-xs font-mono uppercase tracking-widest text-primary bg-surface-raised px-2.5 py-1 rounded-sm border border-border">
-            Coordinate Uncharted
-          </span>
-          <h1 className="text-4xl font-semibold tracking-tight">Off-Chart Waters (404)</h1>
-          <p className="text-sm text-ink-muted leading-relaxed max-w-md mx-auto">
-            The navigational coordinate, depth contour, or page you requested does not exist on this chart grid or has shifted outside surveyed bounds.
-          </p>
-        </div>
-
-        <div className="p-4 rounded-sm bg-surface-raised border border-border text-left space-y-3">
-          <p className="text-xs font-mono font-semibold uppercase tracking-wider text-ink-muted flex items-center gap-1.5">
-            <AlertCircle className="h-3.5 w-3.5 text-primary" />
-            Recommended Navigational Actions
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <Link
-              to="/explore"
-              className="p-2.5 rounded bg-surface border border-border hover:border-primary transition-colors flex items-center gap-2 text-ink font-medium"
-            >
-              <MapPin className="h-4 w-4 text-primary shrink-0" />
-              <span>Interactive Nautical Map</span>
-            </Link>
-            <Link
-              to="/advisories"
-              className="p-2.5 rounded bg-surface border border-border hover:border-primary transition-colors flex items-center gap-2 text-ink font-medium"
-            >
-              <AlertCircle className="h-4 w-4 text-risk-caution shrink-0" />
-              <span>Active Marine Bulletins</span>
-            </Link>
-            <Link
-              to="/login"
-              className="p-2.5 rounded bg-surface border border-border hover:border-primary transition-colors flex items-center gap-2 text-ink font-medium"
-            >
-              <Anchor className="h-4 w-4 text-primary shrink-0" />
-              <span>Sign In to Harbor Station</span>
-            </Link>
-            <Link
-              to="/"
-              className="p-2.5 rounded bg-surface border border-border hover:border-primary transition-colors flex items-center gap-2 text-ink font-medium"
-            >
-              <Home className="h-4 w-4 text-primary shrink-0" />
-              <span>Return to Base Anchorage</span>
-            </Link>
-          </div>
-        </div>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const input = (e.currentTarget.elements.namedItem("search") as HTMLInputElement).value;
-            if (input.trim()) {
-              window.location.href = `/ports?q=${encodeURIComponent(input.trim())}`;
-            } else {
-              window.location.href = "/ports";
-            }
-          }}
-          className="flex gap-2 max-w-md mx-auto w-full pt-2"
-        >
-          <input
-            type="text"
-            name="search"
-            placeholder="Search port or harbour (e.g. Mumbai, Cochin)..."
-            className="flex-1 h-10 px-3 rounded bg-surface border border-border text-xs text-ink placeholder:text-ink-muted focus:outline-none focus:ring-1 focus:ring-primary"
-            aria-label="Search port from 404 page"
-          />
-          <Button type="submit" size="sm" variant="primary">
-            Find Port
-          </Button>
-        </form>
-
-        <div className="pt-2">
-          <Link to="/">
-            <Button size="md" variant="secondary" className="gap-2">
-              <Home className="h-4 w-4" /> Return to Safe Port (Home)
-            </Button>
+      <div className="p-6 rounded-2xl bg-surface border border-border shadow-card text-left space-y-4">
+        <p className="text-xs font-mono font-bold uppercase tracking-wider text-ink-muted flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 text-primary" />
+          <span>Recommended Navigational Waypoints</span>
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <Link
+            to="/explore"
+            className="p-3 rounded-xl bg-surface-raised border border-border hover:border-primary/50 transition-all flex items-center gap-2.5 text-ink font-semibold card-hover"
+          >
+            <MapPin className="h-4 w-4 text-primary shrink-0" />
+            <span>Interactive Live Map</span>
+          </Link>
+          <Link
+            to="/ports"
+            className="p-3 rounded-xl bg-surface-raised border border-border hover:border-primary/50 transition-all flex items-center gap-2.5 text-ink font-semibold card-hover"
+          >
+            <Anchor className="h-4 w-4 text-primary shrink-0" />
+            <span>Indian Port Directory</span>
+          </Link>
+          <Link
+            to="/compare"
+            className="p-3 rounded-xl bg-surface-raised border border-border hover:border-primary/50 transition-all flex items-center gap-2.5 text-ink font-semibold card-hover"
+          >
+            <Compass className="h-4 w-4 text-primary shrink-0" />
+            <span>Vessel Comparison</span>
+          </Link>
+          <Link
+            to="/"
+            className="p-3 rounded-xl bg-surface-raised border border-border hover:border-primary/50 transition-all flex items-center gap-2.5 text-ink font-semibold card-hover"
+          >
+            <Home className="h-4 w-4 text-primary shrink-0" />
+            <span>ORCA Home Landing</span>
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
+      <div>
+        <Link to="/">
+          <Button variant="primary" className="px-6 py-2.5 font-bold shadow-md gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Return to Safe Harbor</span>
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

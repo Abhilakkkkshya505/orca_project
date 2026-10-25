@@ -8,14 +8,12 @@ import { SeaState } from "@/components/ui/SeaState";
 import { formatWaveHeight, formatWindSpeed, formatDataAge } from "@/lib/format";
 import type { RiskLevel } from "@/components/ui/risk-icons";
 import {
-  Anchor,
   Compass,
   ShieldCheck,
   Search,
   ArrowRight,
   WifiOff,
   Database,
-  ExternalLink,
   ChevronDown,
   CloudSun,
   Waves,
@@ -194,7 +192,7 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between selection:bg-primary/20">
+    <div className="flex-1 w-full bg-bg text-ink flex flex-col justify-between selection:bg-primary/20">
       {/* Skip Link for a11y */}
       <a
         href="#main-content"
@@ -202,39 +200,6 @@ export const LandingPage: React.FC = () => {
       >
         Skip to main content
       </a>
-
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-lg tracking-tight hover:opacity-90">
-            <Anchor className="h-6 w-6 text-primary" aria-hidden="true" />
-            <span>ORCA</span>
-          </Link>
-          <span className="text-[11px] px-2 py-0.5 rounded bg-water text-primary font-mono font-medium">
-            SDG 14
-          </span>
-        </div>
-        <nav className="flex items-center gap-3 sm:gap-6 text-sm" aria-label="Main Navigation">
-          <Link to="/explore" className="font-medium hover:text-primary transition-colors">
-            Explore
-          </Link>
-          <a href="#marine-telemetry" className="font-medium text-primary hover:underline transition-colors flex items-center gap-1">
-            <Waves className="h-3.5 w-3.5 animate-pulse" /> Live Waves
-          </a>
-          <Link to="/ports" className="font-medium hover:text-primary transition-colors">
-            Ports
-          </Link>
-          <Link to="/how-it-works" className="hidden sm:inline font-medium hover:text-primary transition-colors">
-            How it works
-          </Link>
-          <Link to="/login" className="font-medium hover:text-primary transition-colors">
-            Sign In
-          </Link>
-          <Link to="/signup">
-            <Button size="sm">Get Started</Button>
-          </Link>
-        </nav>
-      </header>
 
       <main id="main-content" className="flex-1 w-full flex flex-col gap-20 pb-20">
         {/* SECTION 1: HERO WITH SEASTATE */}
@@ -910,66 +875,6 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
       </main>
-
-      {/* SECTION 10: FOOTER */}
-      <footer className="border-t border-border bg-surface px-4 sm:px-6 py-12 text-xs text-ink-muted">
-        <div className="max-w-7xl mx-auto flex flex-col gap-8">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-8">
-            <div className="flex flex-col gap-3 max-w-sm">
-              <div className="flex items-center gap-2">
-                <Anchor className="h-5 w-5 text-primary" aria-hidden="true" />
-                <span className="font-bold text-base text-ink tracking-tight">Project ORCA</span>
-              </div>
-              <p className="text-xs leading-relaxed">
-                Marine Ecosystem Reasoning with Collaborative AI Agents. Developed for United Nations SDG 14: Life Below Water.
-              </p>
-              <p className="text-[11px] font-mono text-ink-muted">
-                Open sustainability research baseline • Bennett University
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
-              <div className="flex flex-col gap-2">
-                <span className="font-semibold text-ink uppercase tracking-wider text-[11px] font-mono">Platform</span>
-                <Link to="/explore" className="hover:text-primary transition-colors">Explore Map</Link>
-                <Link to="/ports" className="hover:text-primary transition-colors">Port Directory</Link>
-                <Link to="/how-it-works" className="hover:text-primary transition-colors">How it works</Link>
-                <Link to="/methodology" className="hover:text-primary transition-colors">Methodology</Link>
-                <Link to="/status" className="hover:text-primary transition-colors">Data Status</Link>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="font-semibold text-ink uppercase tracking-wider text-[11px] font-mono">Information</span>
-                <Link to="/about" className="hover:text-primary transition-colors">About Project</Link>
-                <Link to="/game" className="hover:text-primary transition-colors">Marine Fish Game</Link>
-                <Link to="/offline-preview" className="hover:text-primary transition-colors">Offline Preview</Link>
-                <a
-                  href="https://github.com/Abhilakkkkshya505/orca_project"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary inline-flex items-center gap-1 transition-colors"
-                >
-                  GitHub <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="font-semibold text-ink uppercase tracking-wider text-[11px] font-mono">Legal & Trust</span>
-                <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-                <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
-                <Link to="/accessibility" className="hover:text-primary transition-colors">Accessibility</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
-            <p>© 2026 Project ORCA. All rights reserved.</p>
-            <p className="font-mono text-ink-muted">
-              DEMO NOTICE: Thresholds and values are configured for development and demonstration purposes.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

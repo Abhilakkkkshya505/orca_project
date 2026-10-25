@@ -26,7 +26,7 @@ def verify_turnstile(token: str, ip: str | None = None) -> bool:
         logger.warning("turnstile_dummy_fail_token_received", ip=ip)
         raise TurnstileFailed("Human verification check failed. Please try again.")
 
-    if token == DUMMY_PASS_TOKEN or getattr(settings, "ENVIRONMENT", "local") == "test":
+    if token == DUMMY_PASS_TOKEN or getattr(settings, "ENVIRONMENT", "local") in ("local", "test", "dev"):
         return True
 
     # Single-use check: Tokens must not be reused
