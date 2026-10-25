@@ -15,13 +15,12 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  ArrowRight,
   ShieldCheck,
 } from "lucide-react";
 import { useMe, useLogout } from "@/features/auth/useMe";
 import { useToast } from "@/components/ui/toast";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import PlinthTally from "@/components/originkit/ui/plinth-tally";
+import NeonGlowButton from "@/components/originkit/ui/neon-glow-button";
 
 export const Navbar: React.FC = () => {
   const { data: user } = useMe();
@@ -70,7 +69,6 @@ export const Navbar: React.FC = () => {
   }, [location.pathname]);
 
   const navLinks = [
-    { label: "My Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Explore Map", href: "/explore", icon: Compass },
     { label: "Ports Directory", href: "/ports", icon: MapPin },
     { label: "Vessel Risk", href: "/compare", icon: Ship },
@@ -106,27 +104,24 @@ export const Navbar: React.FC = () => {
         {/* Ocean Brand Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md p-1 -ml-1"
+          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md p-1 -ml-1 shrink-0"
           aria-label="ORCA Home"
         >
-          <div className="h-7 w-7 rounded-md bg-surface-raised text-ink border border-border flex items-center justify-center shrink-0">
-            <Anchor className="h-3.5 w-3.5" />
+          <div className="h-8 w-8 rounded-lg bg-surface-raised text-ink border border-border group-hover:border-primary/50 group-hover:text-primary flex items-center justify-center shrink-0 transition-colors shadow-xs">
+            <Anchor className="h-4 w-4" />
           </div>
           <div className="flex flex-col text-left">
-            <div className="flex items-center gap-1.5">
-              <PlinthTally
-                text="ORCA"
-                size="sm"
-                depth={4}
-                tiltIntensity={10}
-                glow={false}
-                interactive={true}
-                staggerHover={false}
-              />
-              <span className="h-1.5 w-1.5 rounded-full bg-forest dark:bg-sage" />
+            <div className="flex items-center gap-2">
+              <span className="font-heading font-extrabold text-base tracking-tight text-ink leading-tight">
+                ORCA
+              </span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" />
+                SDG 14
+              </span>
             </div>
-            <span className="text-[9px] font-mono text-ink-muted leading-none tracking-wider uppercase font-semibold">
-              Ocean Intelligence • SDG 14
+            <span className="text-[9px] font-mono text-ink-muted leading-tight tracking-wider uppercase font-medium whitespace-nowrap">
+              Marine Intelligence & Safety
             </span>
           </div>
         </Link>
@@ -161,14 +156,28 @@ export const Navbar: React.FC = () => {
 
         {/* Right CTA / Auth Controls + Theme Toggle */}
         <div className="hidden sm:flex items-center gap-2.5">
-          {/* My Dashboard Direct Action Button */}
-          <Link
-            to="/dashboard"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-surface-raised border border-border text-ink hover:border-ink transition-colors"
-          >
-            <LayoutDashboard className="h-3.5 w-3.5 text-forest dark:text-sage" />
-            <span>My Dashboard</span>
-          </Link>
+          {/* Originkit Neon Glow Button */}
+          {user ? (
+            <NeonGlowButton
+              to="/dashboard"
+              variant="cyan"
+              size="sm"
+              icon={<LayoutDashboard className="h-3.5 w-3.5" />}
+              className="hidden sm:inline-flex"
+            >
+              My Dashboard
+            </NeonGlowButton>
+          ) : (
+            <NeonGlowButton
+              to="/explore"
+              variant="cyan"
+              size="sm"
+              icon={<Compass className="h-3.5 w-3.5" />}
+              className="hidden sm:inline-flex"
+            >
+              Launch App
+            </NeonGlowButton>
+          )}
 
           {/* Theme Toggle (Sun / Moon) */}
           <ThemeToggle />
@@ -256,13 +265,6 @@ export const Navbar: React.FC = () => {
                 className="px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink transition-colors"
               >
                 Sign In
-              </Link>
-              <Link
-                to="/explore"
-                className="btn-editorial-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold"
-              >
-                <span>Launch App</span>
-                <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </>
           )}
