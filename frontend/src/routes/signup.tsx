@@ -6,12 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { api, ensureCsrfToken } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/errors";
 import { signupSchema, type SignupInput } from "@/lib/schemas/auth";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import BeamSweep from "@/components/originkit/ui/beam-sweep";
+import WaterButton from "@/components/originkit/ui/water-button";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -289,14 +289,41 @@ export const SignupPage: React.FC = () => {
             <p className="text-xs text-red-600 font-medium">{errors.accepted_terms.message}</p>
           )}
 
-          <Button
+          <WaterButton
             type="submit"
-            variant="primary"
-            className="w-full mt-2 py-2.5 font-bold shadow-md"
-            isLoading={isSubmitting}
+            disabled={isSubmitting}
+            label={isSubmitting ? "Creating Account..." : "Create Mariner Account"}
+            waterColor={resolvedTheme === "dark" ? "#00EEFF" : "#0284C7"}
+            textColor={resolvedTheme === "dark" ? "#FFFFFF" : "#071A2F"}
+            waterAmount={65}
+            rounded={12}
+            paddingY={14}
+            paddingX={24}
+            glass={{
+              tint: resolvedTheme === "dark" ? "rgba(15, 92, 110, 0.25)" : "rgba(224, 242, 254, 0.5)",
+              blur: 20,
+              frost: resolvedTheme === "dark" ? 15 : 40,
+            }}
+            borderOptions={{
+              color: resolvedTheme === "dark" ? "rgba(95, 180, 199, 0.4)" : "rgba(2, 132, 199, 0.3)",
+              stroke: 1,
+            }}
+            style={{
+              width: "100%",
+              marginTop: "0.5rem",
+              fontWeight: 700,
+              fontSize: "0.875rem",
+            }}
           >
-            Create Mariner Account
-          </Button>
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                Creating Account...
+              </span>
+            ) : (
+              "Create Mariner Account"
+            )}
+          </WaterButton>
         </form>
 
         {/* Existing account prompt */}
