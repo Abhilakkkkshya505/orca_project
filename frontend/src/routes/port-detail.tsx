@@ -24,6 +24,7 @@ import {
   Fish,
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
+import { MapView } from "@/features/map/MapView";
 
 
 interface PortDetailResponse {
@@ -665,6 +666,26 @@ export const PortDetailPage: React.FC = () => {
               No active cyclone or high-wave surge watches in force for this maritime sector. Official IMD and INCOIS warnings override ORCA.
             </p>
           )}
+        </div>
+
+        {/* Coastal Geographic & Satellite Observatory Map */}
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-sm space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-border">
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              <Compass className="h-4 w-4 text-primary" />
+              Coastal Hydrographic & Satellite Observatory
+            </h3>
+            <span className="text-[11px] font-mono text-ink-muted">
+              {port.lat.toFixed(4)}°N, {port.lon.toFixed(4)}°E • Satellite, Terrestrial, Nautical & Dark Modes
+            </span>
+          </div>
+          <div className="h-80 w-full rounded-xl overflow-hidden border border-border relative">
+            <MapView
+              selectedLocation={{ lat: port.lat, lon: port.lon }}
+              defaultMode="satellite"
+              className="h-full w-full"
+            />
+          </div>
         </div>
 
         {/* Fishing Zones & Chlorophyll Telemetry */}
