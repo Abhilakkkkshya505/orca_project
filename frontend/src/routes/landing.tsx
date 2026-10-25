@@ -24,6 +24,8 @@ import {
   AlertTriangle,
   Radio,
 } from "lucide-react";
+import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
+
 
 interface SamplePortSummary {
   slug: string;
@@ -216,6 +218,9 @@ export const LandingPage: React.FC = () => {
           <Link to="/explore" className="font-medium hover:text-primary transition-colors">
             Explore
           </Link>
+          <a href="#marine-telemetry" className="font-medium text-primary hover:underline transition-colors flex items-center gap-1">
+            <Waves className="h-3.5 w-3.5 animate-pulse" /> Live Waves
+          </a>
           <Link to="/ports" className="font-medium hover:text-primary transition-colors">
             Ports
           </Link>
@@ -356,7 +361,17 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
+        {/* SECTION: LIVE OPEN-METEO GLOBAL MARINE OBSERVATORY */}
+        <section id="marine-telemetry" className="max-w-7xl mx-auto w-full px-4 sm:px-6">
+          <LiveMarineTelemetry
+            initialLat={54.544587}
+            initialLon={10.227487}
+            title="Global Open-Meteo Marine Telemetry Observatory"
+          />
+        </section>
+
         {/* SECTION 2: ASK IN PLAIN WORDS */}
+
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6">
           <div className="bg-surface border border-border rounded-xl p-6 sm:p-10 shadow-sm text-left flex flex-col gap-6">
             <div>

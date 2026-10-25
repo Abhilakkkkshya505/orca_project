@@ -23,6 +23,8 @@ import {
   Table,
   Fish,
 } from "lucide-react";
+import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
+
 
 interface PortDetailResponse {
   id: string;
@@ -56,6 +58,8 @@ interface PortDetailResponse {
 
 interface FactorItem {
   name: string;
+  label?: string;
+  key?: string;
   value: number | string;
   unit: string;
   threshold_caution?: number;
@@ -63,6 +67,27 @@ interface FactorItem {
   level: RiskLevel;
   source: string;
   data_age_minutes?: number;
+}
+
+
+interface HourlyForecastPoint {
+  valid_time: string;
+  time_label: string;
+  wave_height_m: number | null;
+  wave_direction_deg?: number | null;
+  wave_period_s: number | null;
+  wind_wave_height_m?: number | null;
+  wind_wave_direction_deg?: number | null;
+  wind_wave_period_s?: number | null;
+  secondary_swell_m?: number | null;
+  sea_level_msl_m?: number | null;
+  wind_speed_kmh: number | null;
+  wind_gust_kmh: number | null;
+  wind_direction_deg?: number | null;
+  rain_mm: number | null;
+  douglas_scale: number;
+  sea_condition: string;
+  cross_sea_warning?: boolean;
 }
 
 interface RiskAssessmentResponse {
@@ -73,6 +98,7 @@ interface RiskAssessmentResponse {
   vessel_class: "small_craft" | "mechanised";
   explanation: string;
   factors: FactorItem[];
+  hourly?: HourlyForecastPoint[];
   advisories: Array<{
     id: string;
     headline: string;
@@ -211,15 +237,28 @@ export const PortDetailPage: React.FC = () => {
     );
   }
 
-  const waveFactor = risk?.factors.find((f) => f.name.toLowerCase().includes("wave"))?.value;
-  const windFactor = risk?.factors.find((f) => f.name.toLowerCase().includes("wind"))?.value;
+  const waveFactor = risk?.factors.find((f) => (f.name || f.label || f.key || "").toLowerCase().includes("wave"))?.value;
+  const windFactor = risk?.factors.find((f) => (f.name || f.label || f.key || "").toLowerCase().includes("wind"))?.value;
   const baseWave = typeof waveFactor === "number" ? waveFactor : 1.4;
   const baseWind = typeof windFactor === "number" ? windFactor : 20;
 
-  const timeseries = generate48hForecast(baseWave, baseWind);
+  // Use real Open-Meteo hourly telemetry points when available, falling back to simulated points
+  const timeseries: HourlyPoint[] = (risk?.hourly && risk.hourly.length > 0)
+    ? risk.hourly.map((pt, idx) => ({
+        hourOffset: idx * 3,
+        timeLabel: pt.time_label,
+        waveHeightM: pt.wave_height_m ?? baseWave,
+        wavePeriodS: pt.wave_period_s ?? 7.0,
+        swellHeightM: pt.secondary_swell_m ?? (pt.wave_height_m ? Number((pt.wave_height_m * 0.7).toFixed(2)) : 0.8),
+        windKmh: Math.round(pt.wind_speed_kmh ?? baseWind),
+        windGustKmh: Math.round(pt.wind_gust_kmh ?? (pt.wind_speed_kmh ? pt.wind_speed_kmh * 1.3 : baseWind * 1.3)),
+        rainMm: pt.rain_mm ?? 0.0,
+      }))
+    : generate48hForecast(baseWave, baseWind);
 
   return (
     <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
+
       {/* Header */}
       <header className="border-b border-border bg-surface px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full sticky top-0 z-30">
         <div className="flex items-center gap-3">
@@ -329,6 +368,15 @@ export const PortDetailPage: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Live Open-Meteo Marine & Swell Telemetry Panel */}
+        <LiveMarineTelemetry
+          portSlug={slug}
+          initialLat={port.lat}
+          initialLon={port.lon}
+          title={`Live Open-Meteo Oceanographic Telemetry • ${port.name}`}
+        />
+
 
         {/* Evaluation Controls: Window Selector & Vessel Class */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-surface p-4 rounded-xl border border-border shadow-sm">

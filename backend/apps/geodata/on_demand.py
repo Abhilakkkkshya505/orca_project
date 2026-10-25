@@ -39,11 +39,15 @@ def fetch_on_demand_snapshots(
     now = timezone.now()
 
     try:
-        # 1. Fetch marine variables at sea location
+        # 1. Fetch marine variables at sea location (waves, swells, sea level)
         m_params = {
             "latitude": f"{sea_lat:.4f}",
             "longitude": f"{sea_lon:.4f}",
-            "hourly": "wave_height,wave_period",
+            "hourly": (
+                "wave_height,wave_direction,wave_period,"
+                "wind_wave_height,wind_wave_direction,wind_wave_period,"
+                "secondary_swell_wave_height,sea_level_height_msl"
+            ),
             "forecast_days": 3,
         }
         m_resp = requests.get(
@@ -57,7 +61,7 @@ def fetch_on_demand_snapshots(
         w_params = {
             "latitude": f"{lat:.4f}",
             "longitude": f"{lon:.4f}",
-            "hourly": "wind_speed_10m,wind_gusts_10m,precipitation",
+            "hourly": "wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation,visibility",
             "forecast_days": 3,
         }
         w_resp = requests.get(
@@ -76,9 +80,17 @@ def fetch_on_demand_snapshots(
 
         times = m_data.get("time", [])
         wave_heights = m_data.get("wave_height", [])
+        wave_dirs = m_data.get("wave_direction", [])
         wave_periods = m_data.get("wave_period", [])
+        wind_waves = m_data.get("wind_wave_height", [])
+        wind_wave_dirs = m_data.get("wind_wave_direction", [])
+        wind_wave_periods = m_data.get("wind_wave_period", [])
+        secondary_swells = m_data.get("secondary_swell_wave_height", [])
+        sea_levels = m_data.get("sea_level_height_msl", [])
+
         wind_speeds = w_data.get("wind_speed_10m", [])
         wind_gusts = w_data.get("wind_gusts_10m", [])
+        wind_dirs = w_data.get("wind_direction_10m", [])
         rains = w_data.get("precipitation", [])
 
         count = 0
@@ -90,12 +102,27 @@ def fetch_on_demand_snapshots(
             vals = {}
             if i < len(wave_heights) and wave_heights[i] is not None:
                 vals["wave_height_m"] = float(wave_heights[i])
+            if i < len(wave_dirs) and wave_dirs[i] is not None:
+                vals["wave_direction_deg"] = float(wave_dirs[i])
             if i < len(wave_periods) and wave_periods[i] is not None:
                 vals["wave_period_s"] = float(wave_periods[i])
+            if i < len(wind_waves) and wind_waves[i] is not None:
+                vals["wind_wave_height_m"] = float(wind_waves[i])
+            if i < len(wind_wave_dirs) and wind_wave_dirs[i] is not None:
+                vals["wind_wave_direction_deg"] = float(wind_wave_dirs[i])
+            if i < len(wind_wave_periods) and wind_wave_periods[i] is not None:
+                vals["wind_wave_period_s"] = float(wind_wave_periods[i])
+            if i < len(secondary_swells) and secondary_swells[i] is not None:
+                vals["secondary_swell_wave_height_m"] = float(secondary_swells[i])
+            if i < len(sea_levels) and sea_levels[i] is not None:
+                vals["sea_level_height_msl_m"] = float(sea_levels[i])
+
             if i < len(wind_speeds) and wind_speeds[i] is not None:
                 vals["wind_speed_kmh"] = float(wind_speeds[i])
             if i < len(wind_gusts) and wind_gusts[i] is not None:
                 vals["wind_gust_kmh"] = float(wind_gusts[i])
+            if i < len(wind_dirs) and wind_dirs[i] is not None:
+                vals["wind_direction_deg"] = float(wind_dirs[i])
             if i < len(rains) and rains[i] is not None:
                 vals["rain_mm"] = float(rains[i])
 

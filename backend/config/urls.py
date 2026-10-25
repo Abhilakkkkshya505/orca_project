@@ -19,6 +19,7 @@ api_v1_patterns = [
     path("me/", include("apps.accounts.urls_me")),
     # Geodata & Advisories
     path("advisories/", include("apps.geodata.urls")),
+    path("marine/", include("apps.geodata.urls_marine")),
     # Ports & Geocoding
     path("", include("apps.ports.urls")),
     # Risk Engine

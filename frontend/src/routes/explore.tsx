@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Anchor, ArrowLeft, Sun, Moon } from "lucide-react";
+import { Anchor, ArrowLeft, Sun, Moon, Waves, X } from "lucide-react";
 import { api } from "@/lib/api/client";
 import { ChatPanel } from "@/features/chat/ChatPanel";
 import { MapView } from "@/features/map/MapView";
+import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
 
 export const ExplorePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [showTelemetryDrawer, setShowTelemetryDrawer] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lon: number; name?: string }>(() => {
     const latParam = searchParams.get("lat");
     const lonParam = searchParams.get("lon");
@@ -89,7 +91,18 @@ export const ExplorePage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Live Open-Meteo Waves Trigger */}
+          <button
+            onClick={() => setShowTelemetryDrawer(true)}
+            className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            title="Open live Open-Meteo marine wave and swell telemetry"
+          >
+            <Waves className="h-4 w-4 animate-pulse" />
+            <span className="hidden sm:inline">Open-Meteo Waves</span>
+            <span className="sm:hidden">Waves</span>
+          </button>
+
           <button
             onClick={toggleTheme}
             className="p-2 rounded border border-border text-ink hover:bg-surface-raised transition-colors"
@@ -126,8 +139,51 @@ export const ExplorePage: React.FC = () => {
             onSelectLocation={setSelectedLocation}
             className="w-full h-full"
           />
+
+          {/* Floating Pill on Map to open Telemetry for active waypoint */}
+          <button
+            onClick={() => setShowTelemetryDrawer(true)}
+            className="absolute bottom-6 right-4 z-10 flex items-center gap-2 bg-surface/95 backdrop-blur-md border border-border px-3.5 py-2 rounded-full shadow-card text-xs font-semibold text-primary hover:bg-surface hover:scale-105 transition-all"
+          >
+            <Waves className="h-4 w-4 text-primary" />
+            <span>Live Wave Telemetry ({selectedLocation.lat.toFixed(2)}°, {selectedLocation.lon.toFixed(2)}°)</span>
+          </button>
         </div>
       </div>
+
+      {/* Slide-over Drawer for Live Open-Meteo Marine Telemetry */}
+      {showTelemetryDrawer && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity">
+          <div className="w-full max-w-3xl h-full bg-surface shadow-2xl flex flex-col border-l border-border overflow-hidden animate-in slide-in-from-right duration-200">
+            {/* Drawer Header */}
+            <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-surface-raised">
+              <div className="flex items-center gap-2">
+                <Waves className="h-5 w-5 text-primary" />
+                <h3 className="font-bold text-base text-ink">
+                  Open-Meteo Oceanographic Observatory
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowTelemetryDrawer(false)}
+                className="p-1.5 rounded-lg border border-border text-ink-muted hover:text-ink hover:bg-surface"
+                aria-label="Close telemetry drawer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Drawer Content */}
+            <div className="flex-1 overflow-y-auto p-5">
+              <LiveMarineTelemetry
+                initialLat={selectedLocation.lat}
+                initialLon={selectedLocation.lon}
+                title={`Live Marine Telemetry for ${selectedLocation.name || `${selectedLocation.lat.toFixed(2)}°N, ${selectedLocation.lon.toFixed(2)}°E`}`}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
