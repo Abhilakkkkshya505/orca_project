@@ -1,7 +1,7 @@
 # ORCA Task Progress Tracker
 
-Current Date: **19 October 2026**  
-Overall System State: **Analysis Completed; Ready for Task Execution**
+Current Date: **25 October 2026**  
+Overall System State: **Tasks 0 through 5 Complete & Verified; Ready for Task 6 (Offline, Security & Final QA)**
 
 ---
 
@@ -15,35 +15,36 @@ Overall System State: **Analysis Completed; Ready for Task Execution**
 | **Task 3** | Chat assistant | **DONE (verified)** | 2026-10-21 | `scripts/verify-task3.ps1` (10/10 PASS) | 7-step pipeline (Understand->Resolve->Gather->Decide->Enrich->Explain->Stream), Pydantic Intent, 0-key rule parser with Hindi translit, template explainer (26 templates), Rule S4 number validator, multi-turn follow-up/compare/clarify, 51/51 pytest + 24/24 vitest pass, NLU eval (Task 97.5% dev / 95% held-out). |
 | **Task 4** | Train the models | **DONE (verified)** | 2026-10-21 | `scripts/verify-task4.ps1` (9/9 PASS) | Installable `orca_ml` package, canonical 15-feature pipeline (Rule 22), frozen adoption gates in `gate.yaml`, intent model active (macro-F1 1.0, latency 0.29ms), chl anomaly detector active (3 historical blooms backtested), fishing zone honestly marked UNFINISHED (GFW unset), wave error honestly marked SKIPPED (CDS unset), endpoints `GET /api/v1/models/` & `/card/` (JSON & Markdown), PSI feature drift monitoring, 10/10 pytest pass. |
 | **Task 5** | Full frontend | **DONE (verified)** | 2026-10-21 | `scripts/verify-task5.ps1` (9/9 PASS) | All 26 public & protected routes active; scrolling bugs eliminated (no traps, cooperativeGestures); 10-section real landing page with rotating live SeaState port; WMO Douglas Scale wave animation; legal policies (Privacy, Terms with IMD override); required accepted_terms on signup UI + backend User model + migration; 46/46 vitest + 8/8 test_auth pass. |
-| **Task 6** | Offline, security, final QA | **NOT STARTED** | — | `scripts/verify-task6.ps1` (Pending) | Offline PWA, standalone canvas fish game, security headers, course deliverables audit. |
+| **Task 6** | Offline, security, final QA | **REMAINING** | 2026-10-25 | `scripts/verify-task6.ps1` (Pending) | Part A (Offline Playwright tests), Part B (Security check --deploy, 100% endpoint permission matrix, CSP validation), Part C (Production compose validation), Part D (Deliverables & walkthrough audit), Part E (`verify-all.ps1` & `FINAL-AUDIT.md`). |
 
 ---
 
-## 2. In-Progress Task Detail: Task 0 (Stabilise the Stack, Wire Keys, Prove Providers)
+## 2. Unfinished Scope: Task 6 (Offline, Security, Final QA)
 
-### Current Progress & Foundation
-- [x] Backend system checks pass cleanly (`python manage.py check`: 0 issues).
-- [x] Backend unit & permission test suite passes (`python -m pytest`: 44/44 passed).
-- [x] Frontend build & type check passes (`tsc && vite build`: built in 7.66s, 0 errors).
-- [x] Frontend Vitest suite passes (`pnpm test`: 24/24 passed).
-- [x] `.env` files created from templates for backend and frontend; `.env` verified in `.gitignore`.
-- [x] Spec documents synchronized into `orca/docs/` and `orca/docs/agent-prompts/`.
+### Part A: Offline Tests & PWA Verification
+- [ ] Run Playwright automated offline tests: load app online, visit two ports, set context offline, reload, confirm `offline.html` displays saved ports with ages.
+- [ ] Verify canvas fish mini-game under touch and keyboard emulation at 60fps.
+- [ ] Verify automatic reconnect detection back to active state within 10 seconds.
+- [ ] Assert stale cached risk (>12h) displays `UNKNOWN` with `STALE` banner (Safety Rule S2).
 
-### Unfinished Items for Task 0
-1. [ ] Ensure Docker Desktop engine is active on host; verify `infra/docker-compose.yml` (`db`, `redis`, `api`, `worker`, `beat`).
-2. [ ] Implement `python manage.py check_providers` making live test calls to Open-Meteo, NOAA ERDDAP, GDACS, and LLM (template mode) without leaking secrets.
-3. [ ] Implement `GET /api/v1/data-status/` public health indicator.
-4. [ ] Create `scripts/verify-task0.ps1` testing clean boot, health probes, manage checks, provider connectivity, and git history cleanliness.
-5. [ ] Write `docs/PROVIDERS.md` and verify Attribution component in UI.
+### Part B: Security Hardening & Permission Matrix
+- [ ] Run `python manage.py check --deploy --settings=config.settings.prod` with dummy production env values; resolve all warnings.
+- [ ] Re-run full automated auth checklist from `docs/auth.md` (signup enumeration, lockout, CSRF, Turnstile fail-closed).
+- [ ] Run automated permission matrix test ensuring 100% endpoint coverage across anonymous, guest, unverified, verified owner, other verified, staff.
+- [ ] Verify Cloudflare helpers: `CF-Connecting-IP` spoofing tests, Access JWT middleware verification.
+- [ ] Run CSP securitypolicyviolation sweep across all routes.
+- [ ] Run dependency audits (`pip-audit`, `pnpm audit --prod`) and secret scans.
+- [ ] Verify log-scrubbing (no emails, session tokens, or raw coordinates logged).
 
----
+### Part C: Production Infra & Deployment Verification
+- [ ] Verify `docker-compose.prod.yml` and production Dockerfile boot locally with dummy production env.
+- [ ] Validate GitHub Actions workflow YAML syntax (`actionlint`).
 
-## 3. Recommended Order of Work
+### Part D: Final Course Documentation
+- [ ] Ensure `docs/CODE_WALKTHROUGH.md`, `docs/PROJECT-REPORT.md`, `docs/DEMO-SCRIPT.md` are aligned with live Task 4 ML metrics and Task 5 routes.
+- [ ] Update `CHANGELOG.md` and regenerate OpenAPI schema (`backend/schema.yml`) and frontend types.
 
-1. **TARGET: TASK 0** — Stabilise Docker environment, run migrations on PostGIS, implement provider check command and health checks, run `verify-task0.ps1`.
-2. **TARGET: TASK 1** — Implement world ports database (`apps.ports`), coordinate sea-snapping, remove hardcoded Kochi defaults from backend and frontend, run `verify-task1.ps1`.
-3. **TARGET: TASK 2** — Enhance data pipelines, property-based risk tests, cited thresholds, run `verify-task2.ps1`.
-4. **TARGET: TASK 3** — Wire robust chat assistant with SSE streaming, fallback offline thread creation, and number validator, run `verify-task3.ps1`.
-5. **TARGET: TASK 4** — Advisory ML models and gating script, run `verify-task4.ps1`.
-6. **TARGET: TASK 5** — Full frontend expansion: register all missing routes (`/ports`, `/compare`, `/how-it-works`, `/methodology`, `/about`, `/status`), wave animations, terms/privacy links on auth screens, scrolling landing page, run `verify-task5.ps1`.
-7. **TARGET: TASK 6** — PWA offline testing, canvas mini-game integration, security audit, final course deliverables, run `verify-all.ps1`.
+### Part E: Regression & Final Audit
+- [ ] Build `scripts/verify-all.ps1` executing `verify-task0.ps1` through `verify-task6.ps1` sequentially with summary table.
+- [ ] Repo hygiene scan: clean console.log, print() in backend apps, raw `any` types, and banned words.
+- [ ] Generate comprehensive `docs/FINAL-AUDIT.md`.
