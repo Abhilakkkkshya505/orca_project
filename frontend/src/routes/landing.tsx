@@ -20,6 +20,7 @@ import {
   Fish,
   AlertTriangle,
   Radio,
+  Globe,
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
 import {
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/OceanIllustrations";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
+import TerraDusk from "@/components/originkit/ui/terra-dusk";
 
 
 interface SamplePortSummary {
@@ -164,6 +166,7 @@ export const LandingPage: React.FC = () => {
   const [heroSearch, setHeroSearch] = useState("");
   const [activePortIndex, setActivePortIndex] = useState(0);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [showFullGlobe, setShowFullGlobe] = useState(false);
 
   // 1. Fetch coverage data
   const { data: coverage } = useQuery<CoverageResponse>({
@@ -238,6 +241,42 @@ export const LandingPage: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-surface/80 via-surface/65 to-surface/90 dark:from-[#071A2F]/80 dark:via-[#0B2447]/65 dark:to-[#071A2F]/90 pointer-events-none" />
           </div>
 
+          {/* Originkit Terra Dusk 3D Globe - Covering the Right Half of the Main Page */}
+          <div
+            className="hidden lg:block absolute top-0 right-0 bottom-0 w-1/2 overflow-hidden z-0 pointer-events-auto"
+            aria-label="Originkit Terra Dusk 3D Earth Globe"
+          >
+            <TerraDusk
+              background="transparent"
+              size={640}
+              stars={resolvedTheme === "dark" ? 7 : 3}
+              speed={6.5}
+              hover={8.5}
+              sun="cursor"
+              look={{
+                clouds: 5,
+                lights: resolvedTheme === "dark" ? 7 : 4,
+                atmosphere: resolvedTheme === "dark" ? "#4DA3FF" : "#64B5F6",
+              }}
+              style={{
+                position: "absolute",
+                right: "-6%",
+                top: "48%",
+                transform: "translateY(-50%)",
+                width: "100%",
+                height: "100%",
+                minWidth: 0,
+                minHeight: 0,
+              }}
+            />
+            {/* Smooth transition gradient mask on the left boundary */}
+            <div className="absolute inset-y-0 left-0 w-36 bg-gradient-to-r from-surface dark:from-[#071A2F] to-transparent pointer-events-none" />
+            <div className="absolute top-4 right-6 pointer-events-none px-3 py-1 rounded-full bg-surface/85 dark:bg-[#0B2447]/85 backdrop-blur-md border border-border text-[11px] font-mono text-ink-muted shadow-xs flex items-center gap-1.5 z-10">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#4DA3FF] animate-ping" />
+              <span>Terra Dusk 3D Orbit • Drag Earth / Move Cursor Sun</span>
+            </div>
+          </div>
+
           {/* Subtle Ambient Ocean Bubbles */}
           <FloatingOceanBubbles count={7} />
 
@@ -292,83 +331,142 @@ export const LandingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Live Rotating Sample Port Card with SeaState */}
-            <div className="lg:col-span-5 ocean-card p-5 sm:p-6 flex flex-col gap-4 border-border">
-              <div className="flex items-start justify-between gap-3 pb-3 border-b border-border">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
-                      LIVE HARBOUR TELEMETRY • {activePort.admin1}
-                    </span>
-                    <span className="h-2 w-2 rounded-full bg-primary animate-ping" title="Live rotating station" />
-                  </div>
-                  <h2 className="text-xl font-heading font-bold text-ink mt-0.5">{activePort.name}</h2>
-                </div>
-                <RiskBadge level={activePort.level} size="md" />
-              </div>
-
-              {/* SeaState Live Animated Wave */}
-              <div className="rounded-xl overflow-hidden border border-border bg-surface-raised">
-                <SeaState
-                  waveHeightM={activePort.waveHeightM}
-                  wavePeriodS={activePort.wavePeriodS}
-                  swellHeightM={activePort.swellHeightM}
-                  swellPeriodS={activePort.swellPeriodS}
-                  windKmh={activePort.windKmh}
-                  portName={activePort.name}
-                  dataAgeMinutes={activePort.dataAgeMinutes}
-                  validWindow={activePort.validWindow}
-                  height={150}
+            {/* Right Side Column with Terra Dusk & Live Harbour Telemetry */}
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              {/* Mobile Terra Dusk Preview */}
+              <div className="lg:hidden w-full h-[220px] rounded-2xl overflow-hidden border border-border bg-surface-raised relative shadow-card">
+                <TerraDusk
+                  background="transparent"
+                  size={320}
+                  stars={resolvedTheme === "dark" ? 5 : 2}
+                  speed={7}
+                  hover={8}
+                  sun="cursor"
+                  look={{
+                    clouds: 5,
+                    lights: resolvedTheme === "dark" ? 6 : 4,
+                    atmosphere: resolvedTheme === "dark" ? "#4DA3FF" : "#64B5F6",
+                  }}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    minWidth: 0,
+                    minHeight: 0,
+                  }}
                 />
-              </div>
-
-              {/* Metric Capsules */}
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-xl bg-surface-raised border border-border flex flex-col gap-0.5">
-                  <span className="text-ink-muted font-medium">Significant Wave</span>
-                  <span className="font-mono text-ink font-semibold text-sm">
-                    {formatWaveHeight(activePort.waveHeightM)} ({activePort.wavePeriodS}s)
-                  </span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-surface-raised border border-border flex flex-col gap-0.5">
-                  <span className="text-ink-muted font-medium">Sustained Wind</span>
-                  <span className="font-mono text-ink font-semibold text-sm">
-                    {formatWindSpeed(activePort.windKmh)}
-                  </span>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none px-2.5 py-0.5 rounded-full bg-surface/85 backdrop-blur-xs border border-border text-[10px] font-mono text-ink-muted whitespace-nowrap shadow-xs">
+                  Drag to rotate Earth
                 </div>
               </div>
 
-              {/* Station Selector Chips */}
-              <div className="pt-2 border-t border-border">
-                <p className="text-[11px] text-ink-muted mb-2 font-medium">Switch live sample harbour:</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {SAMPLE_PORTS_FALLBACK.map((port, idx) => (
-                    <button
-                      key={port.slug}
-                      onClick={() => {
-                        setUserInteracted(true);
-                        setActivePortIndex(idx);
-                      }}
-                      className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
-                        activePortIndex === idx
-                          ? "bg-primary text-white font-semibold shadow-xs"
-                          : "bg-surface-raised hover:bg-water text-ink"
-                      }`}
+              {/* Full Globe Expanded View Banner on Desktop */}
+              {showFullGlobe ? (
+                <div className="ocean-card p-5 flex items-center justify-between backdrop-blur-md bg-surface/90 dark:bg-[#132F4C]/90 shadow-2xl border-border">
+                  <div className="flex items-center gap-2.5">
+                    <Globe className="h-5 w-5 text-primary animate-pulse" />
+                    <div>
+                      <p className="text-xs font-bold text-ink">Originkit Terra Dusk 3D Orbit</p>
+                      <p className="text-[11px] text-ink-muted">Drag anywhere on the right half of the page to spin Earth</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setShowFullGlobe(false)}
+                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-hover shadow-xs transition-colors shrink-0"
+                  >
+                    Show Telemetry
+                  </button>
+                </div>
+              ) : (
+                <div className="ocean-card p-5 sm:p-6 flex flex-col gap-4 border-border backdrop-blur-md bg-surface/90 dark:bg-[#132F4C]/90 shadow-2xl transition-all">
+                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-border">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
+                          LIVE HARBOUR TELEMETRY • {activePort.admin1}
+                        </span>
+                        <span className="h-2 w-2 rounded-full bg-primary animate-ping" title="Live rotating station" />
+                      </div>
+                      <h2 className="text-xl font-heading font-bold text-ink mt-0.5">{activePort.name}</h2>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowFullGlobe(true)}
+                        className="hidden lg:flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-border bg-surface text-ink-muted hover:text-ink hover:bg-surface-raised transition-colors"
+                        title="Expand Terra Dusk 3D globe view"
+                      >
+                        <Globe className="h-3 w-3 text-secondary" />
+                        <span>Orbit</span>
+                      </button>
+                      <RiskBadge level={activePort.level} size="md" />
+                    </div>
+                  </div>
+
+                  {/* SeaState Live Animated Wave */}
+                  <div className="rounded-xl overflow-hidden border border-border bg-surface-raised">
+                    <SeaState
+                      waveHeightM={activePort.waveHeightM}
+                      wavePeriodS={activePort.wavePeriodS}
+                      swellHeightM={activePort.swellHeightM}
+                      swellPeriodS={activePort.swellPeriodS}
+                      windKmh={activePort.windKmh}
+                      portName={activePort.name}
+                      dataAgeMinutes={activePort.dataAgeMinutes}
+                      validWindow={activePort.validWindow}
+                      height={150}
+                    />
+                  </div>
+
+                  {/* Metric Capsules */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 rounded-xl bg-surface-raised border border-border flex flex-col gap-0.5">
+                      <span className="text-ink-muted font-medium">Significant Wave</span>
+                      <span className="font-mono text-ink font-semibold text-sm">
+                        {formatWaveHeight(activePort.waveHeightM)} ({activePort.wavePeriodS}s)
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-surface-raised border border-border flex flex-col gap-0.5">
+                      <span className="text-ink-muted font-medium">Sustained Wind</span>
+                      <span className="font-mono text-ink font-semibold text-sm">
+                        {formatWindSpeed(activePort.windKmh)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Station Selector Chips */}
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-[11px] text-ink-muted mb-2 font-medium">Switch live sample harbour:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {SAMPLE_PORTS_FALLBACK.map((port, idx) => (
+                        <button
+                          key={port.slug}
+                          onClick={() => {
+                            setUserInteracted(true);
+                            setActivePortIndex(idx);
+                          }}
+                          className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
+                            activePortIndex === idx
+                              ? "bg-primary text-white font-semibold shadow-xs"
+                              : "bg-surface-raised hover:bg-water text-ink"
+                          }`}
+                        >
+                          {port.name.split(" ")[0]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 text-right">
+                    <Link
+                      to={`/ports/${activePort.slug}`}
+                      className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors"
                     >
-                      {port.name.split(" ")[0]}
-                    </button>
-                  ))}
+                      View full 48h charts for {activePort.name} &rarr;
+                    </Link>
+                  </div>
                 </div>
-              </div>
-
-              <div className="pt-2 text-right">
-                <Link
-                  to={`/ports/${activePort.slug}`}
-                  className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors"
-                >
-                  View full 48h charts for {activePort.name} &rarr;
-                </Link>
-              </div>
+              )}
             </div>
           </div>
 
