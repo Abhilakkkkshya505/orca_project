@@ -18,6 +18,8 @@ _retry_session = retry(_cache_session, retries=5, backoff_factor=0.2)
 _client = openmeteo_requests.Client(session=_retry_session)
 
 OPEN_METEO_MARINE_URL = "https://marine-api.open-meteo.com/v1/marine"
+OPEN_METEO_WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+
 
 
 def get_douglas_state(wave_height: float | None) -> tuple[int, str]:
@@ -95,6 +97,30 @@ def fetch_openmeteo_marine_telemetry(lat: float, lon: float, forecast_days: int 
         hourly_points = []
         cross_sea_count = 0
 
+        # 2. Also fetch atmospheric weather (temperature, humidity, precipitation, wind)
+        weather_params = {
+            "latitude": round(lat, 6),
+            "longitude": round(lon, 6),
+            "hourly": ["temperature_2m", "precipitation", "wind_speed_10m"],
+            "current": ["temperature_2m", "relative_humidity_2m"],
+            "forecast_days": min(max(int(forecast_days), 1), 7),
+        }
+        v_temps, v_rains, v_winds = [], [], []
+        curr_temp, curr_humidity = None, None
+        try:
+            w_responses = _client.weather_api(OPEN_METEO_WEATHER_URL, params=weather_params)
+            if w_responses:
+                w_resp = w_responses[0]
+                if w_resp.Current():
+                    curr_temp = round(float(w_resp.Current().Variables(0).Value()), 1)
+                    curr_humidity = round(float(w_resp.Current().Variables(1).Value()), 1)
+                w_hourly = w_resp.Hourly()
+                v_temps = w_hourly.Variables(0).ValuesAsNumpy()
+                v_rains = w_hourly.Variables(1).ValuesAsNumpy()
+                v_winds = w_hourly.Variables(2).ValuesAsNumpy()
+        except Exception as we:
+            logger.warning(f"weather_fetch_warning: {we}")
+
         for i, dt in enumerate(date_range):
             wh = float(v_wave_height[i]) if i < len(v_wave_height) and not np.isnan(v_wave_height[i]) else None
             wdir = float(v_wave_dir[i]) if i < len(v_wave_dir) and not np.isnan(v_wave_dir[i]) else None
@@ -103,6 +129,10 @@ def fetch_openmeteo_marine_telemetry(lat: float, lon: float, forecast_days: int 
             wwper = float(v_wind_wave_period[i]) if i < len(v_wind_wave_period) and not np.isnan(v_wind_wave_period[i]) else None
             sw2 = float(v_secondary_swell[i]) if i < len(v_secondary_swell) and not np.isnan(v_secondary_swell[i]) else None
             slmsl = float(v_sea_level_msl[i]) if i < len(v_sea_level_msl) and not np.isnan(v_sea_level_msl[i]) else None
+
+            temp_c = float(v_temps[i]) if i < len(v_temps) and not np.isnan(v_temps[i]) else None
+            rain_mm = float(v_rains[i]) if i < len(v_rains) and not np.isnan(v_rains[i]) else None
+            wind_kmh = float(v_winds[i]) if i < len(v_winds) and not np.isnan(v_winds[i]) else None
 
             scale, cond = get_douglas_state(wh)
             cross_sea = bool(sw2 and wwh and sw2 >= 1.0 and wwh >= 1.0)
@@ -121,15 +151,25 @@ def fetch_openmeteo_marine_telemetry(lat: float, lon: float, forecast_days: int 
                 "wind_wave_period_s": round(wwper, 1) if wwper is not None else None,
                 "secondary_swell_m": round(sw2, 2) if sw2 is not None else None,
                 "sea_level_msl_m": round(slmsl, 2) if slmsl is not None else None,
+                "temperature_c": round(temp_c, 1) if temp_c is not None else None,
+                "precipitation_mm": round(rain_mm, 1) if rain_mm is not None else None,
+                "wind_speed_kmh": round(wind_kmh, 1) if wind_kmh is not None else None,
                 "douglas_scale": scale,
                 "sea_condition": cond,
                 "cross_sea_warning": cross_sea,
             })
 
         current_pt = hourly_points[0] if hourly_points else None
+        if current_pt:
+            if curr_temp is not None:
+                current_pt["temperature_c"] = curr_temp
+            if curr_humidity is not None:
+                current_pt["relative_humidity_pct"] = curr_humidity
+
         valid_whs = [p["wave_height_m"] for p in hourly_points if p["wave_height_m"] is not None]
         valid_sls = [p["sea_level_msl_m"] for p in hourly_points if p["sea_level_msl_m"] is not None]
         valid_sws = [p["secondary_swell_m"] for p in hourly_points if p["secondary_swell_m"] is not None]
+
 
         return {
             "query": {

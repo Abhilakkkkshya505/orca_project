@@ -73,13 +73,15 @@ class Orchestrator:
         }
         intent: Intent = self.llm_client.extract_intent(user_query, context=context)
 
-        # Check for Out of Scope / Adversarial / Injections (Part C7)
+        # Check for Out of Scope / General Chat / Inquiries
         if intent.task == "other":
             yield {
                 "event": "status",
-                "data": {"step": "scoped_response", "label": "Evaluating maritime scope..."},
+                "data": {"step": "assistant_reasoning", "label": "Consulting ORCA AI Assistant (powered by Groq)..."},
             }
-            reply_text = render_out_of_scope_reply()
+            reply_text = self.llm_client.generate_chat_reply(user_query, context=context)
+            if not reply_text:
+                reply_text = render_out_of_scope_reply()
             for word in reply_text.split(" "):
                 yield {"event": "token", "data": {"text": word + " "}}
             yield {
@@ -87,6 +89,7 @@ class Orchestrator:
                 "data": {"intent": intent.model_dump(mode="json"), "fallback": False},
             }
             return
+
 
         # Check for Glossary Explanation (Part C5)
         if intent.task == "explain_term":
@@ -98,7 +101,12 @@ class Orchestrator:
             if entry:
                 prose = f"**{entry['term']}**\n\n{entry['definition']}\n\n*Impact for mariners:* {entry['practical_impact']}\n\n*Source:* {entry['citation']}"
             else:
-                prose = "Glossary entry not found. Please ask about significant wave height, swell, steepness, Beaufort scale, or ORCA safety levels."
+                groq_reply = self.llm_client.generate_chat_reply(user_query, context=context)
+                if groq_reply:
+                    prose = groq_reply
+                else:
+                    prose = "Glossary entry not found. Please ask about significant wave height, swell, steepness, Beaufort scale, or ORCA safety levels."
+
 
             for word in prose.split(" "):
                 yield {"event": "token", "data": {"text": word + " "}}
@@ -154,12 +162,51 @@ class Orchestrator:
         lon = primary_place.lon
         location_name = primary_place.text
 
-        # Verify coordinates from database if slug present
-        if primary_place.port_slug and (lat is None or lon is None):
-            port = Port.objects.filter(slug=primary_place.port_slug).first()
-            if port:
-                lat, lon = port.lat, port.lon
-                location_name = port.name
+        # Verify coordinates from database if slug or place text present
+        if lat is None or lon is None:
+            if primary_place.port_slug:
+                port = Port.objects.filter(slug=primary_place.port_slug).first()
+                if port:
+                    lat, lon = port.lat, port.lon
+                    location_name = port.name
+            if (lat is None or lon is None) and primary_place.text:
+                from apps.agents.parser import resolve_port_from_db
+                port, _, _ = resolve_port_from_db(primary_place.text)
+                if port:
+                    lat, lon = port.lat, port.lon
+                    location_name = port.name
+                    primary_place.port_slug = port.slug
+
+        # Fallback to query context location if provided
+        if (lat is None or lon is None) and location and isinstance(location, dict):
+            if "lat" in location and "lon" in location:
+                try:
+                    lat = float(location["lat"])
+                    lon = float(location["lon"])
+                except (ValueError, TypeError):
+                    pass
+
+        # Fallback to known Indian coastal coordinates if DB unseeded
+        if lat is None or lon is None:
+            KNOWN_COORDINATES = {
+                "kochi": (9.967, 76.242, "Kochi (Cochin)"),
+                "cochin": (9.967, 76.242, "Kochi (Cochin)"),
+                "mumbai": (18.940, 72.840, "Mumbai (Bombay)"),
+                "chennai": (13.084, 80.292, "Chennai (Madras)"),
+                "visakhapatnam": (17.686, 83.218, "Visakhapatnam (Vizag)"),
+                "paradip": (20.316, 86.611, "Paradip"),
+                "kandla": (23.003, 70.219, "Kandla"),
+                "kolkata": (22.572, 88.363, "Kolkata (Calcutta)"),
+                "mangalore": (12.914, 74.856, "New Mangalore"),
+                "tuticorin": (8.764, 78.134, "V.O. Chidambaranar (Tuticorin)"),
+                "mormugao": (15.416, 73.800, "Mormugao (Goa)"),
+            }
+            from apps.ports.normalisation import to_ascii
+            from apps.agents.parser import COMMON_TRANSLITERATIONS
+            stem = COMMON_TRANSLITERATIONS.get(to_ascii(primary_place.text).lower(), to_ascii(primary_place.text).lower())
+            if stem in KNOWN_COORDINATES:
+                lat, lon, def_name = KNOWN_COORDINATES[stem]
+                location_name = def_name
 
         if lat is None or lon is None:
             yield {"event": "error", "data": {"code": "unresolved_location", "message": f"Could not determine sea coordinates for {location_name}."}}

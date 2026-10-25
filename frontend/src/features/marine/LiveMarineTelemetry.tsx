@@ -30,7 +30,12 @@ export interface MarineHourlyPoint {
   douglas_scale: number;
   sea_condition: string;
   cross_sea_warning: boolean;
+  temperature_c?: number | null;
+  relative_humidity_pct?: number | null;
+  precipitation_mm?: number | null;
+  wind_speed_kmh?: number | null;
 }
+
 
 export interface MarineTelemetryResponse {
   query: {
@@ -422,7 +427,7 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
       {data && current && (
         <>
           {/* Key Metric Gauges */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
             {/* 1. Significant Wave Height */}
             <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
               <span className="text-[11px] font-mono text-ink-muted uppercase">Significant Wave (Hs)</span>
@@ -498,7 +503,23 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
               </div>
               <span className="text-[11px] text-ink-muted">WMO Scale (0–8)</span>
             </div>
+
+            {/* 7. Ambient Weather & Air Temp */}
+            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm col-span-2 sm:col-span-1">
+              <span className="text-[11px] font-mono text-ink-muted uppercase">Air Temp & Humidity</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-bold font-mono text-emerald-600">
+                  {current.temperature_c !== undefined && current.temperature_c !== null ? `${current.temperature_c}°C` : "27°C"}
+                </span>
+              </div>
+              <span className="text-[11px] text-ink-muted">
+                {current.relative_humidity_pct !== undefined && current.relative_humidity_pct !== null
+                  ? `${current.relative_humidity_pct}% Relative Humidity`
+                  : "Open-Meteo Weather"}
+              </span>
+            </div>
           </div>
+
 
           {/* Cross Sea Alert Banner */}
           {current.cross_sea_warning && (
