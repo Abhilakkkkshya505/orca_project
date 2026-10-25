@@ -45,8 +45,8 @@ export const RootLayout: React.FC = () => {
             scale={2.2}
             intensity={0.8}
             filmThickness={1.2}
-            colorCore={resolvedTheme === "dark" ? "#0284C7" : "#38BDF8"}
-            colorFringe={resolvedTheme === "dark" ? "#2DD4BF" : "#0D9488"}
+            colorCore={resolvedTheme === "dark" ? "#342D66" : "#5A6CB8"}
+            colorFringe={resolvedTheme === "dark" ? "#BA7893" : "#E9B6B5"}
             background="transparent"
             interactive={true}
           />

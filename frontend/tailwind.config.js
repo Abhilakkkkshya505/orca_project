@@ -23,11 +23,15 @@ export default {
         focus: "var(--color-focus)",
         water: "var(--color-water)",
         
-        // Option A Earth & Mineral Tokens
+        // Coastal Sunset Twilight Palette Tokens (#342D66, #5A6CB8, #BA7893, #E9B6B5, #FFD5A4)
+        twilight: "var(--color-twilight)",
+        ocean: "var(--color-ocean)",
+        mauve: "var(--color-mauve)",
+        blush: "var(--color-blush)",
+        sand: "var(--color-sand)",
         forest: "var(--color-forest)",
         sage: "var(--color-sage)",
         bronze: "var(--color-bronze)",
-        sand: "var(--color-sand)",
         stone: "var(--color-stone)",
         charcoal: "var(--color-charcoal)",
         terracotta: "var(--color-terracotta)",

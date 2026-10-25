@@ -1,100 +1,111 @@
-/* Design System Color Tokens — Aesop / Patagonia / Notion Inspired Editorial Palette (Option A) */
+/* Design System Color Tokens — Coastal Sunset Twilight Palette (Dusk at the Beach) */
+/* Palette Swatches: #342D66 (Deep Twilight Indigo), #5A6CB8 (Twilight Blue), #BA7893 (Dusty Mauve), #E9B6B5 (Sunset Blush), #FFD5A4 (Warm Sunset Gold) */
 
 :root,
 [data-theme="light"],
 .light {
-  /* Warm White, Stone, Sand, Charcoal, Forest Green, Muted Sage, Soft Bronze */
-  --color-bg: #FAF8F5;               /* Warm natural alabaster / gallery white ground */
-  --color-bg-alt: #F2EFE9;           /* Pale stone neutral ground */
+  /* Coastal Twilight Sunset Light Mode */
+  --color-bg: #FDF9F7;               /* Delicate dusk porcelain white */
+  --color-bg-alt: #F7EFEA;           /* Soft evening sand blush */
   --color-surface: #FFFFFF;          /* Pure crisp surface canvas */
-  --color-surface-raised: #F5F2EB;   /* Tone-step limestone surface */
-  --color-surface-elevated: #EAE5DC; /* Elevated card / container surface */
-  --color-border: #E5E0D6;           /* Crisp 1px warm stone rule */
-  --color-border-strong: #D1C9BC;    /* Structured architectural boundary */
-  --color-ink: #1A1816;              /* Deep warm charcoal ink */
-  --color-ink-secondary: #423E39;    /* Warm stone slate text */
-  --color-ink-muted: #7A746C;        /* Quiet sand-gray editorial caption */
-  --color-primary: #233F33;          /* Deep Alpine / Heritage Forest Pine */
-  --color-primary-hover: #192E25;    /* Deep woodland shadow */
-  --color-on-primary: #FAF8F5;       /* Warm ivory text on primary */
-  --color-secondary: #8A6F4D;        /* Soft Architectural Bronze / Ochre */
-  --color-accent: #EBF1ED;           /* Subdued sage wash */
-  --color-focus: #233F33;            /* Focus ring */
-  --color-water: #F4F6F4;            /* Soft mineral mist */
+  --color-surface-raised: #FAF1EC;   /* Subtle sunset glow surface */
+  --color-surface-elevated: #F2E4DE; /* Elevated card surface */
+  --color-border: #EADBDF;           /* Soft twilight dusk hairline */
+  --color-border-strong: #D5BFC7;    /* Defined twilight rule */
+  --color-ink: #252042;              /* Deep Twilight Indigo ink (from #342D66) */
+  --color-ink-secondary: #4A4466;    /* Twilight slate text */
+  --color-ink-muted: #7E7594;        /* Dusty violet-gray editorial caption */
+  --color-primary: #342D66;          /* Deep Twilight Indigo */
+  --color-primary-hover: #26204E;    /* Deep nightfall indigo */
+  --color-on-primary: #FFFFFF;       /* Crisp white on primary */
+  --color-secondary: #5A6CB8;        /* Twilight Cornflower Blue */
+  --color-accent: #E9B6B5;           /* Soft Sunset Blush */
+  --color-focus: #5A6CB8;            /* Twilight Blue focus ring */
+  --color-water: #EBF1FA;            /* Soft coastal twilight wash */
 
-  /* Palette Accents */
-  --color-forest: #233F33;           /* Heritage Forest */
-  --color-sage: #5E7A6C;             /* Muted Sage */
-  --color-bronze: #8A6F4D;           /* Soft Bronze */
-  --color-sand: #EFECE6;             /* Fine Sand */
-  --color-stone: #E5E0D6;            /* Natural Stone */
-  --color-charcoal: #1A1816;         /* Charcoal */
-  --color-terracotta: #944638;       /* Terracotta Brick */
+  /* Named Palette Accents */
+  --color-twilight: #342D66;         /* Deep Twilight Indigo */
+  --color-ocean: #5A6CB8;            /* Twilight Cornflower Blue */
+  --color-mauve: #BA7893;            /* Dusty Rose Mauve */
+  --color-blush: #E9B6B5;            /* Soft Sunset Blush */
+  --color-sand: #FFD5A4;             /* Warm Sunset Apricot Gold */
 
-  /* Shadows — Restrained, architectural hairline, 0 neon blur */
-  --shadow-card-color: rgba(26, 24, 22, 0.04);
+  /* Aliases for semantic & existing markup compatibility */
+  --color-forest: #342D66;           /* Twilight Indigo */
+  --color-sage: #5A6CB8;             /* Twilight Blue */
+  --color-bronze: #BA7893;           /* Dusty Mauve */
+  --color-charcoal: #252042;         /* Deep Twilight */
+  --color-terracotta: #BA7893;       /* Dusty Mauve */
+
+  /* Shadows — Soft twilight card shadow */
+  --shadow-card-color: rgba(52, 45, 102, 0.05);
   --shadow-glow-color: transparent;
 
-  /* Semantic Risk Tokens — Restrained Natural Earth & Mineral Tones */
-  --color-risk-safe: #2B5E46;
-  --color-risk-safe-bg: #EFF6F1;
-  --color-risk-safe-border: #C9DFD1;
-  --color-risk-caution: #8E5B23;
-  --color-risk-caution-bg: #FBF6EE;
-  --color-risk-caution-border: #E8D5BC;
-  --color-risk-unsafe: #8C3329;
-  --color-risk-unsafe-bg: #FAF0EE;
-  --color-risk-unsafe-border: #E8C5C0;
-  --color-risk-unknown: #5C564E;
-  --color-risk-unknown-bg: #F4F2EE;
-  --color-risk-unknown-border: #DCD7CE;
+  /* Semantic Risk Tokens Harmonized with Sunset Palette */
+  --color-risk-safe: #2A6B53;
+  --color-risk-safe-bg: #EEF8F3;
+  --color-risk-safe-border: #C1E4D3;
+  --color-risk-caution: #B87333;
+  --color-risk-caution-bg: #FFF5EB;
+  --color-risk-caution-border: #FFD5A4;
+  --color-risk-unsafe: #A83E58;
+  --color-risk-unsafe-bg: #FDF0F3;
+  --color-risk-unsafe-border: #E9B6B5;
+  --color-risk-unknown: #635C7A;
+  --color-risk-unknown-bg: #F3F1F7;
+  --color-risk-unknown-border: #DCD7E7;
 }
 
 [data-theme="dark"],
 .dark {
-  /* Rich Matte Charcoal & Deep Graphite Pine (Dark) */
-  --color-bg: #111312;               /* Matte Charcoal ground, never blue or muddy */
-  --color-bg-alt: #161917;           /* Midnight stone ground */
-  --color-surface: #1B1E1C;          /* Warm stone slate surface */
-  --color-surface-raised: #222624;   /* Tone-step raised panel */
-  --color-surface-elevated: #2A302D; /* Elevated panel */
-  --color-border: rgba(235, 230, 220, 0.09); /* Crisp translucent hairline border */
-  --color-border-strong: rgba(235, 230, 220, 0.16);
-  --color-ink: #F5F2EB;              /* Warm ivory moonlight text */
-  --color-ink-secondary: #D5CEBF;    /* Clean warm sand stone */
-  --color-ink-muted: #928B7E;        /* Quiet taupe editorial caption */
-  --color-primary: #6F9581;          /* Crisp Heritage Sage / Forest highlight */
-  --color-primary-hover: #8BB19D;    /* Gentle sage hover */
-  --color-on-primary: #111312;       /* Deep slate on primary */
-  --color-secondary: #C7A275;        /* Soft Antique Bronze */
-  --color-accent: #1E2521;           /* Deep matte pine wash */
-  --color-focus: #6F9581;            /* Crisp focus ring */
-  --color-water: #181C1A;            /* Mineral dark wash */
+  /* Coastal Twilight Sunset Dark Mode (Deep Nocturnal Indigo & Sunset Accents) */
+  --color-bg: #1A172B;               /* Deepest nocturnal indigo ground */
+  --color-bg-alt: #201D36;           /* Twilight midnight ground */
+  --color-surface: #272342;          /* Rich twilight slate surface */
+  --color-surface-raised: #312C52;   /* Tone-step raised panel */
+  --color-surface-elevated: #3C3663; /* Elevated panel */
+  --color-border: rgba(233, 182, 181, 0.12); /* Translucent sunset blush hairline */
+  --color-border-strong: rgba(233, 182, 181, 0.22);
+  --color-ink: #FDF9F7;              /* Twilight ivory moonlight text */
+  --color-ink-secondary: #DDD5E8;    /* Soft lavender mist */
+  --color-ink-muted: #9E95B3;        /* Quiet dusk mauve caption */
+  --color-primary: #7686D4;          /* Luminous Twilight Cornflower Blue (from #5A6CB8) */
+  --color-primary-hover: #909FE4;    /* Soft twilight glow hover */
+  --color-on-primary: #1A172B;       /* Deep slate on luminous primary */
+  --color-secondary: #FFD5A4;        /* Warm Sunset Gold accent */
+  --color-accent: #BA7893;           /* Dusty Rose Mauve */
+  --color-focus: #7686D4;            /* Twilight Blue focus ring */
+  --color-water: #1F1B36;            /* Deep ocean wash */
 
-  /* Palette Accents (Dark) */
-  --color-forest: #6F9581;
-  --color-sage: #8FAEA0;
-  --color-bronze: #C7A275;
-  --color-sand: #2A302D;
-  --color-stone: #222624;
-  --color-charcoal: #F5F2EB;
-  --color-terracotta: #D66254;
+  /* Named Palette Accents (Dark) */
+  --color-twilight: #342D66;
+  --color-ocean: #7686D4;
+  --color-mauve: #D48EA6;
+  --color-blush: #E9B6B5;
+  --color-sand: #FFD5A4;
+
+  /* Aliases */
+  --color-forest: #7686D4;
+  --color-sage: #8F9DE3;
+  --color-bronze: #FFD5A4;
+  --color-charcoal: #FDF9F7;
+  --color-terracotta: #D48EA6;
 
   /* Shadows */
-  --shadow-card-color: rgba(0, 0, 0, 0.35);
+  --shadow-card-color: rgba(15, 12, 28, 0.45);
   --shadow-glow-color: transparent;
 
   /* Semantic Risk Tokens (Dark Semantic) */
-  --color-risk-safe: #5DB085;
-  --color-risk-safe-bg: rgba(43, 94, 70, 0.18);
-  --color-risk-safe-border: rgba(93, 176, 133, 0.28);
-  --color-risk-caution: #D99548;
-  --color-risk-caution-bg: rgba(142, 91, 35, 0.18);
-  --color-risk-caution-border: rgba(217, 149, 72, 0.28);
-  --color-risk-unsafe: #D66254;
-  --color-risk-unsafe-bg: rgba(140, 51, 41, 0.18);
-  --color-risk-unsafe-border: rgba(214, 98, 84, 0.28);
-  --color-risk-unknown: #9C958B;
-  --color-risk-unknown-bg: rgba(92, 86, 78, 0.18);
-  --color-risk-unknown-border: rgba(156, 149, 139, 0.28);
+  --color-risk-safe: #57BF93;
+  --color-risk-safe-bg: rgba(42, 107, 83, 0.22);
+  --color-risk-safe-border: rgba(87, 191, 147, 0.32);
+  --color-risk-caution: #FFC078;
+  --color-risk-caution-bg: rgba(184, 115, 51, 0.22);
+  --color-risk-caution-border: rgba(255, 192, 120, 0.32);
+  --color-risk-unsafe: #E06C88;
+  --color-risk-unsafe-bg: rgba(168, 62, 88, 0.22);
+  --color-risk-unsafe-border: rgba(224, 108, 136, 0.32);
+  --color-risk-unknown: #A8A0BF;
+  --color-risk-unknown-bg: rgba(99, 92, 122, 0.22);
+  --color-risk-unknown-border: rgba(168, 160, 191, 0.32);
 }

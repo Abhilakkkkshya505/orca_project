@@ -116,8 +116,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           scale={2.0}
           intensity={0.75}
           filmThickness={1.1}
-          colorCore={resolvedTheme === "dark" ? "#0284C7" : "#38BDF8"}
-          colorFringe={resolvedTheme === "dark" ? "#2DD4BF" : "#0D9488"}
+          colorCore={resolvedTheme === "dark" ? "#342D66" : "#5A6CB8"}
+          colorFringe={resolvedTheme === "dark" ? "#BA7893" : "#FFD5A4"}
           background="transparent"
           interactive={true}
         />
