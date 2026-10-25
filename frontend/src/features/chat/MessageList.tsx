@@ -3,7 +3,9 @@ import type { ChatMessage, ClarificationOptionData } from "./useChatStream";
 import { RiskCard } from "./RiskCard";
 import { ComparisonCard } from "./ComparisonCard";
 import { ClarificationOptions } from "./ClarificationOptions";
-import { AlertCircle, RefreshCw, Ship } from "lucide-react";
+import { AlertCircle, RefreshCw, Compass } from "lucide-react";
+import { useTheme } from "@/lib/theme/ThemeContext";
+import GlobeStudy from "@/components/originkit/ui/globe-study";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -28,6 +30,8 @@ export const MessageList: React.FC<MessageListProps> = ({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, currentStatus]);
 
+  const { resolvedTheme } = useTheme();
+
   return (
     <div
       role="log"
@@ -35,14 +39,40 @@ export const MessageList: React.FC<MessageListProps> = ({
       className="flex-1 overflow-y-auto p-4 flex flex-col gap-5 text-left"
     >
       {messages.length === 0 ? (
-        <div className="my-auto text-center p-6 text-ink-muted flex flex-col items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-water text-primary flex items-center justify-center">
-            <Ship className="h-6 w-6" />
+        <div className="my-auto text-center p-4 text-ink-muted flex flex-col items-center gap-4">
+          {/* Originkit Interactive 3D Globe Study */}
+          <div className="w-full max-w-[280px] h-[250px] relative rounded-2xl overflow-hidden border border-border bg-surface-raised/40 shadow-card flex items-center justify-center">
+            <GlobeStudy
+              background="transparent"
+              baseColor={resolvedTheme === "dark" ? "#7CC8FF" : "#0F4C81"}
+              phrase="orcamarineintelligenceglobalsafetycoastaltelemetry"
+              density={48}
+              glyphSize={85}
+              speed={75}
+              hover={100}
+              globe={{ radius: 108, drift: 180, letters: 100 }}
+              pointer={{ zoom: 100, light: 120, pins: 8 }}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                minWidth: 0,
+                minHeight: 0,
+              }}
+            />
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none px-2.5 py-0.5 rounded-full bg-surface/85 backdrop-blur-xs border border-border text-[10px] font-mono text-ink-muted whitespace-nowrap shadow-xs">
+              Drag to spin • Click to drop pin
+            </div>
           </div>
+
           <div>
-            <p className="font-semibold text-sm text-ink">Coastal Safety & Marine Assistant</p>
-            <p className="text-xs mt-1 max-w-sm">
-              Ask about conditions off any coastal port, wave forecasts, or likely fishing zones. The reasoning engine evaluates deterministic safety limits.
+            <p className="font-semibold text-sm text-ink flex items-center justify-center gap-1.5">
+              <Compass className="h-4 w-4 text-primary" />
+              <span>ORCA Coastal Marine Assistant</span>
+            </p>
+            <p className="text-xs mt-1 max-w-sm text-ink-muted leading-relaxed">
+              Ask about wave forecasts, safe sailing windows, or fishing zones. Select any port or drop coordinates directly on the globe and world map.
             </p>
           </div>
         </div>
