@@ -288,17 +288,20 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
       {/* Header & Meta */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
+          <div className="flex items-start gap-3">
+            <span className="p-2 rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
               <Waves className="h-5 w-5" />
             </span>
-            <div>
-              <h2 className="font-bold text-base sm:text-lg tracking-tight flex items-center gap-2">
-                {title}
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-medium">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2 className="font-bold text-base sm:text-lg tracking-tight text-ink">
+                  {title}
+                </h2>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 whitespace-nowrap shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                   LIVE API
                 </span>
-              </h2>
+              </div>
               <p className="text-xs text-ink-muted">
                 Direct FlatBuffer telemetry feed from Open-Meteo Marine (ECMWF & Copernicus)
               </p>
@@ -427,92 +430,92 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
       {data && current && (
         <>
           {/* Key Metric Gauges */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
             {/* 1. Significant Wave Height */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Significant Wave (Hs)</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-primary">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Significant Wave (Hs)</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-primary whitespace-nowrap">
                   {current.wave_height_m !== null ? `${current.wave_height_m}m` : "—"}
                 </span>
               </div>
-              <span className="text-[11px] text-ink font-medium truncate">{current.sea_condition}</span>
+              <span className="text-[11px] text-ink font-medium truncate" title={current.sea_condition}>{current.sea_condition}</span>
             </div>
 
             {/* 2. Wave Direction & Bearing */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Wave Direction</span>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold font-mono text-ink">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Wave Direction</span>
+              <div className="flex items-center gap-2 my-0.5">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-ink whitespace-nowrap">
                   {current.wave_direction_deg !== null ? `${current.wave_direction_deg}°` : "—"}
                 </span>
                 {current.wave_direction_deg !== null && (
                   <Compass
-                    className="h-5 w-5 text-primary transition-transform"
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0 transition-transform"
                     style={{ transform: `rotate(${current.wave_direction_deg}deg)` }}
                   />
                 )}
               </div>
-              <span className="text-[11px] text-ink-muted font-mono">Dominant Swell Vector</span>
+              <span className="text-[11px] text-ink-muted font-mono truncate">Dominant Swell Vector</span>
             </div>
 
             {/* 3. Wind Wave Component */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Wind Sea Waves</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-ink">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Wind Sea Waves</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-ink whitespace-nowrap">
                   {current.wind_wave_height_m !== null ? `${current.wind_wave_height_m}m` : "—"}
                 </span>
               </div>
-              <span className="text-[11px] text-ink-muted">
+              <span className="text-[11px] text-ink-muted truncate">
                 Period: {current.wind_wave_period_s !== null ? `${current.wind_wave_period_s}s` : "—"}
               </span>
             </div>
 
             {/* 4. Secondary Swell */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Secondary Swell</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-sky-600">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Secondary Swell</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-sky-600 dark:text-sky-300 whitespace-nowrap">
                   {current.secondary_swell_m !== null ? `${current.secondary_swell_m}m` : "—"}
                 </span>
               </div>
-              <span className="text-[11px] text-ink-muted">Deepwater Swell</span>
+              <span className="text-[11px] text-ink-muted truncate">Deepwater Swell</span>
             </div>
 
             {/* 5. Sea Level Surge (MSL) */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Sea Level (MSL)</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-indigo-600">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Sea Level (MSL)</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-xl sm:text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-300 whitespace-nowrap">
                   {current.sea_level_msl_m !== null
                     ? `${current.sea_level_msl_m >= 0 ? "+" : ""}${current.sea_level_msl_m}m`
                     : "—"}
                 </span>
               </div>
-              <span className="text-[11px] text-ink-muted">Tidal Deviation</span>
+              <span className="text-[11px] text-ink-muted truncate">Tidal Deviation</span>
             </div>
 
             {/* 6. Douglas Sea Scale */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Douglas Scale</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-amber-600">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Douglas Scale</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-lg sm:text-xl font-bold font-mono text-amber-600 dark:text-amber-400 whitespace-nowrap">
                   Grade {current.douglas_scale}
                 </span>
               </div>
-              <span className="text-[11px] text-ink-muted">WMO Scale (0–8)</span>
+              <span className="text-[11px] text-ink-muted truncate">WMO Scale (0–8)</span>
             </div>
 
             {/* 7. Ambient Weather & Air Temp */}
-            <div className="p-3.5 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm col-span-2 sm:col-span-1">
-              <span className="text-[11px] font-mono text-ink-muted uppercase">Air Temp & Humidity</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold font-mono text-emerald-600">
+            <div className="p-3 bg-surface-raised rounded-xl border border-border flex flex-col justify-between gap-1 shadow-sm min-w-0 col-span-2 sm:col-span-1">
+              <span className="text-[10px] sm:text-[11px] font-mono text-ink-muted uppercase tracking-wider truncate">Air Temp & Humidity</span>
+              <div className="flex items-baseline gap-1 my-0.5">
+                <span className="text-lg sm:text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                   {current.temperature_c !== undefined && current.temperature_c !== null ? `${current.temperature_c}°C` : "27°C"}
                 </span>
               </div>
-              <span className="text-[11px] text-ink-muted">
+              <span className="text-[11px] text-ink-muted truncate" title={current.relative_humidity_pct !== undefined && current.relative_humidity_pct !== null ? `${current.relative_humidity_pct}% Relative Humidity` : "Open-Meteo Weather"}>
                 {current.relative_humidity_pct !== undefined && current.relative_humidity_pct !== null
                   ? `${current.relative_humidity_pct}% Relative Humidity`
                   : "Open-Meteo Weather"}
@@ -696,10 +699,10 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
                   <div className="text-primary font-semibold">
                     Wave: {chartPoints[hoveredIndex].wave_height_m}m ({chartPoints[hoveredIndex].sea_condition})
                   </div>
-                  <div className="text-sky-600">
+                  <div className="text-sky-600 dark:text-sky-300 font-medium">
                     Swell: {chartPoints[hoveredIndex].secondary_swell_m}m
                   </div>
-                  <div className="text-indigo-600">
+                  <div className="text-indigo-600 dark:text-indigo-300 font-medium">
                     Surge: {chartPoints[hoveredIndex].sea_level_msl_m}m
                   </div>
                   <div className="text-ink-muted">
@@ -801,22 +804,22 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
                           <td className="px-3 py-1.5 text-ink-muted">
                             {pt.wind_wave_period_s !== null ? `${pt.wind_wave_period_s}s` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-sky-600 font-medium">
+                          <td className="px-3 py-1.5 text-sky-600 dark:text-sky-300 font-medium">
                             {pt.secondary_swell_m !== null ? `${pt.secondary_swell_m}m` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-indigo-600 font-medium">
+                          <td className="px-3 py-1.5 text-indigo-600 dark:text-indigo-300 font-medium">
                             {pt.sea_level_msl_m !== null ? `${pt.sea_level_msl_m}m` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-emerald-600 font-medium">
+                          <td className="px-3 py-1.5 text-emerald-600 dark:text-emerald-400 font-medium">
                             {pt.temperature_c !== undefined && pt.temperature_c !== null ? `${pt.temperature_c}°C` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-blue-500 font-medium">
+                          <td className="px-3 py-1.5 text-blue-500 dark:text-blue-400 font-medium">
                             {pt.precipitation_mm !== undefined && pt.precipitation_mm !== null ? `${pt.precipitation_mm}mm` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-teal-600 font-medium">
+                          <td className="px-3 py-1.5 text-teal-600 dark:text-teal-300 font-medium">
                             {pt.wind_speed_kmh !== undefined && pt.wind_speed_kmh !== null ? `${pt.wind_speed_kmh}km/h` : "—"}
                           </td>
-                          <td className="px-3 py-1.5 text-amber-600 font-semibold">
+                          <td className="px-3 py-1.5 text-amber-600 dark:text-amber-400 font-semibold">
                             Scale {pt.douglas_scale}
                           </td>
                           <td className="px-3 py-1.5 font-sans text-ink-muted">

@@ -154,7 +154,7 @@ export const ExplorePage: React.FC = () => {
       {/* Slide-over Drawer for Live Open-Meteo Marine Telemetry */}
       {showTelemetryDrawer && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity">
-          <div className="w-full max-w-3xl h-full bg-surface shadow-2xl flex flex-col border-l border-border overflow-hidden animate-in slide-in-from-right duration-200">
+          <div className="w-full max-w-4xl lg:max-w-5xl h-full bg-surface shadow-2xl flex flex-col border-l border-border overflow-hidden animate-in slide-in-from-right duration-200">
             {/* Drawer Header */}
             <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-surface-raised">
               <div className="flex items-center gap-2">
