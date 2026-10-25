@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 
 export const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -110,9 +111,30 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20">
+    <div className="relative min-h-screen flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20 overflow-hidden">
+      {/* Originkit Glimmer Vale Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-65 dark:opacity-80 overflow-hidden">
+        <GlimmerVale
+          speed={30}
+          scale={85}
+          density={45}
+          sparkle={50}
+          skyTop="#1c1938"
+          skyHorizon="#3d3768"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            minWidth: 0,
+            minHeight: 0,
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-bg/50 pointer-events-none" />
+      </div>
+
       {/* Brand Header */}
-      <div className="w-full max-w-md mb-6 text-center space-y-1.5">
+      <div className="relative z-10 w-full max-w-md mb-6 text-center space-y-1.5">
         <Link to="/" className="inline-flex items-center gap-2 group">
           <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
             <Anchor className="h-4 w-4" />
@@ -129,7 +151,7 @@ export const LoginPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="w-full max-w-md bg-surface border border-border rounded-xl p-6 sm:p-7 shadow-xs">
+      <div className="relative z-10 w-full max-w-md bg-surface/90 backdrop-blur-md border border-border rounded-xl p-6 sm:p-7 shadow-xs">
         {serverError && (
           <div
             className="flex items-center gap-2.5 p-3 mb-4 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs"

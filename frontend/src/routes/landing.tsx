@@ -18,6 +18,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
+import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 
 interface SamplePortSummary {
   slug: string;
@@ -187,9 +188,30 @@ export const LandingPage: React.FC = () => {
       </a>
 
       <main id="main-content" className="flex-1 w-full flex flex-col gap-20 sm:gap-28 pb-32">
-        {/* SECTION 1: BESPOKE EDITORIAL HERO */}
+        {/* SECTION 1: BESPOKE EDITORIAL HERO WITH GLIMMER VALE */}
         <section className="relative w-full border-b border-border pt-14 sm:pt-20 pb-20 overflow-hidden bg-surface">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Originkit Glimmer Vale Background */}
+          <div className="absolute inset-0 z-0 pointer-events-none opacity-70 dark:opacity-85 overflow-hidden">
+            <GlimmerVale
+              speed={40}
+              scale={90}
+              density={50}
+              sparkle={55}
+              skyTop="#1c1938"
+              skyHorizon="#3d3768"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                minWidth: 0,
+                minHeight: 0,
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-surface/85 via-surface/65 to-surface pointer-events-none" />
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Editorial Index Eyebrow */}
             <div className="flex items-center justify-between pb-8 mb-8 border-b border-border/70 text-xs font-mono text-ink-muted">
               <span className="tracking-widest uppercase font-medium">01 / Coastal Intelligence & Safety Matrix</span>

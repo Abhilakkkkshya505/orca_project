@@ -79,3 +79,5 @@ infra/cloudflared/*.cert
 
 *.sqlite3
 *.sqlite3-journal
+.originkit/
+
