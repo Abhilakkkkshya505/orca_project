@@ -21,6 +21,7 @@ import {
 import { useMe, useLogout } from "@/features/auth/useMe";
 import { useToast } from "@/components/ui/toast";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import PlinthTally from "@/components/originkit/ui/plinth-tally";
 
 export const Navbar: React.FC = () => {
   const { data: user } = useMe();
@@ -86,10 +87,18 @@ export const Navbar: React.FC = () => {
             <Anchor className="h-5 w-5" />
           </div>
           <div className="flex flex-col text-left">
-            <span className="font-heading font-bold text-lg leading-tight tracking-tight text-ink group-hover:text-primary transition-colors flex items-center gap-1">
-              ORCA
+            <div className="flex items-center gap-1.5">
+              <PlinthTally
+                text="ORCA"
+                size="sm"
+                depth={6}
+                tiltIntensity={12}
+                glow={false}
+                interactive={true}
+                staggerHover={false}
+              />
               <span className="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse" />
-            </span>
+            </div>
             <span className="text-[10px] font-mono text-ink-muted leading-none tracking-wider uppercase font-semibold">
               Ocean Intelligence • SDG 14
             </span>

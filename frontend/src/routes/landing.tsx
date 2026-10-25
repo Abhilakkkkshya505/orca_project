@@ -32,6 +32,7 @@ import {
 import { useTheme } from "@/lib/theme/ThemeContext";
 import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 import TerraDusk from "@/components/originkit/ui/terra-dusk";
+import PlinthTally from "@/components/originkit/ui/plinth-tally";
 
 
 interface SamplePortSummary {
@@ -289,7 +290,20 @@ export const LandingPage: React.FC = () => {
                 <span>Ocean Intelligence Platform • UN SDG 14</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-bold tracking-tight leading-[1.08] text-ink">
+              {/* Originkit Plinth Tally 3D Extruded Monumental Text */}
+              <div className="py-1">
+                <PlinthTally
+                  text="ORCA"
+                  size="hero"
+                  subtitle="Ocean Risk & Coastal Analytics"
+                  depth={18}
+                  tiltIntensity={16}
+                  glow={true}
+                  className="!items-start"
+                />
+              </div>
+
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold tracking-tight leading-[1.12] text-ink">
                 Is it safe to go out? <br />
                 <span className="bg-gradient-to-r from-primary via-sky-500 to-secondary dark:from-[#4DA3FF] dark:via-[#7CC8FF] dark:to-[#7DE2D1] bg-clip-text text-transparent">
                   Ask about any port.
