@@ -116,7 +116,7 @@ export function useChatStream(threadId: string | null) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Accept: "text/event-stream",
+            Accept: "text/event-stream, application/json, */*",
             "X-CSRFToken": csrfToken,
           },
           body: JSON.stringify({

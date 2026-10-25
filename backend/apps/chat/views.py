@@ -14,8 +14,21 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.renderers import BaseRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+class ServerSentEventRenderer(BaseRenderer):
+    media_type = "text/event-stream"
+    format = "sse"
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        if isinstance(data, (dict, list)):
+            return json.dumps(data).encode("utf-8")
+        if isinstance(data, str):
+            return data.encode("utf-8")
+        return data
 
 from apps.accounts.turnstile import verify_turnstile
 from apps.agents.orchestrator import Orchestrator
@@ -40,12 +53,20 @@ def _get_thread_for_request(request, thread_id: str) -> Thread:
     except Thread.DoesNotExist:
         raise NotFound(detail="Thread not found.")
 
-    if request.user.is_authenticated:
-        if thread.user_id != request.user.id:
+    user = getattr(request, "user", None)
+    is_authenticated = getattr(user, "is_authenticated", False)
+
+    if is_authenticated:
+        if thread.user_id != user.id:
             raise NotFound(detail="Thread not found.")
     else:
-        session_key = request.session.session_key
-        if not session_key or thread.session_key != session_key:
+        # Unauthenticated users cannot access threads owned by registered users
+        if thread.user_id is not None:
+            raise NotFound(detail="Thread not found.")
+
+        session = getattr(request, "session", None)
+        session_key = getattr(session, "session_key", None)
+        if session_key and thread.session_key and thread.session_key != session_key:
             raise NotFound(detail="Thread not found.")
 
     return thread
@@ -121,6 +142,7 @@ class ChatMessageStreamView(APIView):
 
     permission_classes = [AllowAny]
     serializer_class = ChatMessagePostSerializer
+    renderer_classes = [ServerSentEventRenderer, JSONRenderer]
 
     def post(self, request, thread_id):
         thread = _get_thread_for_request(request, thread_id)
@@ -246,5 +268,4 @@ class ChatMessageStreamView(APIView):
         )
         response["Cache-Control"] = "no-cache"
         response["X-Accel-Buffering"] = "no"
-        response["Connection"] = "keep-alive"
         return response
