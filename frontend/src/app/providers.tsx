@@ -20,13 +20,16 @@ const queryClient = new QueryClient({
 
 
 import { ToastProvider } from "@/components/ui/toast";
+import { ThemeProvider } from "@/lib/theme/ThemeContext";
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        {children}
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };

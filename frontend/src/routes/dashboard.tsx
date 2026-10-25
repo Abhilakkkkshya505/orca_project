@@ -117,16 +117,16 @@ export const DashboardPage: React.FC = () => {
     <AppShell>
       <div className="flex flex-col gap-8 text-left max-w-7xl mx-auto w-full">
         {/* Hero Command Bar with Ocean Gradient */}
-        <div className="bg-gradient-to-r from-white via-[#F2F8FC] to-[#E1F5FE]/40 border border-[#E5EEF5] rounded-2xl p-6 sm:p-8 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="bg-gradient-to-r from-surface via-surface-raised to-water/40 dark:from-[#132F4C] dark:via-[#173753] dark:to-[#1C3D5A] border border-border rounded-2xl p-6 sm:p-8 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E1F5FE] border border-[#64B5F6]/40 text-[#1E88E5] text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold">
               <span className="h-2 w-2 rounded-full bg-[#2ECC71] animate-pulse" />
               Live Operations Bridge • Telemetry Active
             </div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-[#0F2742]">
+            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-ink">
               Marine Command Center
             </h1>
-            <p className="text-sm text-[#4B6B8A] max-w-2xl leading-relaxed">
+            <p className="text-sm text-ink-muted max-w-2xl leading-relaxed">
               Real-time coastal safety intelligence, high-resolution oceanographic telemetry from Open-Meteo & INCOIS, and automated vessel clearance.
             </p>
           </div>
@@ -138,14 +138,14 @@ export const DashboardPage: React.FC = () => {
               className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
               title="Refresh telemetry"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-[#1E88E5]" : "text-[#4B6B8A]"}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : "text-ink-muted"}`} />
               Sync Feeds
             </button>
             <Link
               to="/locations"
               className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
             >
-              <Plus className="h-3.5 w-3.5 text-[#1E88E5]" />
+              <Plus className="h-3.5 w-3.5 text-primary" />
               Add Waypoint
             </Link>
             <Link
@@ -161,16 +161,16 @@ export const DashboardPage: React.FC = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
-            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
-            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
-            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
+            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
+            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
+            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
+            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="p-5 rounded-2xl bg-[#FEE8E2] text-[#E64A19] border border-[#FF8A65]/30 text-sm flex items-center justify-between">
+          <div className="p-5 rounded-2xl bg-[#FEE8E2] dark:bg-rose-950/30 text-[#E64A19] dark:text-rose-400 border border-[#FF8A65]/30 text-sm flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <span>Failed to synchronize real-time overview metrics. Server may be in maintenance.</span>
@@ -189,100 +189,100 @@ export const DashboardPage: React.FC = () => {
             {/* Top Stat Cards (4 SaaS metrics) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {/* Stat 1: Monitored Stations */}
-              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
+              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                     Monitored Waypoints
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#E1F5FE] text-[#1E88E5] flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                     <MapPin className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-[#0F2742]">
+                  <span className="text-3xl font-heading font-bold text-ink">
                     {data.saved_locations.length}
                   </span>
-                  <span className="text-xs font-medium text-[#1B8A4E] bg-[#E8F8F0] px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
+                  <span className="text-xs font-medium text-[#1B8A4E] dark:text-emerald-400 bg-[#E8F8F0] dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
                     +2 active
                   </span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
                   <span>Targeted coastal stations</span>
-                  <Link to="/locations" className="text-[#1E88E5] hover:underline font-semibold">
+                  <Link to="/locations" className="text-primary hover:underline font-semibold">
                     Manage
                   </Link>
                 </div>
               </div>
 
               {/* Stat 2: Active Advisories */}
-              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#FEF3C7] flex flex-col justify-between">
+              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-amber-400 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                     Official Advisories
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
                     <AlertTriangle className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-[#D97706]">
+                  <span className="text-3xl font-heading font-bold text-amber-500">
                     {data.active_advisories_count}
                   </span>
-                  <span className="text-xs font-medium text-[#4B6B8A]">INCOIS / IMD</span>
+                  <span className="text-xs font-medium text-ink-muted">INCOIS / IMD</span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
                   <span>Maritime coastal warnings</span>
-                  <Link to="/advisories" className="text-[#1E88E5] hover:underline font-semibold">
+                  <Link to="/advisories" className="text-primary hover:underline font-semibold">
                     Review
                   </Link>
                 </div>
               </div>
 
               {/* Stat 3: Alert Triggers */}
-              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
+              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                     Safety Alert Triggers
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#E0F7FA] text-[#00ACC1] flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
                     <Bell className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-[#0F2742]">
+                  <span className="text-3xl font-heading font-bold text-ink">
                     {data.alerts_active_count}
                   </span>
-                  <span className="text-xs font-medium text-[#4B6B8A]">Thresholds Armed</span>
+                  <span className="text-xs font-medium text-ink-muted">Thresholds Armed</span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
                   <span>Wave / wind telemetry watch</span>
-                  <Link to="/alerts" className="text-[#1E88E5] hover:underline font-semibold">
+                  <Link to="/alerts" className="text-primary hover:underline font-semibold">
                     Configure
                   </Link>
                 </div>
               </div>
 
               {/* Stat 4: Deterministic Engine Rating */}
-              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
+              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                     Safety Gate Health
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#E8F8F0] text-[#1B8A4E] flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-[#E8F8F0] dark:bg-emerald-950/40 text-[#1B8A4E] dark:text-emerald-400 flex items-center justify-center">
                     <ShieldCheck className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-[#1B8A4E]">
+                  <span className="text-3xl font-heading font-bold text-[#1B8A4E] dark:text-emerald-400">
                     100%
                   </span>
-                  <span className="text-xs font-medium text-[#1B8A4E] bg-[#E8F8F0] px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
+                  <span className="text-xs font-medium text-[#1B8A4E] dark:text-emerald-400 bg-[#E8F8F0] dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
                     Zero hallucinations
                   </span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
+                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
                   <span>Rule Engine v2.4</span>
-                  <Link to="/how-it-works" className="text-[#1E88E5] hover:underline font-semibold">
+                  <Link to="/how-it-works" className="text-primary hover:underline font-semibold">
                     Audit Logic
                   </Link>
                 </div>
@@ -334,21 +334,21 @@ export const DashboardPage: React.FC = () => {
 
                       return (
                         <div key={idx} className="flex flex-col items-center gap-2 group">
-                          <span className="text-xs font-semibold text-[#0F2742] group-hover:text-[#1E88E5] transition-colors">
+                          <span className="text-xs font-semibold text-ink group-hover:text-primary transition-colors">
                             {item.day}
                           </span>
-                          <span className="text-[11px] font-mono text-[#4B6B8A]">{item.wave}m</span>
+                          <span className="text-[11px] font-mono text-ink-muted">{item.wave}m</span>
                           
                           {/* Visual vertical bar */}
-                          <div className="w-full max-w-[36px] h-28 bg-[#F2F8FC] rounded-xl relative flex items-end p-1 overflow-hidden border border-[#E5EEF5]">
+                          <div className="w-full max-w-[36px] h-28 bg-surface-raised rounded-xl relative flex items-end p-1 overflow-hidden border border-border">
                             <div
                               style={{ height: `${waveHeightPercent}%` }}
                               className={`w-full rounded-lg transition-all duration-500 shadow-xs ${barColor}`}
                             />
                           </div>
 
-                          <div className="flex items-center gap-1 text-[11px] text-[#4B6B8A]">
-                            <Wind className="h-3 w-3 text-[#1E88E5]" />
+                          <div className="flex items-center gap-1 text-[11px] text-ink-muted">
+                            <Wind className="h-3 w-3 text-primary" />
                             <span>{item.wind}kt</span>
                           </div>
                         </div>
@@ -357,16 +357,16 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   {/* Douglas Sea State Scale Reference */}
-                  <div className="bg-[#F2F8FC] border border-[#E5EEF5] rounded-xl p-3 flex flex-wrap items-center justify-between text-xs text-[#4B6B8A] gap-2">
-                    <span className="font-semibold text-[#0F2742]">Douglas Scale Thresholds:</span>
+                  <div className="bg-surface-raised border border-border rounded-xl p-3 flex flex-wrap items-center justify-between text-xs text-ink-muted gap-2">
+                    <span className="font-semibold text-ink">Douglas Scale Thresholds:</span>
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#1E88E5] to-[#4DD0E1]" /> Scale 2-3 (Smooth &lt;1.25m)
+                      <span className="h-2 w-2 rounded-full bg-gradient-to-r from-primary to-secondary" /> Scale 2-3 (Smooth &lt;1.25m)
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[#64B5F6]" /> Scale 4 (Moderate 1.25–2.5m)
+                      <span className="h-2 w-2 rounded-full bg-sky-400" /> Scale 4 (Moderate 1.25–2.5m)
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[#FF8A65]" /> Scale 5+ (Rough &gt;2.5m)
+                      <span className="h-2 w-2 rounded-full bg-coral" /> Scale 5+ (Rough &gt;2.5m)
                     </span>
                   </div>
                 </div>

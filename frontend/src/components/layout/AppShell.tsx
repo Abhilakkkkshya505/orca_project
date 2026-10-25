@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useMe, useLogout } from "@/features/auth/useMe";
 import { useToast } from "@/components/ui/toast";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -234,6 +235,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
           {/* Top Header Actions (Right) */}
           <div className="flex items-center gap-3 ml-auto">
+            {/* Theme Switcher Toggle */}
+            <ThemeToggle />
+
             {/* Live Map CTA Button */}
             <Link
               to="/explore"
