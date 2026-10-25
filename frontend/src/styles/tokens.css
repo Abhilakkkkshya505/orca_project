@@ -1,53 +1,69 @@
-/* Design System Color Tokens according to docs/design.md */
+/* Design System Color Tokens — Luxury Coastal / Ocean Theme */
 
 :root {
-  /* Light mode (Chart paper aesthetic) */
-  --color-bg: #F4F1EA;
-  --color-surface: #FBFAF6;
-  --color-surface-raised: #FFFFFF;
-  --color-border: #CFC9BA;
-  --color-border-strong: #8B8574;
-  --color-ink: #0E2231;
-  --color-ink-muted: #44596A;
-  --color-primary: #0F5C6E;
-  --color-primary-hover: #0B4756;
-  --color-on-primary: #FFFFFF;
-  --color-focus: #B45309;
-  --color-water: #CFE3E8;
+  /* Ocean-Inspired Light Theme */
+  --color-bg: #FAFCFD;               /* Soft White */
+  --color-surface: #FFFFFF;          /* Pure White */
+  --color-surface-raised: #F2F8FC;   /* Light Blue Gray */
+  --color-border: #E5EEF5;           /* Cool Gray / Soft Sea Border */
+  --color-border-strong: #B2EBF2;    /* Seafoam Accent Border */
+  --color-ink: #0F2742;              /* Deep Ocean Navy */
+  --color-ink-muted: #4B6B8A;        /* Ocean Slate Muted */
+  --color-primary: #1E88E5;          /* Ocean Blue */
+  --color-primary-hover: #0F4C81;    /* Deep Ocean Blue */
+  --color-on-primary: #FFFFFF;       /* Pure White */
+  --color-focus: #1E88E5;            /* Ocean Blue focus ring */
+  --color-water: #E1F5FE;            /* Very light sky seafoam wash */
 
-  /* Risk Tokens (Light) */
-  --color-risk-safe: #1B6B3F;
-  --color-risk-safe-bg: #E1F1E7;
-  --color-risk-caution: #7A4B00;
-  --color-risk-caution-bg: #FCEBC2;
-  --color-risk-unsafe: #9F1D17;
-  --color-risk-unsafe-bg: #F9DAD7;
-  --color-risk-unknown: #44596A;
-  --color-risk-unknown-bg: #E3E6E8;
+  /* Ocean Theme Tokens */
+  --color-ocean-deep: #0F4C81;       /* Deep Ocean Blue */
+  --color-ocean-blue: #1E88E5;       /* Ocean Blue */
+  --color-sky-blue: #64B5F6;         /* Sky Blue */
+  --color-aqua: #4DD0E1;             /* Aqua / Turquoise */
+  --color-seafoam: #B2EBF2;          /* Seafoam */
+  --color-coral: #FF8A65;            /* Coral Accent (alerts/critical only) */
+  --color-emerald: #2ECC71;          /* Emerald Accent (success states) */
+
+  /* Risk Tokens (Ocean Light) */
+  --color-risk-safe: #1B8A4E;
+  --color-risk-safe-bg: #E8F8F0;
+  --color-risk-caution: #D97706;
+  --color-risk-caution-bg: #FEF3C7;
+  --color-risk-unsafe: #E64A19;
+  --color-risk-unsafe-bg: #FEE8E2;
+  --color-risk-unknown: #4B6B8A;
+  --color-risk-unknown-bg: #F0F4F8;
 }
 
 [data-theme="dark"] {
-  /* Dark mode */
-  --color-bg: #0A1A24;
-  --color-surface: #10242F;
-  --color-surface-raised: #16303D;
-  --color-border: #26414F;
-  --color-border-strong: #6C8796;
-  --color-ink: #E6EEF2;
-  --color-ink-muted: #A3B6C1;
-  --color-primary: #5FB4C7;
-  --color-primary-hover: #85C8D6;
-  --color-on-primary: #06202A;
-  --color-focus: #F59E0B;
-  --color-water: #143846;
+  /* Calming Deep Sea Night Theme */
+  --color-bg: #0A1926;
+  --color-surface: #0F2334;
+  --color-surface-raised: #142E43;
+  --color-border: #1C3D58;
+  --color-border-strong: #255375;
+  --color-ink: #F0F6FA;
+  --color-ink-muted: #8AA7BF;
+  --color-primary: #4DD0E1;
+  --color-primary-hover: #64B5F6;
+  --color-on-primary: #0A1926;
+  --color-focus: #4DD0E1;
+  --color-water: #112D42;
 
-  /* Risk Tokens (Dark) */
-  --color-risk-safe: #7ED3A0;
-  --color-risk-safe-bg: #12301F;
-  --color-risk-caution: #F2C14E;
-  --color-risk-caution-bg: #3A2A07;
-  --color-risk-unsafe: #FF9E96;
-  --color-risk-unsafe-bg: #3F1411;
-  --color-risk-unknown: #A3B6C1;
-  --color-risk-unknown-bg: #1C2E39;
+  --color-ocean-deep: #0A1926;
+  --color-ocean-blue: #1E88E5;
+  --color-sky-blue: #64B5F6;
+  --color-aqua: #4DD0E1;
+  --color-seafoam: #255375;
+  --color-coral: #FF8A65;
+  --color-emerald: #2ECC71;
+
+  --color-risk-safe: #4ADE80;
+  --color-risk-safe-bg: #0F2D1F;
+  --color-risk-caution: #FBBF24;
+  --color-risk-caution-bg: #322509;
+  --color-risk-unsafe: #FB7185;
+  --color-risk-unsafe-bg: #381216;
+  --color-risk-unknown: #8AA7BF;
+  --color-risk-unknown-bg: #142E43;
 }

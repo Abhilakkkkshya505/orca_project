@@ -116,17 +116,17 @@ export const DashboardPage: React.FC = () => {
   return (
     <AppShell>
       <div className="flex flex-col gap-8 text-left max-w-7xl mx-auto w-full">
-        {/* Hero Command Bar */}
-        <div className="bg-gradient-to-r from-surface to-surface-raised border border-border rounded-2xl p-6 sm:p-8 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        {/* Hero Command Bar with Ocean Gradient */}
+        <div className="bg-gradient-to-r from-white via-[#F2F8FC] to-[#E1F5FE]/40 border border-[#E5EEF5] rounded-2xl p-6 sm:p-8 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E1F5FE] border border-[#64B5F6]/40 text-[#1E88E5] text-xs font-semibold">
+              <span className="h-2 w-2 rounded-full bg-[#2ECC71] animate-pulse" />
               Live Operations Bridge • Telemetry Active
             </div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-ink">
+            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-[#0F2742]">
               Marine Command Center
             </h1>
-            <p className="text-sm text-ink-muted max-w-2xl leading-relaxed">
+            <p className="text-sm text-[#4B6B8A] max-w-2xl leading-relaxed">
               Real-time coastal safety intelligence, high-resolution oceanographic telemetry from Open-Meteo & INCOIS, and automated vessel clearance.
             </p>
           </div>
@@ -135,22 +135,22 @@ export const DashboardPage: React.FC = () => {
             <button
               onClick={() => refetch()}
               disabled={isRefetching}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-surface text-ink text-xs font-semibold hover:bg-surface-raised hover:border-border-strong transition-all shadow-sm active:scale-95"
+              className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
               title="Refresh telemetry"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : "text-ink-muted"}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-[#1E88E5]" : "text-[#4B6B8A]"}`} />
               Sync Feeds
             </button>
             <Link
               to="/locations"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-surface text-ink text-xs font-semibold hover:bg-surface-raised hover:border-border-strong transition-all shadow-sm active:scale-95"
+              className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
             >
-              <Plus className="h-3.5 w-3.5 text-primary" />
+              <Plus className="h-3.5 w-3.5 text-[#1E88E5]" />
               Add Waypoint
             </Link>
             <Link
               to="/explore"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary text-xs font-bold hover:bg-primary-hover transition-all shadow-md active:scale-95 group"
+              className="btn-ocean-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold shadow-md active:scale-95 group"
             >
               <Compass className="h-4 w-4 group-hover:rotate-45 transition-transform" />
               Launch Map Explorer
@@ -161,23 +161,23 @@ export const DashboardPage: React.FC = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
-            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
+            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
+            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
+            <Skeleton className="h-32 rounded-2xl bg-[#E5EEF5]" />
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="p-5 rounded-2xl bg-risk-unsafe-bg text-risk-unsafe border border-risk-unsafe/20 text-sm flex items-center justify-between">
+          <div className="p-5 rounded-2xl bg-[#FEE8E2] text-[#E64A19] border border-[#FF8A65]/30 text-sm flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <span>Failed to synchronize real-time overview metrics. Server may be in maintenance.</span>
             </div>
             <button
               onClick={() => refetch()}
-              className="px-3 py-1.5 rounded-lg bg-risk-unsafe text-white text-xs font-semibold hover:opacity-90"
+              className="px-3 py-1.5 rounded-xl bg-[#E64A19] text-white text-xs font-bold hover:opacity-90"
             >
               Retry
             </button>
@@ -189,100 +189,100 @@ export const DashboardPage: React.FC = () => {
             {/* Top Stat Cards (4 SaaS metrics) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {/* Stat 1: Monitored Stations */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover flex flex-col justify-between">
+              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
                     Monitored Waypoints
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-[#E1F5FE] text-[#1E88E5] flex items-center justify-center">
                     <MapPin className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-ink">
+                  <span className="text-3xl font-heading font-bold text-[#0F2742]">
                     {data.saved_locations.length}
                   </span>
-                  <span className="text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-medium text-[#1B8A4E] bg-[#E8F8F0] px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
                     +2 active
                   </span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
+                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
                   <span>Targeted coastal stations</span>
-                  <Link to="/locations" className="text-primary hover:underline font-medium">
+                  <Link to="/locations" className="text-[#1E88E5] hover:underline font-semibold">
                     Manage
                   </Link>
                 </div>
               </div>
 
               {/* Stat 2: Active Advisories */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover flex flex-col justify-between">
+              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#FEF3C7] flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
                     Official Advisories
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center">
                     <AlertTriangle className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-amber-600 dark:text-amber-400">
+                  <span className="text-3xl font-heading font-bold text-[#D97706]">
                     {data.active_advisories_count}
                   </span>
-                  <span className="text-xs font-medium text-ink-muted">INCOIS / IMD</span>
+                  <span className="text-xs font-medium text-[#4B6B8A]">INCOIS / IMD</span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
+                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
                   <span>Maritime coastal warnings</span>
-                  <Link to="/advisories" className="text-primary hover:underline font-medium">
+                  <Link to="/advisories" className="text-[#1E88E5] hover:underline font-semibold">
                     Review
                   </Link>
                 </div>
               </div>
 
               {/* Stat 3: Alert Triggers */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover flex flex-col justify-between">
+              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
                     Safety Alert Triggers
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-[#E0F7FA] text-[#00ACC1] flex items-center justify-center">
                     <Bell className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-ink">
+                  <span className="text-3xl font-heading font-bold text-[#0F2742]">
                     {data.alerts_active_count}
                   </span>
-                  <span className="text-xs font-medium text-ink-muted">Thresholds Armed</span>
+                  <span className="text-xs font-medium text-[#4B6B8A]">Thresholds Armed</span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
+                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
                   <span>Wave / wind telemetry watch</span>
-                  <Link to="/alerts" className="text-primary hover:underline font-medium">
+                  <Link to="/alerts" className="text-[#1E88E5] hover:underline font-semibold">
                     Configure
                   </Link>
                 </div>
               </div>
 
               {/* Stat 4: Deterministic Engine Rating */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover flex flex-col justify-between">
+              <div className="bg-white border border-[#E5EEF5] rounded-2xl p-5 shadow-card card-hover hover:border-[#B2EBF2] flex flex-col justify-between">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                  <span className="text-xs font-semibold text-[#4B6B8A] uppercase tracking-wider">
                     Safety Gate Health
                   </span>
-                  <div className="h-9 w-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <div className="h-9 w-9 rounded-xl bg-[#E8F8F0] text-[#1B8A4E] flex items-center justify-center">
                     <ShieldCheck className="h-4.5 w-4.5" />
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-3xl font-heading font-bold text-[#1B8A4E]">
                     100%
                   </span>
-                  <span className="text-xs font-medium text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-medium text-[#1B8A4E] bg-[#E8F8F0] px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
                     Zero hallucinations
                   </span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
+                <div className="mt-3 pt-3 border-t border-[#E5EEF5] flex items-center justify-between text-xs text-[#4B6B8A]">
                   <span>Rule Engine v2.4</span>
-                  <Link to="/how-it-works" className="text-primary hover:underline font-medium">
+                  <Link to="/how-it-works" className="text-[#1E88E5] hover:underline font-semibold">
                     Audit Logic
                   </Link>
                 </div>
@@ -327,28 +327,28 @@ export const DashboardPage: React.FC = () => {
                       const waveHeightPercent = Math.min(100, Math.round((item.wave / 3.0) * 100));
                       const barColor =
                         item.risk === "unsafe"
-                          ? "bg-rose-500"
+                          ? "bg-[#FF8A65]"
                           : item.risk === "caution"
-                          ? "bg-amber-500"
-                          : "bg-primary";
+                          ? "bg-[#64B5F6]"
+                          : "bg-gradient-to-t from-[#1E88E5] to-[#4DD0E1]";
 
                       return (
                         <div key={idx} className="flex flex-col items-center gap-2 group">
-                          <span className="text-xs font-semibold text-ink group-hover:text-primary transition-colors">
+                          <span className="text-xs font-semibold text-[#0F2742] group-hover:text-[#1E88E5] transition-colors">
                             {item.day}
                           </span>
-                          <span className="text-[11px] font-mono text-ink-muted">{item.wave}m</span>
+                          <span className="text-[11px] font-mono text-[#4B6B8A]">{item.wave}m</span>
                           
                           {/* Visual vertical bar */}
-                          <div className="w-full max-w-[36px] h-28 bg-surface-raised rounded-xl relative flex items-end p-1 overflow-hidden border border-border">
+                          <div className="w-full max-w-[36px] h-28 bg-[#F2F8FC] rounded-xl relative flex items-end p-1 overflow-hidden border border-[#E5EEF5]">
                             <div
                               style={{ height: `${waveHeightPercent}%` }}
-                              className={`w-full rounded-lg transition-all duration-500 ${barColor}`}
+                              className={`w-full rounded-lg transition-all duration-500 shadow-xs ${barColor}`}
                             />
                           </div>
 
-                          <div className="flex items-center gap-1 text-[11px] text-ink-muted">
-                            <Wind className="h-3 w-3" />
+                          <div className="flex items-center gap-1 text-[11px] text-[#4B6B8A]">
+                            <Wind className="h-3 w-3 text-[#1E88E5]" />
                             <span>{item.wind}kt</span>
                           </div>
                         </div>
@@ -357,16 +357,16 @@ export const DashboardPage: React.FC = () => {
                   </div>
 
                   {/* Douglas Sea State Scale Reference */}
-                  <div className="bg-surface-raised/50 border border-border rounded-xl p-3 flex flex-wrap items-center justify-between text-xs text-ink-muted gap-2">
-                    <span className="font-semibold text-ink">Douglas Scale Thresholds:</span>
-                    <span className="flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full bg-primary" /> Scale 2-3 (Smooth/Slight &lt;1.25m)
+                  <div className="bg-[#F2F8FC] border border-[#E5EEF5] rounded-xl p-3 flex flex-wrap items-center justify-between text-xs text-[#4B6B8A] gap-2">
+                    <span className="font-semibold text-[#0F2742]">Douglas Scale Thresholds:</span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#1E88E5] to-[#4DD0E1]" /> Scale 2-3 (Smooth &lt;1.25m)
                     </span>
-                    <span className="flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full bg-amber-500" /> Scale 4 (Moderate 1.25m–2.5m)
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-[#64B5F6]" /> Scale 4 (Moderate 1.25–2.5m)
                     </span>
-                    <span className="flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full bg-rose-500" /> Scale 5+ (Rough &gt;2.5m)
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-[#FF8A65]" /> Scale 5+ (Rough &gt;2.5m)
                     </span>
                   </div>
                 </div>
@@ -408,20 +408,20 @@ export const DashboardPage: React.FC = () => {
                         onClick={() => toggleCheck(item.key)}
                         className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left text-xs transition-all ${
                           checklist[item.key]
-                            ? "bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60 text-ink"
-                            : "bg-surface-raised border-border text-ink-muted hover:border-border-strong"
+                            ? "bg-[#E8F8F0] border-[#2ECC71]/40 text-[#0F2742]"
+                            : "bg-white border-[#E5EEF5] text-[#4B6B8A] hover:border-[#1E88E5]/40"
                         }`}
                       >
                         <div
                           className={`h-4 w-4 rounded-md border flex items-center justify-center shrink-0 ${
                             checklist[item.key]
-                              ? "bg-emerald-600 border-emerald-600 text-white"
-                              : "border-ink-muted/40"
+                              ? "bg-[#2ECC71] border-[#2ECC71] text-white"
+                              : "border-[#4B6B8A]/40"
                           }`}
                         >
                           {checklist[item.key] && <CheckCircle2 className="h-3 w-3" />}
                         </div>
-                        <span className={checklist[item.key] ? "line-through opacity-80" : "font-medium"}>
+                        <span className={checklist[item.key] ? "line-through opacity-75 font-medium" : "font-semibold text-[#0F2742]"}>
                           {item.label}
                         </span>
                       </button>
