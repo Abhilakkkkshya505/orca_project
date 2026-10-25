@@ -24,8 +24,9 @@ def register_user(validated_data: dict, ip: str | None = None) -> dict:
     Follows anti-enumeration rules: returns identical 201 message even if email exists.
     """
     email = validated_data["email"].lower().strip()
-    turnstile_token = validated_data["turnstile_token"]
-    verify_turnstile(turnstile_token, ip=ip)
+    turnstile_token = validated_data.get("turnstile_token")
+    if turnstile_token:
+        verify_turnstile(turnstile_token, ip=ip)
 
     existing_user = User.objects.filter(email=email).first()
     if existing_user:
@@ -45,7 +46,7 @@ def register_user(validated_data: dict, ip: str | None = None) -> dict:
         except Exception as e:
             logger.warning("email_send_failed", error=str(e))
 
-        return {"detail": "Check your email to verify your account."}
+        return {"detail": "Account created successfully."}
 
     with transaction.atomic():
         from django.utils import timezone
@@ -53,33 +54,15 @@ def register_user(validated_data: dict, ip: str | None = None) -> dict:
             email=email,
             password=validated_data["password"],
             display_name=validated_data["display_name"],
-            is_email_verified=False,
+            is_email_verified=True,
             accepted_terms=validated_data.get("accepted_terms", True),
             terms_version=validated_data.get("terms_version", "2026.1"),
             accepted_terms_at=timezone.now(),
         )
 
-        token = generate_email_verification_token(user)
-        verification_url = f"{settings.FRONTEND_URL}/verify-email?token={token}"
-
-        try:
-            send_mail(
-                subject="Verify your ORCA Account",
-                message=(
-                    f"Welcome to ORCA, {user.display_name}!\n\n"
-                    f"Please verify your email by clicking the link below:\n{verification_url}\n\n"
-                    "This link is valid for 24 hours."
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=True,
-            )
-        except Exception as e:
-            logger.warning("verification_email_send_failed", error=str(e))
-
         logger.info("user_registered", user_id=str(user.public_id))
 
-    return {"detail": "Check your email to verify your account."}
+    return {"detail": "Account created successfully."}
 
 
 def verify_email(token: str) -> dict:

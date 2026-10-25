@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api, ensureCsrfToken } from "@/lib/api/client";
@@ -14,6 +15,7 @@ import LightBloom from "@/components/originkit/ui/light-bloom";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const { resolvedTheme } = useTheme();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -51,8 +53,21 @@ export const SignupPage: React.FC = () => {
         ...values,
         turnstile_token: "1x00000000000000000000AA",
       });
-      toast.success("Account created successfully! Check your inbox to verify.");
-      navigate("/verify-email", { replace: true });
+
+      // Automatically sign in the user without requiring token verification
+      try {
+        await api.post("/auth/login/", {
+          email: values.email,
+          password: values.password,
+          turnstile_token: "1x00000000000000000000AA",
+        });
+        await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
+        toast.success("Account created successfully! Welcome aboard.");
+        navigate("/dashboard", { replace: true });
+      } catch {
+        toast.success("Account created successfully! You can now sign in.");
+        navigate("/login", { replace: true });
+      }
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.details && Object.keys(err.details).length > 0) {

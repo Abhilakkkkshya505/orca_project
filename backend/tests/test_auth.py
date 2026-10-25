@@ -32,10 +32,10 @@ class TestAuthenticationFlows:
         # First signup -> creates user
         res1 = self.client.post(url, payload, format="json")
         assert res1.status_code == 201
-        assert res1.json() == {"detail": "Check your email to verify your account."}
+        assert res1.json() == {"detail": "Account created successfully."}
 
         user = User.objects.get(email="fisherman1@orca.example")
-        assert user.is_email_verified is False
+        assert user.is_email_verified is True
         assert user.accepted_terms is True
         assert user.terms_version == "2026.1"
         assert user.accepted_terms_at is not None
@@ -43,7 +43,7 @@ class TestAuthenticationFlows:
         # Second signup with same email -> identical response, no duplicate created
         res2 = self.client.post(url, payload, format="json")
         assert res2.status_code == 201
-        assert res2.json() == {"detail": "Check your email to verify your account."}
+        assert res2.json() == {"detail": "Account created successfully."}
         assert User.objects.filter(email="fisherman1@orca.example").count() == 1
 
     def test_signup_requires_accepted_terms(self):
