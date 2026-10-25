@@ -108,12 +108,16 @@ interface RiskAssessmentResponse {
   }>;
   fishing_zones: Array<{
     id: string;
-    name: string;
-    distance_km: number;
-    bearing: number;
-    species_expected: string[];
-    confidence: number;
+    name?: string;
+    distance_km?: number;
+    bearing?: number;
+    species_expected?: string[];
+    confidence?: number;
     model_version?: string;
+    origin?: string;
+    score?: number;
+    risk_level?: string;
+    factors?: Record<string, any>;
   }>;
   chlorophyll_anomaly?: {
     flagged: boolean;
@@ -676,20 +680,36 @@ export const PortDetailPage: React.FC = () => {
 
             {risk?.fishing_zones && risk.fishing_zones.length > 0 ? (
               <div className="space-y-2">
-                {risk.fishing_zones.map((zone) => (
-                  <div key={zone.id} className="p-3 rounded bg-surface-raised border border-border text-xs flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold text-ink">{zone.name}</p>
-                      <p className="text-ink-muted font-mono text-[11px]">
-                        Target Species: {zone.species_expected.join(", ")}
-                      </p>
+                {risk.fishing_zones.map((zone) => {
+                  const species = Array.isArray(zone.species_expected) && zone.species_expected.length > 0
+                    ? zone.species_expected.join(", ")
+                    : "Pelagic / Mackerel / Sardines";
+                  const zoneName = zone.name || `Potential Fishing Zone (${zone.origin || zone.model_version || "INCOIS/PFZ"})`;
+                  return (
+                    <div key={zone.id} className="p-3 rounded bg-surface-raised border border-border text-xs flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-ink">{zoneName}</p>
+                        <p className="text-ink-muted font-mono text-[11px]">
+                          Target Species: {species}
+                        </p>
+                      </div>
+                      <div className="text-right font-mono text-[11px]">
+                        {zone.distance_km !== undefined ? (
+                          <span className="font-semibold text-primary">{zone.distance_km} km</span>
+                        ) : (
+                          <span className="font-semibold text-emerald-600">
+                            {zone.score ? `${zone.score}% Potential` : zone.risk_level || "Active Zone"}
+                          </span>
+                        )}
+                        {zone.bearing !== undefined ? (
+                          <p className="text-ink-muted">Bearing: {zone.bearing}°</p>
+                        ) : zone.factors?.sst_gradient ? (
+                          <p className="text-ink-muted">Gradient: {zone.factors.sst_gradient}</p>
+                        ) : null}
+                      </div>
                     </div>
-                    <div className="text-right font-mono text-[11px]">
-                      <span className="font-semibold text-primary">{zone.distance_km} km</span>
-                      <p className="text-ink-muted">Bearing: {zone.bearing}°</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-xs text-ink-muted py-2">
