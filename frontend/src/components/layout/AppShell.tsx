@@ -19,6 +19,8 @@ import {
 import { useMe, useLogout } from "@/features/auth/useMe";
 import { useToast } from "@/components/ui/toast";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import LiquidFilm from "@/components/originkit/ui/liquid-film";
+import { useTheme } from "@/lib/theme/ThemeContext";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -38,6 +40,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
 
   // Close menus on outside click
   useEffect(() => {
@@ -102,7 +105,24 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex text-left font-sans selection:bg-primary/20">
+    <div className="min-h-screen bg-bg text-ink flex text-left font-sans selection:bg-primary/20 relative">
+      {/* Originkit Liquid Film Ambient Fluid Background */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30 dark:opacity-40"
+        aria-hidden="true"
+      >
+        <LiquidFilm
+          speed={0.5}
+          scale={2.0}
+          intensity={0.75}
+          filmThickness={1.1}
+          colorCore={resolvedTheme === "dark" ? "#0284C7" : "#38BDF8"}
+          colorFringe={resolvedTheme === "dark" ? "#2DD4BF" : "#0D9488"}
+          background="transparent"
+          interactive={true}
+        />
+      </div>
+
       {/* Desktop Sidebar (Linear / Vercel style) */}
       <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-surface shrink-0 z-30 sticky top-0 h-screen overflow-y-auto">
         {/* Brand Header */}
@@ -195,7 +215,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen relative z-10">
         {/* Top Operational Header */}
         <header className="sticky top-0 z-20 h-16 border-b border-border bg-surface/90 backdrop-blur-md px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* Mobile Brand & Hamburger */}
