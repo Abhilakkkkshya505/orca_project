@@ -15,6 +15,7 @@ import {
   Fish,
   AlertTriangle,
   ArrowUpRight,
+  LayoutDashboard,
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
 
@@ -234,6 +235,13 @@ export const LandingPage: React.FC = () => {
                     <span>Check Seaworthiness</span>
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
+                  <Link
+                    to="/dashboard"
+                    className="h-11 px-4 rounded-md border border-border bg-surface-raised hover:border-ink text-ink text-xs font-semibold flex items-center justify-center gap-2 shrink-0 tracking-wide transition-colors"
+                  >
+                    <LayoutDashboard className="h-3.5 w-3.5 text-forest dark:text-sage" aria-hidden="true" />
+                    <span>My Dashboard</span>
+                  </Link>
                 </form>
 
                 {/* Ground Truth Metadata */}

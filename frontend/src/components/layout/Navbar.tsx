@@ -52,6 +52,7 @@ export const Navbar: React.FC = () => {
   }, [location.pathname]);
 
   const navLinks = [
+    { label: "My Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Explore Map", href: "/explore", icon: Compass },
     { label: "Ports Directory", href: "/ports", icon: MapPin },
     { label: "Vessel Risk", href: "/compare", icon: Ship },
@@ -136,6 +137,15 @@ export const Navbar: React.FC = () => {
 
         {/* Right CTA / Auth Controls + Theme Toggle */}
         <div className="hidden sm:flex items-center gap-2.5">
+          {/* My Dashboard Direct Action Button */}
+          <Link
+            to="/dashboard"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-surface-raised border border-border text-ink hover:border-ink transition-colors"
+          >
+            <LayoutDashboard className="h-3.5 w-3.5 text-forest dark:text-sage" />
+            <span>My Dashboard</span>
+          </Link>
+
           {/* Theme Toggle (Sun / Moon) */}
           <ThemeToggle />
 
