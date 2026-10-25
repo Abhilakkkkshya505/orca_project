@@ -105,30 +105,30 @@ export const SignupPage: React.FC = () => {
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         {/* Brand Header */}
-        <div className="w-full mb-6 text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2.5 group">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
-              <Anchor className="h-5 w-5" />
+        <div className="w-full mb-6 text-center space-y-1.5">
+          <Link to="/" className="inline-flex items-center gap-2 group">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+              <Anchor className="h-4 w-4" />
             </div>
-            <span className="font-heading font-bold text-2xl tracking-tight text-ink">
+            <span className="font-heading font-bold text-xl tracking-tight text-ink">
               ORCA
             </span>
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">
-            Join the Coastal Safety Network
+          <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
+            Create Mariner Account
           </h1>
           <p className="text-xs text-ink-muted leading-relaxed">
-            Create an account to monitor coastal ports, receive automated swell alerts, and log voyages.
+            Access verified harbour telemetry, deterministic swell gates, and offshore cache.
           </p>
         </div>
 
-        <div className="w-full bg-surface/92 dark:bg-[#132F4C]/92 backdrop-blur-md border border-border rounded-2xl p-6 sm:p-8 shadow-2xl card-hover">
+        <div className="w-full bg-surface border border-border rounded-xl p-6 sm:p-7 shadow-xs">
         {serverError && (
           <div
-            className="flex items-center gap-2.5 p-3.5 mb-5 rounded-xl bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20 text-xs"
+            className="flex items-center gap-2.5 p-3 mb-4 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs"
             role="alert"
           >
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-600" aria-hidden="true" />
+            <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" aria-hidden="true" />
             <span className="font-medium">{serverError}</span>
           </div>
         )}
@@ -138,7 +138,7 @@ export const SignupPage: React.FC = () => {
           type="button"
           onClick={handleGoogleSignUp}
           disabled={googleLoading || isSubmitting}
-          className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-border bg-surface-raised hover:bg-surface text-ink text-xs font-semibold shadow-xs hover:border-primary/50 transition-all mb-4 disabled:opacity-50"
+          className="w-full flex items-center justify-center gap-2.5 py-2 px-3.5 rounded-lg border border-border bg-surface hover:bg-surface-raised text-ink text-xs font-medium shadow-xs transition-colors mb-3 disabled:opacity-50"
         >
           {googleLoading ? (
             <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />

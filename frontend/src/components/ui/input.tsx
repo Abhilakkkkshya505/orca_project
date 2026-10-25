@@ -15,7 +15,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full flex flex-col gap-1.5 text-left">
-        <label htmlFor={inputId} className="text-sm font-medium text-ink select-none">
+        <label htmlFor={inputId} className="text-xs font-medium text-ink select-none">
           {label}
         </label>
         <input
@@ -23,21 +23,21 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           aria-invalid={Boolean(error)}
           aria-describedby={errorId || helperId}
-          className={`w-full h-11 px-3 py-2 text-sm bg-surface-raised border rounded-sm text-ink placeholder:text-ink-muted/60 transition-colors focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 ${
+          className={`w-full h-10 px-3 py-2 text-sm bg-surface border rounded-lg text-ink placeholder:text-ink-muted/50 transition-colors focus:outline-none focus:ring-1 ${
             error
-              ? "border-risk-unsafe focus-visible:border-risk-unsafe"
-              : "border-border-strong focus-visible:border-primary"
+              ? "border-rose-500 focus:border-rose-500 focus:ring-rose-500/20"
+              : "border-border focus:border-primary focus:ring-primary/20"
           } ${className}`}
           {...props}
         />
         {error && (
-          <p id={errorId} className="flex items-center gap-1.5 text-xs text-risk-unsafe mt-0.5" role="alert">
+          <p id={errorId} className="flex items-center gap-1.5 text-xs text-rose-500 mt-0.5" role="alert">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </p>
         )}
         {!error && helperText && (
-          <p id={helperId} className="text-xs text-ink-muted">
+          <p id={helperId} className="text-[11px] text-ink-muted">
             {helperText}
           </p>
         )}

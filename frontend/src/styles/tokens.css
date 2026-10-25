@@ -1,94 +1,94 @@
-/* Design System Color Tokens — Luxury Coastal / Ocean Theme (Light & Dark) */
+/* Design System Color Tokens — Refined Maritime / Linear-Grade Typography & Surface System */
 
 :root,
 [data-theme="light"],
 .light {
-  /* Ocean-Inspired Light Theme */
-  --color-bg: #FAFCFD;               /* Soft White */
-  --color-bg-alt: #F2F8FC;           /* Light Blue Gray */
-  --color-surface: #FFFFFF;          /* Pure White */
-  --color-surface-raised: #F2F8FC;   /* Light Blue Gray */
-  --color-surface-elevated: #E5EEF5; /* Cool Gray */
-  --color-border: #E5EEF5;           /* Soft Sea Border */
-  --color-border-strong: #B2EBF2;    /* Seafoam Accent Border */
-  --color-ink: #0F2742;              /* Deep Ocean Navy */
-  --color-ink-secondary: #2C4A6F;    /* Ocean Navy Secondary */
-  --color-ink-muted: #4B6B8A;        /* Ocean Slate Muted */
-  --color-primary: #1E88E5;          /* Ocean Blue */
-  --color-primary-hover: #0F4C81;    /* Deep Ocean Blue */
-  --color-on-primary: #FFFFFF;       /* Pure White */
-  --color-secondary: #4DD0E1;        /* Aqua / Turquoise */
-  --color-accent: #B2EBF2;           /* Seafoam */
-  --color-focus: #1E88E5;            /* Ocean Blue focus ring */
-  --color-water: #E1F5FE;            /* Very light sky seafoam wash */
+  /* Restrained Scandinavian & Coastal Architecture Palette (Light) */
+  --color-bg: #FAFAF9;               /* Warm porcelain white ground */
+  --color-bg-alt: #F5F5F4;           /* Warm stone neutral */
+  --color-surface: #FFFFFF;          /* Pure crisp surface */
+  --color-surface-raised: #F5F5F4;   /* Subtle tone-step surface */
+  --color-surface-elevated: #E7E5E4; /* Elevated container surface */
+  --color-border: #E7E5E4;           /* Crisp 1px warm neutral border */
+  --color-border-strong: #D6D3D1;    /* Strong structured border */
+  --color-ink: #0F172A;              /* Deep slate graphite ink */
+  --color-ink-secondary: #334155;    /* Secondary slate */
+  --color-ink-muted: #64748B;        /* Muted editorial slate */
+  --color-primary: #0284C7;          /* Refined coastal maritime blue */
+  --color-primary-hover: #0369A1;    /* Deep sea navy */
+  --color-on-primary: #FFFFFF;       /* Pure white on primary */
+  --color-secondary: #0D9488;        /* Architectural muted teal */
+  --color-accent: #E0F2FE;           /* Sea mist wash */
+  --color-focus: #0284C7;            /* Accessible focus ring */
+  --color-water: #F0F9FF;            /* Very light marine tint */
 
   /* Ocean Palette */
-  --color-ocean-deep: #0F4C81;       /* Deep Ocean Blue */
-  --color-ocean-blue: #1E88E5;       /* Ocean Blue */
-  --color-sky-blue: #64B5F6;         /* Sky Blue */
-  --color-aqua: #4DD0E1;             /* Aqua / Turquoise */
-  --color-seafoam: #B2EBF2;          /* Seafoam */
-  --color-coral: #FF8A65;            /* Coral Accent (alerts/critical only) */
-  --color-emerald: #2ECC71;          /* Emerald Accent (success states) */
-  --color-amber: #F59E0B;            /* Amber Accent (warnings) */
+  --color-ocean-deep: #0C4A6E;       /* Deep ocean slate */
+  --color-ocean-blue: #0284C7;       /* Maritime blue */
+  --color-sky-blue: #38BDF8;         /* Clear sky */
+  --color-aqua: #0D9488;             /* Muted teal */
+  --color-seafoam: #CCFBF1;          /* Soft seafoam */
+  --color-coral: #E11D48;            /* Refined ruby alert */
+  --color-emerald: #059669;          /* Emerald success */
+  --color-amber: #D97706;            /* Amber warning */
 
-  /* Shadows */
-  --shadow-card-color: rgba(15, 76, 129, 0.05);
-  --shadow-glow-color: rgba(77, 208, 225, 0.25);
+  /* Shadows — Restrained, 0 neon blur */
+  --shadow-card-color: rgba(15, 23, 42, 0.04);
+  --shadow-glow-color: transparent;
 
-  /* Risk Tokens (Ocean Light) */
-  --color-risk-safe: #1B8A4E;
-  --color-risk-safe-bg: #E8F8F0;
-  --color-risk-caution: #D97706;
-  --color-risk-caution-bg: #FEF3C7;
-  --color-risk-unsafe: #E64A19;
-  --color-risk-unsafe-bg: #FEE8E2;
-  --color-risk-unknown: #4B6B8A;
-  --color-risk-unknown-bg: #F0F4F8;
+  /* Risk Tokens (Restrained Semantics) */
+  --color-risk-safe: #15803D;
+  --color-risk-safe-bg: #F0FDF4;
+  --color-risk-caution: #B45309;
+  --color-risk-caution-bg: #FFFBEB;
+  --color-risk-unsafe: #BE123C;
+  --color-risk-unsafe-bg: #FFF1F2;
+  --color-risk-unknown: #475569;
+  --color-risk-unknown-bg: #F1F5F9;
 }
 
 [data-theme="dark"],
 .dark {
-  /* Deep Ocean at Night Theme */
-  --color-bg: #071A2F;               /* Deep Navy */
-  --color-bg-alt: #0B2447;           /* Midnight Blue */
-  --color-surface: #132F4C;          /* Dark Ocean Surface */
-  --color-surface-raised: #173753;   /* Slate Ocean Raised Surface */
-  --color-surface-elevated: #1C3D5A; /* Highlight Surface */
-  --color-border: rgba(255, 255, 255, 0.08); /* Translucent Night Border */
-  --color-border-strong: rgba(125, 226, 209, 0.22); /* Bioluminescent Border */
-  --color-ink: #F5FAFF;              /* Crisp Moonlight White */
-  --color-ink-secondary: #C9D8E8;    /* Luminous Ocean Silver */
-  --color-ink-muted: #90A9C1;        /* Muted Nautical Slate */
-  --color-primary: #4DA3FF;          /* Luminous Ocean Blue */
-  --color-primary-hover: #7CC8FF;    /* Bright Sky Blue Glow */
-  --color-on-primary: #071A2F;       /* Deep Navy on Primary */
-  --color-secondary: #4DD0E1;        /* Luminous Aqua */
-  --color-accent: #7DE2D1;           /* Bioluminescent Seafoam */
-  --color-focus: #4DA3FF;            /* Focus Ring */
-  --color-water: #0B2447;            /* Deep Sea Wash */
+  /* Deep Ocean Graphite — Linear & Raycast Inspired (Dark) */
+  --color-bg: #0B0F17;               /* Deep graphite navy, never muddy */
+  --color-bg-alt: #0F1420;           /* Midnight slate ground */
+  --color-surface: #131926;          /* Dark ocean surface */
+  --color-surface-raised: #1A2234;   /* Tone-step raised panel */
+  --color-surface-elevated: #222D42; /* Highlight layer */
+  --color-border: rgba(255, 255, 255, 0.08); /* Crisp translucent hairline border */
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-ink: #F8FAFC;              /* Pure crisp moonlight text */
+  --color-ink-secondary: #CBD5E1;    /* Clean cool silver */
+  --color-ink-muted: #94A3B8;        /* Muted slate text */
+  --color-primary: #38BDF8;          /* Crisp maritime sky */
+  --color-primary-hover: #7DD3FC;    /* Bright coastal highlight */
+  --color-on-primary: #0B0F17;       /* Deep slate on primary */
+  --color-secondary: #2DD4BF;        /* Clean teal */
+  --color-accent: #164E63;           /* Subdued deep sea */
+  --color-focus: #38BDF8;            /* Crisp focus ring */
+  --color-water: #0F172A;            /* Deep marine wash */
 
-  /* Ocean Palette (Dark Adaptation) */
-  --color-ocean-deep: #071A2F;       /* Deep Navy */
-  --color-ocean-blue: #4DA3FF;       /* Luminous Ocean Blue */
-  --color-sky-blue: #7CC8FF;         /* Sky Blue Glow */
-  --color-aqua: #4DD0E1;             /* Aqua */
-  --color-seafoam: #7DE2D1;          /* Bioluminescent Seafoam */
-  --color-coral: #FF8A65;            /* Coral Warning */
-  --color-emerald: #2ECC71;          /* Emerald Success */
-  --color-amber: #F59E0B;            /* Amber Warning */
+  /* Ocean Palette (Dark) */
+  --color-ocean-deep: #070B12;       /* Deepest trench */
+  --color-ocean-blue: #38BDF8;       /* Crisp ocean blue */
+  --color-sky-blue: #7DD3FC;         /* Soft daylight sky */
+  --color-aqua: #2DD4BF;             /* Clean aqua */
+  --color-seafoam: #99F6E4;          /* Pale seafoam */
+  --color-coral: #FB7185;            /* Rose alert */
+  --color-emerald: #34D399;          /* Emerald success */
+  --color-amber: #FBBF24;            /* Warm amber */
 
   /* Shadows */
   --shadow-card-color: rgba(0, 0, 0, 0.4);
-  --shadow-glow-color: rgba(77, 163, 255, 0.22);
+  --shadow-glow-color: transparent;
 
-  /* Risk Tokens (Dark Deep Ocean) */
-  --color-risk-safe: #2ECC71;
-  --color-risk-safe-bg: rgba(46, 204, 113, 0.16);
-  --color-risk-caution: #F59E0B;
-  --color-risk-caution-bg: rgba(245, 158, 11, 0.16);
-  --color-risk-unsafe: #FF8A65;
-  --color-risk-unsafe-bg: rgba(255, 138, 101, 0.16);
-  --color-risk-unknown: #90A9C1;
-  --color-risk-unknown-bg: rgba(144, 169, 193, 0.16);
+  /* Risk Tokens (Dark Semantic) */
+  --color-risk-safe: #34D399;
+  --color-risk-safe-bg: rgba(16, 185, 129, 0.12);
+  --color-risk-caution: #FBBF24;
+  --color-risk-caution-bg: rgba(245, 158, 11, 0.12);
+  --color-risk-unsafe: #FB7185;
+  --color-risk-unsafe-bg: rgba(244, 63, 94, 0.12);
+  --color-risk-unknown: #94A3B8;
+  --color-risk-unknown-bg: rgba(148, 163, 184, 0.12);
 }

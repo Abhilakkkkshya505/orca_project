@@ -1,8 +1,12 @@
-@import "@fontsource/ibm-plex-sans/400.css";
-@import "@fontsource/ibm-plex-sans/500.css";
-@import "@fontsource/ibm-plex-sans/600.css";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/500.css";
+@import "@fontsource/geist-mono/600.css";
 @import "./tokens.css";
 
 @tailwind base;
@@ -14,7 +18,7 @@
     color-scheme: light dark;
     background-color: var(--color-bg);
     color: var(--color-ink);
-    font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     scroll-padding-top: 5rem;
     scroll-behavior: smooth;
     overflow-x: hidden;
@@ -30,19 +34,28 @@
     text-rendering: optimizeLegibility;
     background-color: var(--color-bg);
     color: var(--color-ink);
+    line-height: 1.6;
+    letter-spacing: -0.011em;
   }
 
-  /* Temporary smooth color transitions when toggling theme */
+  /* Smooth color transitions when toggling theme */
   html.theme-transition,
   html.theme-transition *,
   html.theme-transition *::before,
   html.theme-transition *::after {
-    transition: background-color 260ms ease, border-color 260ms ease, color 260ms ease, fill 260ms ease, stroke 260ms ease, box-shadow 260ms ease !important;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, fill 200ms ease, stroke 200ms ease, box-shadow 200ms ease !important;
   }
 
   h1, h2, h3, h4, .font-heading {
-    font-family: "Space Grotesk", "Plus Jakarta Sans", sans-serif;
-    letter-spacing: -0.02em;
+    font-family: "Space Grotesk", "Inter", sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  /* Monospace typography strictly for coordinates, telemetry & numbers */
+  code, pre, .font-mono {
+    font-family: "Geist Mono", "IBM Plex Mono", ui-monospace, monospace;
+    letter-spacing: -0.01em;
   }
 
   /* Accessible focus ring */
@@ -56,169 +69,93 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Ocean-inspired smooth custom scrollbar (Light) */
+  /* Minimal custom scrollbar (Light) */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #F2F8FC;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #B2EBF2;
+    background: #D6D3D1;
     border-radius: 9999px;
-    border: 2px solid #F2F8FC;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #64B5F6;
+    background: #A8A29E;
   }
 
-  /* Ocean scrollbar (Dark Deep Ocean) */
-  .dark ::-webkit-scrollbar-track,
-  [data-theme="dark"] ::-webkit-scrollbar-track {
-    background: #0B2447;
-  }
+  /* Minimal scrollbar (Dark) */
   .dark ::-webkit-scrollbar-thumb,
   [data-theme="dark"] ::-webkit-scrollbar-thumb {
-    background: #1C3D5A;
-    border: 2px solid #0B2447;
+    background: #334155;
   }
   .dark ::-webkit-scrollbar-thumb:hover,
   [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-    background: #4DA3FF;
+    background: #475569;
   }
 }
 
 @layer utilities {
-  /* Ocean-themed card styling (Light & Dark) */
+  /* Restrained, architectural card styling (No oversized blobs or neon glow) */
   .ocean-card {
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 20px;
-    box-shadow: 0 4px 20px -2px var(--shadow-card-color), 0 2px 6px -1px var(--shadow-card-color);
-    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+    transition: border-color 150ms ease, background-color 150ms ease;
   }
   .ocean-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px -4px var(--shadow-card-color), 0 0 20px -2px var(--shadow-glow-color);
-    border-color: var(--color-primary);
+    border-color: var(--color-border-strong);
   }
 
   .card-hover {
-    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
+    transition: border-color 150ms ease, background-color 150ms ease;
   }
   .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 34px -4px var(--shadow-card-color), 0 0 16px -2px var(--shadow-glow-color);
     border-color: var(--color-primary);
   }
 
-  /* Frosted water glass surface */
-  .glass-surface {
-    background-color: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-  .dark .glass-surface,
-  [data-theme="dark"] .glass-surface {
-    background-color: rgba(11, 36, 71, 0.85);
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-
-  /* Ocean Button Styles */
+  /* Editorial button styles (Flat, restrained, zero screaming gradients) */
   .btn-ocean-primary {
-    background: linear-gradient(135deg, #1E88E5 0%, #0F4C81 100%);
-    color: #FFFFFF;
-    box-shadow: 0 4px 14px 0 rgba(30, 136, 229, 0.35);
-    transition: all 200ms ease;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: opacity 150ms ease, background-color 150ms ease;
   }
   .btn-ocean-primary:hover {
-    background: linear-gradient(135deg, #1976D2 0%, #0D3E6B 100%);
-    box-shadow: 0 6px 20px 0 rgba(30, 136, 229, 0.45);
-    transform: translateY(-1px);
+    background-color: var(--color-primary-hover);
   }
   .btn-ocean-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px 0 rgba(30, 136, 229, 0.3);
-  }
-
-  .dark .btn-ocean-primary,
-  [data-theme="dark"] .btn-ocean-primary {
-    background: linear-gradient(135deg, #4DA3FF 0%, #102A43 100%);
-    box-shadow: 0 4px 16px 0 rgba(77, 163, 255, 0.3);
-    color: #FFFFFF;
-  }
-  .dark .btn-ocean-primary:hover,
-  [data-theme="dark"] .btn-ocean-primary:hover {
-    background: linear-gradient(135deg, #7CC8FF 0%, #173753 100%);
-    box-shadow: 0 6px 22px 0 rgba(77, 163, 255, 0.45);
+    opacity: 0.9;
   }
 
   .btn-ocean-secondary {
-    background-color: #FFFFFF;
-    border: 1px solid #B2EBF2;
-    color: #0F4C81;
-    box-shadow: 0 2px 8px rgba(15, 76, 129, 0.04);
-    transition: all 200ms ease;
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 150ms ease, border-color 150ms ease;
   }
   .btn-ocean-secondary:hover {
-    border-color: #1E88E5;
-    background-color: #F2F8FC;
-    color: #1E88E5;
-    transform: translateY(-1px);
+    background-color: var(--color-surface-raised);
+    border-color: var(--color-border-strong);
   }
 
-  .dark .btn-ocean-secondary,
-  [data-theme="dark"] .btn-ocean-secondary {
-    background-color: #132F4C;
-    border: 1px solid rgba(77, 163, 255, 0.35);
-    color: #F5FAFF;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
-  .dark .btn-ocean-secondary:hover,
-  [data-theme="dark"] .btn-ocean-secondary:hover {
-    border-color: #4DA3FF;
-    background-color: #173753;
-    color: #4DA3FF;
-  }
-
-  /* Subtle animated background gradient */
-  .ocean-bg-gradient {
-    background: radial-gradient(circle at 10% 20%, rgba(178, 235, 242, 0.3) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(100, 181, 246, 0.2) 0%, transparent 45%),
-                linear-gradient(180deg, #FAFCFD 0%, #F2F8FC 60%, #FFFFFF 100%);
-  }
-  .dark .ocean-bg-gradient,
-  [data-theme="dark"] .ocean-bg-gradient {
-    background: radial-gradient(circle at 10% 20%, rgba(19, 47, 76, 0.6) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(77, 163, 255, 0.09) 0%, transparent 45%),
-                linear-gradient(180deg, #071A2F 0%, #0B2447 60%, #102A43 100%);
-  }
-
-  /* Translucent floating bubbles (Light & Dark) */
-  .bubble {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(178, 235, 242, 0.4) 60%, rgba(77, 208, 225, 0.2) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    pointer-events: none;
-    box-shadow: inset -2px -2px 6px rgba(15, 76, 129, 0.08), 0 4px 12px rgba(77, 208, 225, 0.15);
-  }
-  .dark .bubble,
-  [data-theme="dark"] .bubble {
-    background: radial-gradient(circle at 30% 30%, rgba(124, 200, 255, 0.4), rgba(77, 208, 225, 0.15) 60%, rgba(11, 36, 71, 0.3) 100%);
-    border: 1px solid rgba(125, 226, 209, 0.3);
-    box-shadow: inset -2px -2px 6px rgba(7, 26, 47, 0.5), 0 0 16px rgba(77, 208, 225, 0.2);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  /* Clean editorial badge */
+  .badge-editorial {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    color: var(--color-ink-secondary);
   }
 }

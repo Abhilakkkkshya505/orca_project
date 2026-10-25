@@ -112,44 +112,44 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20">
       {/* Brand Header */}
-      <div className="w-full max-w-md mb-6 text-center space-y-2">
-        <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
-            <Anchor className="h-5 w-5" />
+      <div className="w-full max-w-md mb-6 text-center space-y-1.5">
+        <Link to="/" className="inline-flex items-center gap-2 group">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+            <Anchor className="h-4 w-4" />
           </div>
-          <span className="font-heading font-bold text-2xl tracking-tight text-ink">
+          <span className="font-heading font-bold text-xl tracking-tight text-ink">
             ORCA
           </span>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-ink">
-          Welcome back to the bridge
+        <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
+          Sign In to ORCA Bridge
         </h1>
         <p className="text-xs text-ink-muted leading-relaxed">
-          Sign in to access your monitored ports, custom wave alerts, and AI reasoning logs.
+          Access coastal harbour telemetry, automated swell gates, and voyage logs.
         </p>
       </div>
 
-      <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 sm:p-8 shadow-card card-hover">
+      <div className="w-full max-w-md bg-surface border border-border rounded-xl p-6 sm:p-7 shadow-xs">
         {serverError && (
           <div
-            className="flex items-center gap-2.5 p-3.5 mb-5 rounded-xl bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20 text-xs"
+            className="flex items-center gap-2.5 p-3 mb-4 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-xs"
             role="alert"
           >
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-600" aria-hidden="true" />
+            <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" aria-hidden="true" />
             <span className="font-medium">{serverError}</span>
           </div>
         )}
 
         {/* Quick Demo Captain Credentials Banner */}
-        <div className="p-3 mb-5 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between text-xs text-ink">
+        <div className="p-3 mb-4 rounded-lg bg-surface-raised border border-border flex items-center justify-between text-xs text-ink">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary shrink-0" />
-            <span className="font-medium">Testing as guest?</span>
+            <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+            <span className="font-medium text-xs">Testing as guest?</span>
           </div>
           <button
             type="button"
             onClick={fillDemoCredentials}
-            className="text-[11px] font-bold text-primary hover:underline bg-surface px-2.5 py-1 rounded-md border border-primary/30 shadow-xs"
+            className="text-[11px] font-semibold text-primary hover:underline bg-surface px-2.5 py-1 rounded-md border border-border shadow-xs"
           >
             Load Demo Captain
           </button>
