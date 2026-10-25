@@ -7,28 +7,16 @@ import { SeaState } from "@/components/ui/SeaState";
 import { formatWaveHeight, formatWindSpeed, formatDataAge } from "@/lib/format";
 import type { RiskLevel } from "@/components/ui/risk-icons";
 import {
-  ShieldCheck,
   Search,
   ArrowRight,
   WifiOff,
   Database,
   ChevronDown,
-  CloudSun,
-  Waves,
-  Satellite,
   Fish,
   AlertTriangle,
-  Radio,
-  Globe,
-  Anchor,
-  Compass,
+  ArrowUpRight,
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
-import { useTheme } from "@/lib/theme/ThemeContext";
-import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
-import TerraDusk from "@/components/originkit/ui/terra-dusk";
-import PlinthTally from "@/components/originkit/ui/plinth-tally";
-import Lightfall from "@/components/originkit/ui/lightfall";
 
 interface SamplePortSummary {
   slug: string;
@@ -120,53 +108,36 @@ const SAMPLE_PORTS_FALLBACK: SamplePortSummary[] = [
     windKmh: 24,
     level: "caution",
     validWindow: "Next 12 Hours",
-    dataAgeMinutes: 50,
-  },
-  {
-    slug: "port-blair-in",
-    name: "Port Blair",
-    admin1: "Andaman & Nicobar",
-    lat: 11.67,
-    lon: 92.75,
-    waveHeightM: 1.9,
-    wavePeriodS: 8.8,
-    swellHeightM: 1.7,
-    swellPeriodS: 8.5,
-    windKmh: 22,
-    level: "caution",
-    validWindow: "Next 12 Hours",
-    dataAgeMinutes: 40,
+    dataAgeMinutes: 15,
   },
 ];
 
 interface CoverageResponse {
   total_ports: number;
   total_coastal_ports: number;
-  by_country: Array<{ country_code: string; country_name: string; port_count: number }>;
-  india_by_state: Array<{ admin1_name: string; port_count: number }>;
+  states_count: number;
 }
 
 interface DataStatusResponse {
   sources: Array<{
-    slug: string;
     name: string;
+    slug: string;
     status: string;
-    age_minutes: number | null;
+    age_minutes: number;
     attribution: string;
   }>;
 }
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { resolvedTheme } = useTheme();
+
   const [heroSearch, setHeroSearch] = useState("");
   const [activePortIndex, setActivePortIndex] = useState(0);
   const [userInteracted, setUserInteracted] = useState(false);
-  const [showFullGlobe, setShowFullGlobe] = useState(false);
 
-  // 1. Fetch coverage data
+  // 1. Fetch live coastal station count
   const { data: coverage } = useQuery<CoverageResponse>({
-    queryKey: ["ports", "coverage"],
+    queryKey: ["ports-coverage"],
     queryFn: () => api.get<CoverageResponse>("/ports/coverage/"),
     staleTime: 60 * 60 * 1000,
   });
@@ -178,12 +149,12 @@ export const LandingPage: React.FC = () => {
     staleTime: 60 * 1000,
   });
 
-  // Rotate sample ports every 12s if user has not interacted
+  // Rotate sample ports every 14s if user has not interacted
   useEffect(() => {
     if (userInteracted) return;
     const interval = setInterval(() => {
       setActivePortIndex((prev) => (prev + 1) % SAMPLE_PORTS_FALLBACK.length);
-    }, 12000);
+    }, 14000);
     return () => clearInterval(interval);
   }, [userInteracted]);
 
@@ -199,250 +170,183 @@ export const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 w-full bg-bg text-ink flex flex-col justify-between selection:bg-water selection:text-primary transition-colors duration-200">
+    <div className="flex-1 w-full bg-bg text-ink flex flex-col justify-between selection:bg-sand selection:text-charcoal transition-colors duration-200">
       {/* Skip Link for a11y */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:shadow-md"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary focus:rounded-md focus:shadow-sm"
       >
         Skip to main content
       </a>
 
-      <main id="main-content" className="flex-1 w-full flex flex-col gap-16 sm:gap-24 pb-24">
-        {/* SECTION 1: EDITORIAL HERO SECTION */}
-        <section className="relative w-full border-b border-border pt-12 sm:pt-16 pb-16 overflow-hidden bg-surface">
-          {/* Subtle Glimmer Vale Atmosphere in Background */}
-          <div
-            className="absolute inset-0 overflow-hidden z-0 opacity-20 dark:opacity-30 pointer-events-none"
-            aria-hidden="true"
-          >
-            <GlimmerVale
-              speed={25}
-              sparkle={40}
-              density={45}
-              scale={90}
-              background="transparent"
-              skyTop={resolvedTheme === "dark" ? "#0B0F17" : "#FAFAF9"}
-              skyHorizon={resolvedTheme === "dark" ? "#131926" : "#F5F5F4"}
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-              }}
-            />
-          </div>
-
-          {/* Terra Dusk 3D Globe Covering Right Half */}
-          <div
-            className="hidden lg:block absolute top-0 right-0 bottom-0 w-1/2 overflow-hidden z-0 pointer-events-auto opacity-75 dark:opacity-90"
-            aria-label="Interactive 3D Earth Globe"
-          >
-            <TerraDusk
-              background="transparent"
-              size={620}
-              stars={resolvedTheme === "dark" ? 4 : 1}
-              speed={4}
-              hover={6}
-              sun="cursor"
-              look={{
-                clouds: 4,
-                lights: resolvedTheme === "dark" ? 5 : 2,
-                atmosphere: resolvedTheme === "dark" ? "#38BDF8" : "#0284C7",
-              }}
-              style={{
-                position: "absolute",
-                right: "-10%",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "620px",
-                height: "620px",
-              }}
-            />
-            {/* Smooth transition mask */}
-            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-surface to-transparent pointer-events-none" />
-          </div>
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center text-left">
-            {/* Left Column: Headline, Plinth Tally Branding & Search */}
-            <div className="lg:col-span-7 flex flex-col gap-5">
-              {/* Monolithic Plinth Tally 3D Extruded Brand Typography */}
-              <div className="pt-1">
-                <PlinthTally
-                  text="ORCA"
-                  size="hero"
-                  subtitle="Ocean Risk & Coastal Analytics"
-                  depth={8}
-                  tiltIntensity={12}
-                  glow={false}
-                  className="!items-start"
-                />
-              </div>
-
-              {/* Strict 2-Line Headline */}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold tracking-tight text-ink leading-[1.12]">
-                Verified ocean safety. <br />
-                Before casting off.
-              </h1>
-
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg text-ink-muted leading-relaxed max-w-xl font-normal">
-                Deterministic seaworthiness ratings, live wave telemetry, and productive fishing zones for small-craft and mechanised vessels across Indian coastal waters.
-              </p>
-
-              {/* Clean Functional Search Bar */}
-              <form onSubmit={handleHeroSubmit} className="flex flex-col sm:flex-row gap-2.5 pt-2 max-w-lg">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" aria-hidden="true" />
-                  <input
-                    type="text"
-                    value={heroSearch}
-                    onChange={(e) => setHeroSearch(e.target.value)}
-                    placeholder="Search Mumbai, Kochi, Chennai, or coordinates..."
-                    className="w-full h-11 pl-10 pr-3.5 rounded-lg bg-surface border border-border text-sm text-ink placeholder:text-ink-muted/60 focus:outline-none focus:border-primary transition-colors"
-                    aria-label="Search port, harbour or coastal coordinates"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="btn-ocean-primary h-11 px-5 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 shrink-0"
-                >
-                  <span>Check Port</span>
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
-              </form>
-
-              {/* Editorial Baseline Claims */}
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-1 text-xs text-ink-muted font-normal">
-                <span className="flex items-center gap-1.5 text-ink font-medium">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" /> Hardcoded Safety Rules
-                </span>
-                <span>• Official IMD & INCOIS Feeds</span>
-                <span>• Zero AI Hallucinations</span>
-              </div>
+      <main id="main-content" className="flex-1 w-full flex flex-col gap-20 sm:gap-28 pb-32">
+        {/* SECTION 1: BESPOKE EDITORIAL HERO */}
+        <section className="relative w-full border-b border-border pt-14 sm:pt-20 pb-20 overflow-hidden bg-surface">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Editorial Index Eyebrow */}
+            <div className="flex items-center justify-between pb-8 mb-8 border-b border-border/70 text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase font-medium">01 / Coastal Intelligence & Safety Matrix</span>
+              <span className="hidden sm:inline-block tracking-wider">Arabian Sea • Bay of Bengal • Indian Ocean</span>
             </div>
 
-            {/* Right Column: Live Harbour Telemetry Card with Originkit Lightfall */}
-            <div className="lg:col-span-5 flex flex-col gap-3">
-              <div className="ocean-card relative overflow-hidden p-5 sm:p-6 flex flex-col gap-4 border border-border bg-surface shadow-xs">
-                {/* Originkit Lightfall Streaming Light Ray Cascade */}
-                <div
-                  className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-25 dark:opacity-40"
-                  aria-hidden="true"
-                >
-                  <Lightfall
-                    speed={24}
-                    density={30}
-                    color={resolvedTheme === "dark" ? "#38BDF8" : "#0284C7"}
-                    secondaryColor={resolvedTheme === "dark" ? "#2DD4BF" : "#0D9488"}
-                    intensity={0.8}
-                    warp={1.1}
-                    interactive={true}
-                    className="w-full h-full"
-                  />
-                  {/* Subtle surface overlay ensuring full contrast for telemetry */}
-                  <div className="absolute inset-0 bg-surface/75 dark:bg-[#131926]/75 pointer-events-none" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start text-left">
+              {/* Left Column: Architectural Editorial Statement & Query Form */}
+              <div className="lg:col-span-7 flex flex-col gap-6">
+                <div className="space-y-4">
+                  <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm text-[11px] font-mono tracking-wider uppercase bg-surface-raised border border-border text-ink-secondary">
+                    <span className="w-1.5 h-1.5 rounded-full bg-forest" />
+                    Autonomous Ocean Observation
+                  </span>
+
+                  <h1 className="text-4xl sm:text-6xl lg:text-[4.25rem] font-editorial leading-[1.03] tracking-tight text-ink font-normal">
+                    Verified ocean safety, <br />
+                    <span className="italic font-normal text-ink-secondary">calculated before casting off.</span>
+                  </h1>
+
+                  <p className="text-base sm:text-lg text-ink-muted leading-relaxed max-w-xl font-sans font-normal pt-1">
+                    Deterministic seaworthiness evaluation, real-time FlatBuffer ocean telemetry, and productive thermal fishing fronts for artisanal and mechanised vessels across Indian waters.
+                  </p>
                 </div>
 
-                <div className="relative z-10 flex items-start justify-between gap-3 pb-3 border-b border-border">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
-                        LIVE HARBOUR TELEMETRY • {activePort.admin1}
-                      </span>
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" title="Live station" />
-                    </div>
-                    <h2 className="text-lg font-heading font-bold text-ink mt-0.5">{activePort.name}</h2>
+                {/* Tactile Editorial Search Input */}
+                <form onSubmit={handleHeroSubmit} className="flex flex-col sm:flex-row gap-2.5 pt-3 max-w-xl">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" aria-hidden="true" />
+                    <input
+                      type="text"
+                      value={heroSearch}
+                      onChange={(e) => setHeroSearch(e.target.value)}
+                      placeholder="Search port, harbour, or enter lat / lon coordinates..."
+                      className="w-full h-11 pl-10 pr-3.5 rounded-md bg-surface border border-border text-sm text-ink placeholder:text-ink-muted/70 focus:outline-none focus:border-ink transition-colors font-sans"
+                      aria-label="Search port, harbour or coastal coordinates"
+                    />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setShowFullGlobe(!showFullGlobe)}
-                      className="hidden lg:flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md border border-border bg-surface-raised text-ink-muted hover:text-ink transition-colors"
-                      title="Toggle globe view"
-                    >
-                      <Globe className="h-3 w-3 text-primary" />
-                      <span>{showFullGlobe ? "Telemetry" : "Orbit"}</span>
-                    </button>
+                  <button
+                    type="submit"
+                    className="btn-editorial-primary h-11 px-5 rounded-md text-xs font-semibold flex items-center justify-center gap-2 shrink-0 tracking-wide uppercase"
+                  >
+                    <span>Check Seaworthiness</span>
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                </form>
+
+                {/* Ground Truth Metadata */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-3 border-t border-border/80 text-xs text-ink-secondary">
+                  <div>
+                    <span className="block font-mono text-[10px] text-ink-muted uppercase">Rule Evaluation</span>
+                    <span className="font-medium text-ink">Deterministic Gates</span>
+                  </div>
+                  <div>
+                    <span className="block font-mono text-[10px] text-ink-muted uppercase">Scientific Sources</span>
+                    <span className="font-medium text-ink">INCOIS • IMD • ECMWF</span>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <span className="block font-mono text-[10px] text-ink-muted uppercase">Hallucination Risk</span>
+                    <span className="font-medium text-emerald-700 dark:text-emerald-400">Zero (Code-Enforced)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Handcrafted Telemetry Slate */}
+              <div className="lg:col-span-5 flex flex-col gap-3">
+                <div className="editorial-card p-5 sm:p-6 border border-border bg-surface flex flex-col gap-4">
+                  {/* Ledger Header */}
+                  <div className="flex items-start justify-between gap-3 pb-3 border-b border-border">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
+                          Live Station Feed • {activePort.admin1}
+                        </span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-forest animate-pulse" />
+                      </div>
+                      <h2 className="text-xl font-editorial italic font-normal text-ink mt-0.5">
+                        {activePort.name}
+                      </h2>
+                    </div>
                     <RiskBadge level={activePort.level} size="sm" />
                   </div>
-                </div>
 
-                {/* SeaState Live Animated Wave Display */}
-                <div className="relative z-10 rounded-lg overflow-hidden border border-border bg-surface-raised">
-                  <SeaState
-                    waveHeightM={activePort.waveHeightM}
-                    wavePeriodS={activePort.wavePeriodS}
-                    swellHeightM={activePort.swellHeightM}
-                    swellPeriodS={activePort.swellPeriodS}
-                    windKmh={activePort.windKmh}
-                    portName={activePort.name}
-                    dataAgeMinutes={activePort.dataAgeMinutes}
-                    validWindow={activePort.validWindow}
-                    height={130}
-                  />
-                </div>
-
-                {/* Metric Capsules */}
-                <div className="relative z-10 grid grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded-lg bg-surface-raised border border-border flex flex-col gap-0.5">
-                    <span className="text-ink-muted text-[11px] font-medium">Significant Wave</span>
-                    <span className="font-mono text-ink font-semibold text-xs">
-                      {formatWaveHeight(activePort.waveHeightM)} ({activePort.wavePeriodS}s)
-                    </span>
+                  {/* Minimalist Wave Diagram Container */}
+                  <div className="rounded-md overflow-hidden border border-border bg-surface-raised">
+                    <SeaState
+                      waveHeightM={activePort.waveHeightM}
+                      wavePeriodS={activePort.wavePeriodS}
+                      swellHeightM={activePort.swellHeightM}
+                      swellPeriodS={activePort.swellPeriodS}
+                      windKmh={activePort.windKmh}
+                      portName={activePort.name}
+                      dataAgeMinutes={activePort.dataAgeMinutes}
+                      validWindow={activePort.validWindow}
+                      height={120}
+                    />
                   </div>
-                  <div className="p-2.5 rounded-lg bg-surface-raised border border-border flex flex-col gap-0.5">
-                    <span className="text-ink-muted text-[11px] font-medium">Sustained Wind</span>
-                    <span className="font-mono text-ink font-semibold text-xs">
-                      {formatWindSpeed(activePort.windKmh)}
-                    </span>
-                  </div>
-                </div>
 
-                {/* Station Selector Chips */}
-                <div className="relative z-10 pt-2 border-t border-border">
-                  <p className="text-[11px] text-ink-muted mb-1.5 font-medium">Switch sample harbour:</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {SAMPLE_PORTS_FALLBACK.map((port, idx) => (
-                      <button
-                        key={port.slug}
-                        onClick={() => {
-                          setUserInteracted(true);
-                          setActivePortIndex(idx);
-                        }}
-                        className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
-                          activePortIndex === idx
-                            ? "bg-primary text-white font-semibold"
-                            : "bg-surface-raised hover:bg-border text-ink"
-                        }`}
-                      >
-                        {port.name.split(" ")[0]}
-                      </button>
-                    ))}
+                  {/* Precise Telemetry Numerical Readouts */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-3 rounded-md bg-surface-raised border border-border flex flex-col gap-0.5">
+                      <span className="text-[10px] font-mono text-ink-muted uppercase">Significant Wave (Hs)</span>
+                      <span className="font-mono font-bold text-ink text-sm">
+                        {formatWaveHeight(activePort.waveHeightM)}
+                        <span className="text-xs font-normal text-ink-muted ml-1">({activePort.wavePeriodS}s)</span>
+                      </span>
+                    </div>
+                    <div className="p-3 rounded-md bg-surface-raised border border-border flex flex-col gap-0.5">
+                      <span className="text-[10px] font-mono text-ink-muted uppercase">Sustained Wind</span>
+                      <span className="font-mono font-bold text-ink text-sm">
+                        {formatWindSpeed(activePort.windKmh)}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="relative z-10 pt-1 text-right">
-                  <Link
-                    to={`/ports/${activePort.slug}`}
-                    className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1 transition-colors"
-                  >
-                    View 48h outlook for {activePort.name} &rarr;
-                  </Link>
+                  {/* Station Selector Bar */}
+                  <div className="pt-2 border-t border-border flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+                      {SAMPLE_PORTS_FALLBACK.map((port, idx) => (
+                        <button
+                          key={port.slug}
+                          onClick={() => {
+                            setUserInteracted(true);
+                            setActivePortIndex(idx);
+                          }}
+                          className={`px-2.5 py-1 text-xs rounded-md font-mono transition-colors ${
+                            activePortIndex === idx
+                              ? "bg-primary text-on-primary font-semibold"
+                              : "bg-surface-raised hover:bg-border text-ink-secondary"
+                          }`}
+                        >
+                          {port.name.split(" ")[0]}
+                        </button>
+                      ))}
+                    </div>
+
+                    <Link
+                      to={`/ports/${activePort.slug}`}
+                      className="text-xs font-mono text-ink hover:underline inline-flex items-center gap-1 shrink-0 ml-2"
+                    >
+                      <span>Full Log</span>
+                      <ArrowUpRight className="h-3 w-3" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION: LIVE OPEN-METEO GLOBAL MARINE OBSERVATORY */}
-        <section id="marine-telemetry" className="max-w-7xl mx-auto w-full px-4 sm:px-6">
-          <div className="border border-border rounded-xl p-5 sm:p-6 bg-surface">
-            <div className="mb-4">
-              <h2 className="text-xl font-heading font-bold text-ink">
-                Global Open-Meteo Marine Telemetry Observatory
+        {/* SECTION 2: LIVE OPEN-METEO GLOBAL MARINE OBSERVATORY */}
+        <section id="marine-telemetry" className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">02 / Telemetry Engine & Timeseries</span>
+            <span>Direct FlatBuffers</span>
+          </div>
+
+          <div className="editorial-card p-5 sm:p-7 bg-surface">
+            <div className="mb-5">
+              <h2 className="text-2xl font-editorial font-normal italic text-ink">
+                Global Open-Meteo Oceanographic Observatory
               </h2>
-              <p className="text-xs text-ink-muted mt-0.5">
-                Live ocean coordinate telemetry with wave height, swell directions, wind speed, and sea state.
+              <p className="text-xs text-ink-muted mt-1 max-w-2xl">
+                Real-time ocean coordinate telemetry. Evaluates significant wave height, primary and secondary swell bearings, sea level MSL tidal surge, and ambient meteorology.
               </p>
             </div>
             <LiveMarineTelemetry
@@ -453,231 +357,280 @@ export const LandingPage: React.FC = () => {
           </div>
         </section>
 
-        {/* SECTION 2: ASK IN PLAIN WORDS */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left">
-          <div className="border border-border rounded-xl p-6 sm:p-8 bg-surface flex flex-col gap-6">
+        {/* SECTION 3: REASONING ENGINE & MARITIME INQUIRY */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">03 / Conversational Safety Gate</span>
+            <span>Zero Hallucinations</span>
+          </div>
+
+          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-                Ask in plain words. Get deterministic safety verdicts.
+              <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
+                Natural inquiry with deterministic verdict gates.
               </h2>
-              <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-xl leading-relaxed">
-                Inspect how the deterministic evaluation engine processes real maritime queries:
+              <p className="text-xs sm:text-sm text-ink-muted mt-1.5 max-w-xl leading-relaxed">
+                Inspect how calibrated safety parameters evaluate unstructured mariner queries without probabilistic drift:
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Link
                 to="/explore?q=Is%20it%20safe%20for%20a%20small%20canoe%20out%20of%20Mumbai%20tomorrow%20morning%3F"
-                className="p-4 rounded-lg bg-surface border border-border hover:border-border-strong transition-colors flex flex-col justify-between gap-3 group"
+                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
               >
                 <div>
-                  <span className="text-[11px] font-mono text-primary font-semibold">Small Craft Seaworthiness</span>
-                  <p className="text-xs font-medium text-ink mt-1.5 leading-snug">
+                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                    Small Craft Seaworthiness
+                  </span>
+                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
                     &ldquo;Is it safe for a small canoe out of Mumbai tomorrow morning?&rdquo;
                   </p>
                 </div>
-                <span className="text-[11px] text-ink-muted group-hover:text-primary flex items-center gap-1 font-medium transition-colors">
-                  Inspect verdict <ArrowRight className="h-3 w-3" />
-                </span>
+                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                  <span>Inspect rule trail</span>
+                  <ArrowRight className="h-3 w-3" />
+                </div>
               </Link>
 
               <Link
                 to="/explore?q=Where%20are%20the%20productive%20fishing%20zones%20near%20Visakhapatnam%20today%3F"
-                className="p-4 rounded-lg bg-surface border border-border hover:border-border-strong transition-colors flex flex-col justify-between gap-3 group"
+                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
               >
                 <div>
-                  <span className="text-[11px] font-mono text-primary font-semibold">Thermal Fronts & PFZ</span>
-                  <p className="text-xs font-medium text-ink mt-1.5 leading-snug">
+                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                    Thermal Fronts & PFZ
+                  </span>
+                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
                     &ldquo;Where are the productive fishing zones near Visakhapatnam today?&rdquo;
                   </p>
                 </div>
-                <span className="text-[11px] text-ink-muted group-hover:text-primary flex items-center gap-1 font-medium transition-colors">
-                  Inspect verdict <ArrowRight className="h-3 w-3" />
-                </span>
+                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                  <span>Inspect rule trail</span>
+                  <ArrowRight className="h-3 w-3" />
+                </div>
               </Link>
 
               <Link
                 to="/explore?q=What%20is%20the%20wave%20height%20and%20swell%20period%20off%20Chennai%20right%20now%3F"
-                className="p-4 rounded-lg bg-surface border border-border hover:border-border-strong transition-colors flex flex-col justify-between gap-3 group"
+                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
               >
                 <div>
-                  <span className="text-[11px] font-mono text-primary font-semibold">Live Hydrodynamics</span>
-                  <p className="text-xs font-medium text-ink mt-1.5 leading-snug">
+                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                    Hydrodynamic Ingestion
+                  </span>
+                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
                     &ldquo;What is the wave height and swell period off Chennai right now?&rdquo;
                   </p>
                 </div>
-                <span className="text-[11px] text-ink-muted group-hover:text-primary flex items-center gap-1 font-medium transition-colors">
-                  Inspect verdict <ArrowRight className="h-3 w-3" />
-                </span>
+                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                  <span>Inspect rule trail</span>
+                  <ArrowRight className="h-3 w-3" />
+                </div>
               </Link>
             </div>
           </div>
         </section>
 
-        {/* SECTION 3: DETERMINISTIC ARCHITECTURE */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left flex flex-col gap-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-              Five specialized agents. One deterministic rules engine.
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-2xl leading-relaxed">
-              ORCA separates data collection and explanation synthesis from safety judgment. LLMs format explanations; calibrated numerical thresholds decide safety.
-            </p>
+        {/* SECTION 4: THE ARCHITECTURE OF OCEAN RISK */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left flex flex-col gap-6">
+          <div className="flex items-center justify-between pb-4 mb-2 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">04 / Multi-Agent Ingestion Topology</span>
+            <span>ECMWF • Copernicus • NOAA</span>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Agent List */}
-            <div className="lg:col-span-7 flex flex-col gap-2.5">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Agent Ledger */}
+            <div className="lg:col-span-7 flex flex-col gap-3">
               {[
                 {
-                  icon: CloudSun,
-                  name: "1. Weather Agent",
-                  desc: "Evaluates sustained atmospheric wind speeds, squall gusts, and convective precipitation from Open-Meteo models.",
+                  id: "01",
+                  name: "Atmospheric Wind & Squall Agent",
+                  desc: "Evaluates sustained wind speeds, convective squall gusts, and barometric gradient drops from global ECMWF models.",
+                  source: "Open-Meteo High-Res Atmosphere",
                 },
                 {
-                  icon: Waves,
-                  name: "2. Ocean State Agent",
-                  desc: "Computes significant wave height, primary swell period, and Douglas sea state classification at oceanic coordinates.",
+                  id: "02",
+                  name: "Hydrodynamic Wave State Agent",
+                  desc: "Computes significant wave height (Hs), dominant swell period, and Douglas sea state index across oceanic coordinates.",
+                  source: "Copernicus Marine FlatBuffers",
                 },
                 {
-                  icon: Satellite,
-                  name: "3. Satellite Telemetry Agent",
-                  desc: "Processes NOAA CoastWatch ERDDAP and Sentinel imagery for sea surface temperature (SST) gradients and chlorophyll.",
+                  id: "03",
+                  name: "Thermal Satellite Radiometry Agent",
+                  desc: "Processes NOAA CoastWatch ERDDAP and Sentinel-3 radiometry for sea surface temperature (SST) divergence lines.",
+                  source: "NOAA CoastWatch ERDDAP",
                 },
                 {
-                  icon: Fish,
-                  name: "4. Fishing Zones Agent",
-                  desc: "Identifies productive thermal divergence lines using machine learning, strictly excluding Marine Protected Areas.",
+                  id: "04",
+                  name: "Potential Fishing Zones (PFZ) Agent",
+                  desc: "Identifies nutrient-rich upwelling areas, enforcing strict exclusion masks across statutory Marine Protected Areas.",
+                  source: "MODIS Chlorophyll + INCOIS",
                 },
                 {
-                  icon: Radio,
-                  name: "5. Official Advisories Agent",
-                  desc: "Ingests statutory bulletins from INCOIS and IMD, triggering override status on active cyclone and high-wave watches.",
+                  id: "05",
+                  name: "Statutory Coastal Advisories Agent",
+                  desc: "Ingests bulletins from IMD and INCOIS, triggering immediate status overrides on cyclone, storm surge, or gale watches.",
+                  source: "IMD Marine Bulletin Protocol",
                 },
-              ].map((agent, i) => (
-                <div key={i} className="p-3.5 rounded-lg bg-surface border border-border flex items-start gap-3">
-                  <div className="p-2 rounded-md bg-surface-raised text-primary shrink-0">
-                    <agent.icon className="h-4 w-4" aria-hidden="true" />
-                  </div>
-                  <div className="text-xs">
-                    <h3 className="font-semibold text-ink">{agent.name}</h3>
-                    <p className="text-ink-muted mt-0.5 leading-relaxed">{agent.desc}</p>
+              ].map((agent) => (
+                <div key={agent.id} className="p-4 rounded-md bg-surface border border-border flex items-start gap-4">
+                  <span className="font-mono text-xs text-ink-muted font-bold shrink-0 pt-0.5">
+                    {agent.id}
+                  </span>
+                  <div className="flex-1 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-semibold text-ink text-sm font-sans">{agent.name}</h3>
+                      <span className="font-mono text-[10px] text-ink-muted">{agent.source}</span>
+                    </div>
+                    <p className="text-ink-muted mt-1 leading-relaxed">{agent.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Decision Rules Box */}
-            <div className="lg:col-span-5 bg-surface-raised border border-border rounded-xl p-5 flex flex-col gap-3.5">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary shrink-0" aria-hidden="true" />
-                <h3 className="font-heading font-bold text-sm text-ink">Who decides safety?</h3>
+            {/* Deterministic Boundary Manifesto Box */}
+            <div className="lg:col-span-5 editorial-card p-6 bg-surface-raised flex flex-col gap-4">
+              <div>
+                <span className="text-[10px] font-mono text-forest dark:text-sage uppercase font-semibold">
+                  Safety Governance Rule
+                </span>
+                <h3 className="text-xl font-editorial font-normal italic text-ink mt-1">
+                  Why language models do not decide seaworthiness.
+                </h3>
               </div>
+
               <p className="text-xs text-ink-muted leading-relaxed">
-                Large language models are inherently probabilistic and cannot be trusted with seaworthiness gates. In ORCA, language models only translate pre-evaluated JSON into clear language.
+                Probabilistic models generate text; calibrated physical thresholds govern maritime safety. In ORCA, language models are strictly constrained to translating pre-evaluated JSON into clear plain-language explanations.
               </p>
-              <div className="p-3 rounded-md bg-surface border border-border text-xs space-y-1 font-mono">
-                <p className="text-emerald-600 dark:text-emerald-400 font-semibold">✓ Wave &lt; 1.5 m & Wind &lt; 30 km/h &rarr; SAFE</p>
-                <p className="text-amber-600 dark:text-amber-400 font-semibold">⚠ Wave 1.5–2.5 m or Wind 30–45 km/h &rarr; CAUTION</p>
-                <p className="text-rose-600 dark:text-rose-400 font-semibold">✕ Wave &gt; 2.5 m or Wind &gt; 45 km/h &rarr; UNSAFE</p>
-                <p className="text-ink-muted font-semibold">? Missing or stale data &rarr; UNKNOWN</p>
+
+              <div className="p-3.5 rounded-md bg-surface border border-border space-y-2 font-mono text-xs">
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Wave &lt; 1.5 m & Wind &lt; 30 km/h</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-risk-safe-bg text-risk-safe border border-risk-safe/30">SAFE</span>
+                </div>
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                  <span className="text-amber-700 dark:text-amber-400 font-semibold">Wave 1.5–2.5 m or Wind 30–45 km/h</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-risk-caution-bg text-risk-caution border border-risk-caution/30">CAUTION</span>
+                </div>
+                <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                  <span className="text-rose-700 dark:text-rose-400 font-semibold">Wave &gt; 2.5 m or Wind &gt; 45 km/h</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-risk-unsafe-bg text-risk-unsafe border border-risk-unsafe/30">UNSAFE</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-muted font-semibold">Missing sensor telemetry</span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-risk-unknown-bg text-risk-unknown border border-risk-unknown/30">UNKNOWN</span>
+                </div>
               </div>
-              <p className="text-[11px] text-ink-muted">
+
+              <p className="text-[11px] text-ink-muted leading-normal">
                 * Calibrated against DG Shipping & INCOIS Small Craft seaworthiness standards.
               </p>
             </div>
           </div>
         </section>
 
-        {/* SECTION 4: THE FOUR SAFETY LEVELS */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left flex flex-col gap-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-              Four deterministic safety levels
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-xl leading-relaxed">
-              Every port or coordinate is assigned exactly one level based on current observations and forecast models:
-            </p>
+        {/* SECTION 5: FOUR PRECISE OPERATIONAL TIERS */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">05 / Verdict Classifications</span>
+            <span>Deterministic Tiers</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <div className="p-4 rounded-lg bg-surface border border-border flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-ink">Safe</span>
-                <RiskBadge level="safe" size="sm" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
+              <div>
+                <div className="flex items-center justify-between pb-2 border-b border-border">
+                  <span className="font-editorial text-lg italic text-ink">Safe</span>
+                  <RiskBadge level="safe" size="sm" />
+                </div>
+                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                  Hydrodynamic conditions are well within standard seaworthiness limits. Sustained wind &lt; 30 km/h, wave height &lt; 1.5 m, zero active gale alerts.
+                </p>
               </div>
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Conditions are well within standard seaworthiness limits. Wind &lt; 30 km/h, wave height &lt; 1.5 m, and no active gale alerts.
-              </p>
+              <span className="text-[10px] font-mono text-ink-muted">Standard transit permitted</span>
             </div>
 
-            <div className="p-4 rounded-lg bg-surface border border-border flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-ink">Caution</span>
-                <RiskBadge level="caution" size="sm" />
+            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
+              <div>
+                <div className="flex items-center justify-between pb-2 border-b border-border">
+                  <span className="font-editorial text-lg italic text-ink">Caution</span>
+                  <RiskBadge level="caution" size="sm" />
+                </div>
+                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                  Elevated chop, gusty winds, or long-period deepwater swell. Small canoes and artisanal craft must exercise extreme care or remain inshore.
+                </p>
               </div>
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Elevated chop, gusty winds, or long-period swell. Small canoes and artisanal craft should exercise extreme care or stay inshore.
-              </p>
+              <span className="text-[10px] font-mono text-ink-muted">Artisanal craft warning</span>
             </div>
 
-            <div className="p-4 rounded-lg bg-surface border border-border flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-ink">Unsafe</span>
-                <RiskBadge level="unsafe" size="sm" />
+            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
+              <div>
+                <div className="flex items-center justify-between pb-2 border-b border-border">
+                  <span className="font-editorial text-lg italic text-ink">Unsafe</span>
+                  <RiskBadge level="unsafe" size="sm" />
+                </div>
+                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                  Hazardous sea state, wave height &gt; 2.5 m, squall gusts &gt; 45 km/h, or statutory gale warnings active. Operations strictly not advised.
+                </p>
               </div>
-              <p className="text-xs text-ink-muted leading-relaxed">
-                Dangerous sea state, high waves (&gt; 2.5 m), squalls (&gt; 45 km/h), or active statutory storm warnings. Operations not advised.
-              </p>
+              <span className="text-[10px] font-mono text-ink-muted">Vessel departure closed</span>
             </div>
 
-            <div className="p-4 rounded-lg bg-surface border border-border flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-sm text-ink">Unknown</span>
-                <RiskBadge level="unknown" size="sm" />
+            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
+              <div>
+                <div className="flex items-center justify-between pb-2 border-b border-border">
+                  <span className="font-editorial text-lg italic text-ink">Unknown</span>
+                  <RiskBadge level="unknown" size="sm" />
+                </div>
+                <p className="text-xs text-ink mt-2.5 font-medium leading-relaxed">
+                  ORCA outputs Unknown when buoy or satellite telemetry is stale. It never guesses calm waters without verified live feeds.
+                </p>
               </div>
-              <p className="text-xs text-ink font-medium leading-relaxed">
-                ORCA says unknown when data is missing or stale. It never assumes calm seas without verified feeds.
-              </p>
+              <span className="text-[10px] font-mono text-ink-muted">Zero assumption policy</span>
             </div>
           </div>
         </section>
 
-        {/* SECTION 5: COASTAL COVERAGE */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left">
-          <div className="border border-border rounded-xl p-6 sm:p-8 bg-surface flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        {/* SECTION 6: COASTAL STATION DIRECTORY */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">06 / Geographic Coverage</span>
+            <span>3,874 Coastal Stations</span>
+          </div>
+
+          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div>
-                <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-                  Coastal station directory
+                <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
+                  Indian coastline coverage directory.
                 </h2>
                 <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-xl leading-relaxed">
-                  Active monitoring across commercial ports, minor fishing harbours, and coastal fish landing centres.
+                  Comprehensive coverage across major commercial ports, minor fishing harbours, and artisanal landing centres.
                 </p>
               </div>
 
-              {/* Station Count Metrics */}
-              <div className="flex items-center gap-6 bg-surface-raised p-3.5 rounded-lg border border-border">
+              <div className="flex items-center gap-6 bg-surface-raised p-4 rounded-md border border-border shrink-0">
                 <div>
-                  <p className="text-2xl font-bold font-mono text-primary">
+                  <p className="text-2xl font-mono font-bold text-ink">
                     {coverage?.total_ports || 3875}
                   </p>
-                  <p className="text-[10px] text-ink-muted uppercase font-semibold">Total Stations</p>
+                  <p className="text-[10px] font-mono text-ink-muted uppercase">Cataloged Stations</p>
                 </div>
                 <div className="h-6 w-px bg-border" />
                 <div>
-                  <p className="text-2xl font-bold font-mono text-ink">
+                  <p className="text-2xl font-mono font-bold text-forest dark:text-sage">
                     {coverage?.total_coastal_ports || 3874}
                   </p>
-                  <p className="text-[10px] text-ink-muted uppercase font-semibold">Coastal Harbours</p>
+                  <p className="text-[10px] font-mono text-ink-muted uppercase">Coastal Harbours</p>
                 </div>
               </div>
             </div>
 
-            {/* State Filter Pills */}
+            {/* Coastal State Chips */}
             <div>
-              <p className="text-xs font-semibold text-ink mb-2">Browse Indian Coastal States:</p>
-              <div className="flex flex-wrap gap-1.5">
+              <p className="text-xs font-mono text-ink-muted uppercase mb-3">Browse by Coastal State:</p>
+              <div className="flex flex-wrap gap-2">
                 {[
                   { name: "Gujarat", count: 22 },
                   { name: "Kerala", count: 17 },
@@ -693,112 +646,117 @@ export const LandingPage: React.FC = () => {
                   <Link
                     key={st.name}
                     to={`/ports?state=${encodeURIComponent(st.name)}`}
-                    className="px-2.5 py-1 rounded-md bg-surface-raised border border-border hover:border-border-strong text-xs font-medium text-ink flex items-center gap-1.5 transition-colors"
+                    className="px-3 py-1.5 rounded-md bg-surface-raised border border-border hover:border-ink text-xs font-medium text-ink flex items-center gap-2 transition-colors font-mono"
                   >
                     <span>{st.name}</span>
-                    <span className="text-[10px] font-mono text-ink-muted">
-                      {st.count}
-                    </span>
+                    <span className="text-[10px] text-ink-muted font-mono">{st.count}</span>
                   </Link>
                 ))}
               </div>
             </div>
 
-            <div className="pt-1">
+            <div className="pt-2">
               <Link
                 to="/ports"
-                className="btn-ocean-secondary inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium"
+                className="btn-editorial-secondary inline-flex items-center gap-2 text-xs font-mono"
               >
-                <span>Browse port directory</span>
+                <span>Open complete coastal directory</span>
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           </div>
         </section>
 
-        {/* SECTION 6: LOW SIGNAL & MARITIME MODE */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left">
-          <div className="border border-border rounded-xl p-6 sm:p-8 bg-surface grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="flex flex-col gap-3">
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-mono text-primary font-semibold">
-                <WifiOff className="h-3.5 w-3.5" aria-hidden="true" /> Low Connectivity Maritime Mode
-              </div>
-              <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-                Works when mobile reception drops at sea.
+        {/* SECTION 7: OFFSHORE PWA RESILIENCE */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">07 / Low-Connectivity Architecture</span>
+            <span>Progressive Web App</span>
+          </div>
+
+          <div className="editorial-card p-6 sm:p-8 bg-surface grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="flex flex-col gap-4">
+              <span className="inline-flex items-center gap-1.5 text-xs font-mono text-forest dark:text-sage uppercase font-semibold">
+                <WifiOff className="h-3.5 w-3.5" aria-hidden="true" /> Offshore Cache Engine
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
+                Built for the realities of zero cellular bars.
               </h2>
               <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-                ORCA functions as an installable Progressive Web App (PWA). When heading beyond cell tower range (5–12 nautical miles), recent port forecasts and safety advisories remain accessible in offline storage.
+                ORCA functions as an installable Progressive Web App (PWA). When sailing beyond coastal cell towers (5–12 nautical miles offshore), recent port forecasts, telemetry curves, and advisory snapshots remain accessible from local device cache.
               </p>
-              <div className="flex flex-wrap gap-2.5 pt-1">
-                <Link
-                  to="/game"
-                  className="btn-ocean-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold"
-                >
-                  <Fish className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Marine Fish Game</span>
-                </Link>
+              <div className="flex flex-wrap gap-3 pt-1">
                 <Link
                   to="/offline-preview"
-                  className="btn-ocean-secondary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium"
+                  className="btn-editorial-primary inline-flex items-center gap-2 text-xs font-semibold"
                 >
-                  <span>Preview Offline Mode</span>
+                  <span>Inspect Offline Mode</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  to="/game"
+                  className="btn-editorial-secondary inline-flex items-center gap-2 text-xs"
+                >
+                  <Fish className="h-3.5 w-3.5" />
+                  <span>Marine Fish Game</span>
                 </Link>
               </div>
             </div>
 
-            <div className="bg-surface-raised border border-border rounded-lg p-5 flex flex-col gap-2.5 text-xs">
-              <h3 className="font-semibold text-xs text-ink">Built for offshore realities:</h3>
-              <ul className="space-y-2 text-ink-muted">
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">✓</span>
-                  <span><strong>Cached Forecasts:</strong> The last evaluated 48h outlook remains interactive with 0 bars offshore.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">✓</span>
-                  <span><strong>Compact Payload:</strong> Compressed JSON payloads ensure fast loads over 2G/3G coastal connections.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold">✓</span>
-                  <span><strong>Zero Bloat:</strong> No heavy external analytics or video assets consuming maritime data quotas.</span>
-                </li>
-              </ul>
+            <div className="p-5 rounded-md bg-surface-raised border border-border text-xs space-y-3 font-mono">
+              <div className="flex items-start gap-2.5">
+                <span className="text-forest dark:text-sage font-bold">✓</span>
+                <div>
+                  <strong className="text-ink font-sans">Persistent Local Cache:</strong>
+                  <p className="text-ink-muted font-sans text-xs mt-0.5">The last synchronized 48h sea state outlook stays interactive offshore.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="text-forest dark:text-sage font-bold">✓</span>
+                <div>
+                  <strong className="text-ink font-sans">Sub-100KB Payloads:</strong>
+                  <p className="text-ink-muted font-sans text-xs mt-0.5">FlatBuffers and compressed JSON ensure fast transfers over 2G/3G links.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="text-forest dark:text-sage font-bold">✓</span>
+                <div>
+                  <strong className="text-ink font-sans">Zero Extraneous Bloat:</strong>
+                  <p className="text-ink-muted font-sans text-xs mt-0.5">No video trackers or heavy advertising scripts draining mariner data.</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 7: DATA SOURCES & OPERATIONAL BOUNDARIES */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left flex flex-col gap-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">
-              Data sources and operational boundaries
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted mt-1 max-w-xl leading-relaxed">
-              ORCA relies on public scientific telemetry and adheres to strict operational boundaries.
-            </p>
+        {/* SECTION 8: STATUTORY BOUNDARIES & SOLAS */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">08 / Governance & Legal Precedence</span>
+            <span>SOLAS Compliance</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Live Data Sources Table */}
-            <div className="lg:col-span-7 border border-border rounded-xl bg-surface overflow-hidden">
-              <div className="p-3.5 border-b border-border bg-surface-raised flex items-center justify-between">
+            <div className="lg:col-span-7 editorial-card bg-surface overflow-hidden">
+              <div className="p-4 border-b border-border bg-surface-raised flex items-center justify-between">
                 <h3 className="text-xs font-mono font-semibold text-ink flex items-center gap-1.5">
-                  <Database className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                  Live Feed Status & Freshness
+                  <Database className="h-3.5 w-3.5 text-forest dark:text-sage" />
+                  Telemetry Source Ingestion Status
                 </h3>
-                <Link to="/status" className="text-xs text-primary font-medium hover:underline">
-                  Full status &rarr;
+                <Link to="/status" className="text-xs font-mono text-ink-muted hover:text-ink">
+                  Detailed Status &rarr;
                 </Link>
               </div>
-              <div className="divide-y divide-border text-xs">
+              <div className="divide-y divide-border text-xs font-sans">
                 {dataStatus?.sources ? (
                   dataStatus.sources.slice(0, 5).map((src) => (
-                    <div key={src.slug} className="p-3 flex items-center justify-between gap-4">
+                    <div key={src.slug} className="p-3.5 flex items-center justify-between gap-4">
                       <div>
                         <p className="font-semibold text-ink">{src.name}</p>
                         <p className="text-ink-muted text-[11px] truncate max-w-sm">{src.attribution}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-mono font-medium uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                        <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase bg-surface-raised border border-border text-forest dark:text-sage">
                           {src.status}
                         </span>
                         <p className="text-[10px] text-ink-muted font-mono mt-0.5">
@@ -808,99 +766,95 @@ export const LandingPage: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="p-3.5 text-xs text-ink-muted">Loading live telemetry status...</div>
+                  <div className="p-4 text-xs text-ink-muted">Awaiting telemetry telemetry response...</div>
                 )}
               </div>
             </div>
 
-            {/* IMD Override & SOLAS boundaries */}
-            <div className="lg:col-span-5 flex flex-col gap-3">
-              <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-ink space-y-1.5">
-                <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 font-semibold text-xs">
-                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  Statutory Warning Precedence
+            <div className="lg:col-span-5 flex flex-col gap-4">
+              <div className="p-5 rounded-md bg-surface-raised border border-terracotta/30 text-ink space-y-1.5">
+                <div className="flex items-center gap-1.5 text-terracotta font-semibold text-xs font-mono uppercase">
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                  Statutory Precedence
                 </div>
-                <p className="text-xs font-semibold text-ink">
-                  Official IMD and INCOIS warnings override ORCA.
+                <p className="text-xs font-bold text-ink">
+                  Official IMD & INCOIS warnings strictly supersede ORCA.
                 </p>
                 <p className="text-xs text-ink-muted leading-relaxed">
-                  Statutory maritime broadcasts, gale alerts, and swell surge warnings issued by statutory authorities strictly supersede any output or safety rating produced by ORCA.
+                  Statutory maritime broadcasts, gale warnings, and cyclone advisories issued by national maritime authorities override any automated output or advisory produced by ORCA.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg border border-border bg-surface space-y-1.5 text-xs">
-                <h4 className="font-semibold text-ink">What ORCA does not do:</h4>
-                <ul className="space-y-1 text-ink-muted list-disc list-inside">
-                  <li>Does not replace certified ECDIS navigation charts or radar.</li>
-                  <li>Does not steer or connect to vessel autopilot mechanisms.</li>
-                  <li>Does not guess or invent safety values when sensor telemetry is down.</li>
-                  <li>Does not replace captain/skipper responsibility under SOLAS regulations.</li>
+              <div className="p-5 rounded-md border border-border bg-surface space-y-2 text-xs">
+                <h4 className="font-semibold text-ink font-mono uppercase text-[11px]">Operational Boundaries:</h4>
+                <ul className="space-y-1.5 text-ink-muted list-disc list-inside">
+                  <li>Does not replace certified nautical ECDIS paper charts.</li>
+                  <li>Does not interface with vessel rudder or autopilot systems.</li>
+                  <li>Does not fabricate calm parameters during sensor outages.</li>
+                  <li>Does not relieve vessel masters of statutory SOLAS duties.</li>
                 </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 8: SDG 14 TARGETS */}
-        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 text-left">
-          <div className="border border-border rounded-xl p-6 sm:p-8 bg-surface flex flex-col gap-6">
-            <div className="flex items-center gap-2.5">
-              <span className="p-1.5 px-2 rounded-md bg-primary/10 text-primary font-mono text-xs font-bold">
-                SDG 14
-              </span>
-              <div>
-                <h2 className="text-xl font-heading font-bold tracking-tight text-ink">
-                  Supporting UN Sustainable Development Goal 14
-                </h2>
-                <p className="text-xs text-ink-muted mt-0.5">Conserve and sustainably use the oceans, seas and marine resources.</p>
-              </div>
+        {/* SECTION 9: UNITED NATIONS SDG 14 COMMITMENT */}
+        <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">09 / Sustainability Mandate</span>
+            <span>UN SDG 14 Life Below Water</span>
+          </div>
+
+          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
+            <div>
+              <span className="font-mono text-xs text-forest dark:text-sage font-bold">UN SDG 14</span>
+              <h2 className="text-2xl font-editorial font-normal italic text-ink mt-1">
+                Preserving life at sea and protecting marine habitats.
+              </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1 text-xs">
-              <div className="p-4 rounded-lg bg-surface-raised border border-border flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-primary font-bold text-[11px]">Target 14.b</span>
-                  <Anchor className="h-4 w-4 text-ink-muted" />
-                </div>
-                <h3 className="font-bold text-ink">Support Artisanal Fisheries</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
+                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.b</span>
+                <h3 className="font-bold text-ink text-sm font-sans">Artisanal Small-Scale Fisheries</h3>
                 <p className="text-ink-muted leading-relaxed">
-                  Provide small-scale artisanal fishers with free, accurate coastal safety intelligence to minimize loss of life and gear at sea.
+                  Provide artisanal coastal fishers with free, deterministic safety intelligence to eliminate avoidable casualties and gear destruction at sea.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-surface-raised border border-border flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-primary font-bold text-[11px]">Target 14.1</span>
-                  <Compass className="h-4 w-4 text-ink-muted" />
-                </div>
-                <h3 className="font-bold text-ink">Prevent Coastal Marine Hazards</h3>
+              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
+                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.1</span>
+                <h3 className="font-bold text-ink text-sm font-sans">Prevent Marine Contamination</h3>
                 <p className="text-ink-muted leading-relaxed">
-                  Reduce accidental vessel wreckage and fuel contamination by warning small crafts against operating in hazardous swell surges.
+                  Avert vessel wreckage, hull breaching, and coastal diesel spills by providing reliable advance warnings against cross-sea swells.
                 </p>
               </div>
 
-              <div className="p-4 rounded-lg bg-surface-raised border border-border flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-primary font-bold text-[11px]">Target 14.2</span>
-                  <Fish className="h-4 w-4 text-ink-muted" />
-                </div>
-                <h3 className="font-bold text-ink">Sustainable Ecosystem Management</h3>
+              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
+                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.2</span>
+                <h3 className="font-bold text-ink text-sm font-sans">Marine Protected Area Enclaves</h3>
                 <p className="text-ink-muted leading-relaxed">
-                  Protect vulnerable marine ecosystems by enforcing exclusion zones across Marine Protected Areas (MPAs) in all fishing zone recommendations.
+                  Strictly exclude sensitive coral reefs, mangrove estuaries, and Marine Protected Areas (MPAs) from all recommended fishing zones.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 9: ACCESSIBLE FAQ */}
-        <section className="max-w-3xl mx-auto w-full px-4 sm:px-6 text-left flex flex-col gap-5">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-heading font-bold tracking-tight text-ink">Frequently Answered Questions</h2>
-            <p className="text-xs text-ink-muted mt-1">Operational details and methodology.</p>
+        {/* SECTION 10: ACCESSIBLE FAQ */}
+        <section className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left flex flex-col gap-6">
+          <div className="flex items-center justify-between pb-3 border-b border-border text-xs font-mono text-ink-muted">
+            <span className="tracking-widest uppercase">10 / Methodological Reference</span>
+            <span>FAQ</span>
           </div>
 
-          <div className="space-y-2">
+          <div>
+            <h2 className="text-3xl font-editorial font-normal italic text-ink">
+              Frequently clarified questions.
+            </h2>
+          </div>
+
+          <div className="space-y-2.5">
             {[
               {
                 q: "How is the seaworthiness rating computed?",
@@ -923,12 +877,12 @@ export const LandingPage: React.FC = () => {
                 a: "No. Official statutory warnings from the India Meteorological Department (IMD) and the Indian National Centre for Ocean Information Services (INCOIS) always take precedence over ORCA. ORCA is an advisory decision-support tool.",
               },
             ].map((faq, i) => (
-              <details key={i} className="group border border-border rounded-lg bg-surface p-3.5 sm:p-4 cursor-pointer">
-                <summary className="font-semibold text-xs sm:text-sm text-ink flex items-center justify-between list-none">
+              <details key={i} className="group border border-border rounded-md bg-surface p-4 cursor-pointer">
+                <summary className="font-medium text-sm text-ink flex items-center justify-between list-none">
                   <span>{faq.q}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-ink-muted group-open:rotate-180 transition-transform" />
+                  <ChevronDown className="h-4 w-4 text-ink-muted group-open:rotate-180 transition-transform" />
                 </summary>
-                <p className="text-xs text-ink-muted mt-2 leading-relaxed">
+                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed font-sans">
                   {faq.a}
                 </p>
               </details>

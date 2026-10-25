@@ -81,11 +81,11 @@ export const Navbar: React.FC = () => {
         {/* Ocean Brand Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg p-1 -ml-1"
+          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md p-1 -ml-1"
           aria-label="ORCA Home"
         >
-          <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
-            <Anchor className="h-4 w-4" />
+          <div className="h-7 w-7 rounded-md bg-surface-raised text-ink border border-border flex items-center justify-center shrink-0">
+            <Anchor className="h-3.5 w-3.5" />
           </div>
           <div className="flex flex-col text-left">
             <div className="flex items-center gap-1.5">
@@ -98,7 +98,7 @@ export const Navbar: React.FC = () => {
                 interactive={true}
                 staggerHover={false}
               />
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              <span className="h-1.5 w-1.5 rounded-full bg-forest dark:bg-sage" />
             </div>
             <span className="text-[9px] font-mono text-ink-muted leading-none tracking-wider uppercase font-semibold">
               Ocean Intelligence • SDG 14
@@ -225,7 +225,7 @@ export const Navbar: React.FC = () => {
               </Link>
               <Link
                 to="/explore"
-                className="btn-ocean-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold"
+                className="btn-editorial-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold"
               >
                 <span>Launch App</span>
                 <ArrowRight className="h-3.5 w-3.5" />

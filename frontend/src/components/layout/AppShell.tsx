@@ -132,7 +132,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               {user?.display_name || "Captain's Bridge"}
             </p>
             <p className="text-[10px] font-mono text-ink-muted truncate">
-              {user?.default_vessel_class === "mechanised" ? "Mechanised Hull" : "Small Craft (&lt;12m)"}
+              {user?.default_vessel_class === "mechanised" ? "Mechanised Hull" : "Small Craft (<12m)"}
             </p>
           </div>
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" title="Telemetry Live" />

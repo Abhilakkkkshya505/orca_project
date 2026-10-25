@@ -22,17 +22,17 @@ export const Footer: React.FC = () => {
           {/* Brand & Mission Column */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center gap-2.5 group w-fit">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
-                <Anchor className="h-4 w-4" />
+              <div className="h-7 w-7 rounded-md bg-surface-raised text-ink border border-border flex items-center justify-center shrink-0">
+                <Anchor className="h-3.5 w-3.5" />
               </div>
               <div className="flex flex-col">
-                <span className="font-heading font-bold text-xl leading-tight tracking-tight text-ink flex items-center gap-2">
+                <span className="font-editorial text-2xl leading-none text-ink flex items-center gap-2">
                   ORCA
-                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-sm bg-surface-raised text-forest dark:text-sage border border-border">
                     SDG 14
                   </span>
                 </span>
-                <span className="text-[10px] font-mono text-ink-muted uppercase tracking-wider font-semibold">
+                <span className="text-[9px] font-mono text-ink-muted uppercase tracking-wider font-semibold mt-0.5">
                   Ocean Reasoning & Coastal Analytics
                 </span>
               </div>

@@ -7,20 +7,13 @@ import { RiskBadge } from "@/components/ui/risk-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { RiskLevel } from "@/components/ui/risk-icons";
 import {
-  MapPin,
   AlertTriangle,
-  Bell,
-  Activity,
-  ArrowRight,
   ShieldCheck,
   Compass,
-  Waves,
-  Wind,
   Plus,
   RefreshCw,
-  Clock,
-  Radio,
-  CheckCircle2,
+  ExternalLink,
+  Ship,
 } from "lucide-react";
 
 interface SavedLocationOverview {
@@ -60,7 +53,7 @@ const mockRecentActivity = [
     id: "act-1",
     title: "INCOIS High Swell Advisory Ingested",
     station: "Arabian Sea Sector 4",
-    time: "12 minutes ago",
+    time: "12m ago",
     type: "advisory",
     severity: "caution",
   },
@@ -68,7 +61,7 @@ const mockRecentActivity = [
     id: "act-2",
     title: "Open-Meteo High-Resolution Telemetry Synced",
     station: "Kochi Marine Observatory",
-    time: "24 minutes ago",
+    time: "24m ago",
     type: "telemetry",
     severity: "safe",
   },
@@ -76,7 +69,7 @@ const mockRecentActivity = [
     id: "act-3",
     title: "Deterministic Safety Gate Evaluation Completed",
     station: "Port of Mumbai Offshore Zone",
-    time: "1 hour ago",
+    time: "1h ago",
     type: "evaluation",
     severity: "safe",
   },
@@ -84,14 +77,14 @@ const mockRecentActivity = [
     id: "act-4",
     title: "VHF Marine Emergency Beacon Test Acknowledged",
     station: "Coast Guard Regional HQ",
-    time: "3 hours ago",
+    time: "3h ago",
     type: "system",
     severity: "safe",
   },
 ];
 
 export const DashboardPage: React.FC = () => {
-  const [selectedRange, setSelectedRange] = useState<"24h" | "48h" | "7d">("7d");
+  const [vesselClass, setVesselClass] = useState<"small" | "mechanised">("small");
   const [checklist, setChecklist] = useState({
     vhf: true,
     lifejackets: true,
@@ -115,69 +108,118 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <AppShell>
-      <div className="flex flex-col gap-8 text-left max-w-7xl mx-auto w-full">
-        {/* Hero Command Bar with Ocean Gradient */}
-        <div className="bg-gradient-to-r from-surface via-surface-raised to-water/40 dark:from-[#132F4C] dark:via-[#173753] dark:to-[#1C3D5A] border border-border rounded-2xl p-6 sm:p-8 shadow-card flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold">
-              <span className="h-2 w-2 rounded-full bg-[#2ECC71] animate-pulse" />
-              Live Operations Bridge • Telemetry Active
+      <div className="flex flex-col gap-6 text-left max-w-7xl mx-auto w-full pb-20">
+        {/* Linear/GitHub Style Command Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted">
+              <span className="uppercase tracking-wider">Fleet Command</span>
+              <span>/</span>
+              <span className="text-ink font-medium">Arabian Sea & Bay of Bengal</span>
+              <span>/</span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] bg-surface-raised border border-border text-forest dark:text-sage font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-forest dark:bg-sage animate-pulse" />
+                Live Feed Active
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight text-ink">
-              Marine Command Center
+            <h1 className="text-2xl sm:text-3xl font-editorial italic font-normal text-ink mt-1">
+              Maritime Operations Bridge
             </h1>
-            <p className="text-sm text-ink-muted max-w-2xl leading-relaxed">
-              Real-time coastal safety intelligence, high-resolution oceanographic telemetry from Open-Meteo & INCOIS, and automated vessel clearance.
-            </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => refetch()}
               disabled={isRefetching}
-              className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
+              className="btn-editorial-secondary inline-flex items-center gap-1.5 text-xs font-mono"
               title="Refresh telemetry"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : "text-ink-muted"}`} />
-              Sync Feeds
+              <RefreshCw className={`h-3 w-3 ${isRefetching ? "animate-spin text-primary" : "text-ink-muted"}`} />
+              <span>{isRefetching ? "Syncing..." : "Sync Feeds"}</span>
             </button>
             <Link
               to="/locations"
-              className="btn-ocean-secondary inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xs active:scale-95"
+              className="btn-editorial-secondary inline-flex items-center gap-1.5 text-xs font-mono"
             >
-              <Plus className="h-3.5 w-3.5 text-primary" />
-              Add Waypoint
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Waypoint</span>
             </Link>
             <Link
               to="/explore"
-              className="btn-ocean-primary inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold shadow-md active:scale-95 group"
+              className="btn-editorial-primary inline-flex items-center gap-1.5 text-xs font-semibold"
             >
-              <Compass className="h-4 w-4 group-hover:rotate-45 transition-transform" />
-              Launch Map Explorer
+              <Compass className="h-3.5 w-3.5" />
+              <span>Map Explorer</span>
             </Link>
+          </div>
+        </div>
+
+        {/* Master Operations Status Strip */}
+        <div className="editorial-card p-5 bg-surface border border-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-start gap-4">
+            <div className="p-2.5 rounded-md bg-surface-raised border border-border text-ink shrink-0 mt-0.5">
+              <Ship className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono uppercase tracking-wider text-ink-muted">
+                  Active Vessel Profile
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-surface-raised border border-border text-ink">
+                  {vesselClass === "small" ? "Artisanal Craft (<8m)" : "Mechanised Trawler (8–24m)"}
+                </span>
+              </div>
+              <p className="text-sm font-sans text-ink mt-1 font-medium">
+                {vesselClass === "small"
+                  ? "Evaluating under DG Shipping Artisanal Safety Limits (Hs threshold: 1.5m)."
+                  : "Evaluating under Commercial Marine Safety Limits (Hs threshold: 2.5m)."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 bg-surface-raised p-1 rounded-md border border-border shrink-0 self-start md:self-center">
+            <button
+              onClick={() => setVesselClass("small")}
+              className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                vesselClass === "small"
+                  ? "bg-primary text-on-primary font-semibold"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Artisanal (&lt;8m)
+            </button>
+            <button
+              onClick={() => setVesselClass("mechanised")}
+              className={`px-3 py-1 rounded text-xs font-mono font-medium transition-colors ${
+                vesselClass === "mechanised"
+                  ? "bg-primary text-on-primary font-semibold"
+                  : "text-ink-muted hover:text-ink"
+              }`}
+            >
+              Mechanised (8–24m)
+            </button>
           </div>
         </div>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
-            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
-            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
-            <Skeleton className="h-32 rounded-2xl bg-surface-raised" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Skeleton className="h-28 rounded-md bg-surface-raised" />
+            <Skeleton className="h-28 rounded-md bg-surface-raised" />
+            <Skeleton className="h-28 rounded-md bg-surface-raised" />
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="p-5 rounded-2xl bg-[#FEE8E2] dark:bg-rose-950/30 text-[#E64A19] dark:text-rose-400 border border-[#FF8A65]/30 text-sm flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="h-5 w-5 shrink-0" />
-              <span>Failed to synchronize real-time overview metrics. Server may be in maintenance.</span>
+          <div className="p-4 rounded-md bg-surface-raised border border-terracotta/40 text-terracotta text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span>Failed to synchronize overview telemetry. Retrying automatically over fallback feeds.</span>
             </div>
             <button
               onClick={() => refetch()}
-              className="px-3 py-1.5 rounded-xl bg-[#E64A19] text-white text-xs font-bold hover:opacity-90"
+              className="px-2.5 py-1 rounded bg-terracotta text-white font-mono text-xs hover:opacity-90"
             >
               Retry
             </button>
@@ -186,439 +228,229 @@ export const DashboardPage: React.FC = () => {
 
         {data && (
           <>
-            {/* Top Stat Cards (4 SaaS metrics) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {/* Stat 1: Monitored Stations */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-                    Monitored Waypoints
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                    <MapPin className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-ink">
-                    {data.saved_locations.length}
-                  </span>
-                  <span className="text-xs font-medium text-[#1B8A4E] dark:text-emerald-400 bg-[#E8F8F0] dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
-                    +2 active
-                  </span>
-                </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Targeted coastal stations</span>
-                  <Link to="/locations" className="text-primary hover:underline font-semibold">
-                    Manage
-                  </Link>
-                </div>
-              </div>
-
-              {/* Stat 2: Active Advisories */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-amber-400 flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-                    Official Advisories
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
-                    <AlertTriangle className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-amber-500">
-                    {data.active_advisories_count}
-                  </span>
-                  <span className="text-xs font-medium text-ink-muted">INCOIS / IMD</span>
-                </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Maritime coastal warnings</span>
-                  <Link to="/advisories" className="text-primary hover:underline font-semibold">
-                    Review
-                  </Link>
-                </div>
-              </div>
-
-              {/* Stat 3: Alert Triggers */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-                    Safety Alert Triggers
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center">
-                    <Bell className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-ink">
-                    {data.alerts_active_count}
-                  </span>
-                  <span className="text-xs font-medium text-ink-muted">Thresholds Armed</span>
-                </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Wave / wind telemetry watch</span>
-                  <Link to="/alerts" className="text-primary hover:underline font-semibold">
-                    Configure
-                  </Link>
-                </div>
-              </div>
-
-              {/* Stat 4: Deterministic Engine Rating */}
-              <div className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover hover:border-primary flex flex-col justify-between">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-                    Safety Gate Health
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#E8F8F0] dark:bg-emerald-950/40 text-[#1B8A4E] dark:text-emerald-400 flex items-center justify-center">
-                    <ShieldCheck className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-3xl font-heading font-bold text-[#1B8A4E] dark:text-emerald-400">
-                    100%
-                  </span>
-                  <span className="text-xs font-medium text-[#1B8A4E] dark:text-emerald-400 bg-[#E8F8F0] dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-[#2ECC71]/30">
-                    Zero hallucinations
-                  </span>
-                </div>
-                <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Rule Engine v2.4</span>
-                  <Link to="/how-it-works" className="text-primary hover:underline font-semibold">
-                    Audit Logic
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Middle Grid: Wave Height & Forecast Chart + Pre-Voyage Checklist */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Forecast & Sea State Chart (2 Cols) */}
-              <div className="lg:col-span-2 bg-surface border border-border rounded-2xl p-6 shadow-card flex flex-col justify-between">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
-                  <div>
-                    <h2 className="text-base font-bold text-ink flex items-center gap-2">
-                      <Waves className="h-4 w-4 text-primary" />
-                      7-Day Coastal Wave Height & Douglas Sea State Outlook
-                    </h2>
-                    <p className="text-xs text-ink-muted mt-0.5">
-                      Forecast model: Open-Meteo Marine (ECMWF & GFS ensemble)
-                    </p>
-                  </div>
-                  <div className="flex items-center bg-surface-raised border border-border rounded-xl p-1 gap-1 text-xs">
-                    {(["24h", "48h", "7d"] as const).map((range) => (
-                      <button
-                        key={range}
-                        onClick={() => setSelectedRange(range)}
-                        className={`px-3 py-1 rounded-lg font-medium transition-colors ${
-                          selectedRange === range
-                            ? "bg-primary text-white shadow-sm"
-                            : "text-ink-muted hover:text-ink"
-                        }`}
-                      >
-                        {range.toUpperCase()}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* SVG Visual Spark & Forecast Bars */}
-                <div className="py-6 space-y-6">
-                  <div className="grid grid-cols-7 gap-2 text-center">
-                    {forecastDays.map((item, idx) => {
-                      const waveHeightPercent = Math.min(100, Math.round((item.wave / 3.0) * 100));
-                      const barColor =
-                        item.risk === "unsafe"
-                          ? "bg-[#FF8A65]"
-                          : item.risk === "caution"
-                          ? "bg-[#64B5F6]"
-                          : "bg-gradient-to-t from-[#1E88E5] to-[#4DD0E1]";
-
-                      return (
-                        <div key={idx} className="flex flex-col items-center gap-2 group">
-                          <span className="text-xs font-semibold text-ink group-hover:text-primary transition-colors">
-                            {item.day}
-                          </span>
-                          <span className="text-[11px] font-mono text-ink-muted">{item.wave}m</span>
-                          
-                          {/* Visual vertical bar */}
-                          <div className="w-full max-w-[36px] h-28 bg-surface-raised rounded-xl relative flex items-end p-1 overflow-hidden border border-border">
-                            <div
-                              style={{ height: `${waveHeightPercent}%` }}
-                              className={`w-full rounded-lg transition-all duration-500 shadow-xs ${barColor}`}
-                            />
-                          </div>
-
-                          <div className="flex items-center gap-1 text-[11px] text-ink-muted">
-                            <Wind className="h-3 w-3 text-primary" />
-                            <span>{item.wind}kt</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Douglas Sea State Scale Reference */}
-                  <div className="bg-surface-raised border border-border rounded-xl p-3 flex flex-wrap items-center justify-between text-xs text-ink-muted gap-2">
-                    <span className="font-semibold text-ink">Douglas Scale Thresholds:</span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-gradient-to-r from-primary to-secondary" /> Scale 2-3 (Smooth &lt;1.25m)
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-sky-400" /> Scale 4 (Moderate 1.25–2.5m)
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-coral" /> Scale 5+ (Rough &gt;2.5m)
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Next high tide: 14:45 IST • Wave direction: WSW 245°</span>
-                  <Link to="/explore" className="text-primary hover:underline font-semibold flex items-center gap-1">
-                    Examine On Satellite Map <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Pre-Voyage Inspection Checklist (1 Col) */}
-              <div className="bg-surface border border-border rounded-2xl p-6 shadow-card flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-border">
-                    <h2 className="text-base font-bold text-ink flex items-center gap-2">
-                      <Radio className="h-4 w-4 text-primary" />
-                      Pre-Voyage Checklist
-                    </h2>
-                    <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                      {completedChecks}/{totalChecks} Completed
-                    </span>
-                  </div>
-                  <p className="text-xs text-ink-muted mt-2">
-                    Mandatory small-craft pre-departure verification according to DG Shipping guidelines.
-                  </p>
-
-                  <div className="mt-4 space-y-3">
-                    {[
-                      { key: "vhf" as const, label: "VHF Marine Radio on Channel 16 operational" },
-                      { key: "lifejackets" as const, label: "Life jackets & flotation suits inspected" },
-                      { key: "telemetry" as const, label: "Live ORCA risk assessment & IMD bulletin reviewed" },
-                      { key: "fuel" as const, label: "Fuel reserve ≥ 130% of intended voyage route" },
-                      { key: "bilge" as const, label: "Bilge pumps & emergency manual pumps tested" },
-                    ].map((item) => (
-                      <button
-                        key={item.key}
-                        onClick={() => toggleCheck(item.key)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-xl border text-left text-xs transition-all ${
-                          checklist[item.key]
-                            ? "bg-[#E8F8F0] border-[#2ECC71]/40 text-[#0F2742]"
-                            : "bg-white border-[#E5EEF5] text-[#4B6B8A] hover:border-[#1E88E5]/40"
-                        }`}
-                      >
-                        <div
-                          className={`h-4 w-4 rounded-md border flex items-center justify-center shrink-0 ${
-                            checklist[item.key]
-                              ? "bg-[#2ECC71] border-[#2ECC71] text-white"
-                              : "border-[#4B6B8A]/40"
-                          }`}
-                        >
-                          {checklist[item.key] && <CheckCircle2 className="h-3 w-3" />}
-                        </div>
-                        <span className={checklist[item.key] ? "line-through opacity-75 font-medium" : "font-semibold text-[#0F2742]"}>
-                          {item.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Emergency Coast Guard: <strong className="text-ink">1554</strong></span>
-                  <Link to="/offline-preview" className="text-primary hover:underline font-semibold">
-                    Offline PWA
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Monitored Coastal Waypoints Grid */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-heading font-bold text-ink flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    Saved Coastal Stations & Ports
-                  </h2>
-                  <p className="text-xs text-ink-muted mt-0.5">
-                    Real-time safety evaluations evaluated against your small-craft vessel limits.
-                  </p>
-                </div>
-                <Link
-                  to="/locations"
-                  className="text-xs text-primary font-semibold hover:underline flex items-center gap-1"
-                >
-                  Manage Waypoints <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-
-              {data.saved_locations.length === 0 ? (
-                <div className="p-10 text-center bg-surface border border-dashed border-border rounded-2xl text-ink-muted space-y-3">
-                  <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center">
-                    <Compass className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-base font-semibold text-ink">No Saved Coastal Stations</p>
-                    <p className="text-xs text-ink-muted mt-1 max-w-sm mx-auto">
-                      Save regular fishing zones, landing harbours, or offshore routes to track automatic safety updates.
-                    </p>
-                  </div>
-                  <Link
-                    to="/locations"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-on-primary text-xs font-semibold hover:bg-primary-hover shadow-sm"
-                  >
-                    <Plus className="h-4 w-4" /> Add Coastal Waypoint
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {data.saved_locations.map((item) => (
-                    <div
-                      key={item.location.id}
-                      className="bg-surface border border-border rounded-2xl p-5 shadow-card card-hover flex flex-col justify-between gap-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="font-heading font-bold text-base text-ink">{item.location.name}</h3>
-                          <p className="text-xs font-mono text-ink-muted mt-0.5">
-                            {item.location.lat.toFixed(2)}°N, {item.location.lon.toFixed(2)}°E
-                          </p>
-                        </div>
-                        <RiskBadge level={item.level} size="md" />
-                      </div>
-
-                      <div className="p-3 rounded-xl bg-surface-raised border border-border text-xs space-y-1">
-                        <span className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
-                          Primary Threshold Factor
-                        </span>
-                        <p className="font-medium text-ink flex items-center gap-1.5">
-                          <Activity className="h-3.5 w-3.5 text-primary" />
-                          {item.top_factor || "Optimal sea parameters"}
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                        <span>Valid until 12h horizon</span>
-                        <Link
-                          to="/explore"
-                          className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
-                        >
-                          Inspect <ArrowRight className="h-3 w-3" />
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Bottom Row: Recent Maritime Timeline + Data Freshness Table */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Activity Timeline (1 Col) */}
-              <div className="bg-surface border border-border rounded-2xl p-6 shadow-card flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-border">
-                    <h2 className="text-base font-bold text-ink flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-primary" />
-                      Operational Feed
-                    </h2>
-                    <span className="text-xs text-ink-muted">Past 24 Hours</span>
-                  </div>
-
-                  <div className="mt-4 relative pl-4 border-l-2 border-border space-y-5">
-                    {mockRecentActivity.map((act) => (
-                      <div key={act.id} className="relative group text-left">
-                        <div className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-primary border-2 border-surface" />
-                        <h4 className="text-xs font-semibold text-ink group-hover:text-primary transition-colors">
-                          {act.title}
-                        </h4>
-                        <p className="text-[11px] text-ink-muted mt-0.5">{act.station}</p>
-                        <span className="text-[10px] font-mono text-ink-muted mt-1 block">{act.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Encrypted audit log</span>
-                  <Link to="/status" className="text-primary hover:underline font-semibold">
-                    System Status
-                  </Link>
-                </div>
-              </div>
-
-              {/* Data Freshness Table (2 Cols) */}
-              <div className="lg:col-span-2 bg-surface border border-border rounded-2xl p-6 shadow-card flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-border">
+            {/* Asymmetric Core Workspace: 8 Columns vs 4 Columns */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column (8 cols): Waypoints Ledger & Forecast Matrix */}
+              <div className="lg:col-span-8 flex flex-col gap-6">
+                {/* Monitored Waypoints Table */}
+                <div className="editorial-card bg-surface overflow-hidden">
+                  <div className="p-4 border-b border-border bg-surface-raised flex items-center justify-between">
                     <div>
-                      <h2 className="text-base font-bold text-ink flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-primary" />
-                        Telemetry & Provider Ingestion Health
+                      <h2 className="text-sm font-semibold font-sans text-ink">
+                        Monitored Coastal Waypoints
                       </h2>
-                      <p className="text-xs text-ink-muted mt-0.5">
-                        Automated pipelines streaming coastal oceanographic feeds
+                      <p className="text-[11px] text-ink-muted font-mono">
+                        {data.saved_locations.length} station{data.saved_locations.length === 1 ? "" : "s"} under automated surveillance
                       </p>
                     </div>
-                    <span className="text-xs font-mono text-ink-muted hidden sm:inline">Poll: 60s</span>
+                    <Link
+                      to="/locations"
+                      className="text-xs font-mono text-forest dark:text-sage hover:underline flex items-center gap-1"
+                    >
+                      <span>Configure</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
                   </div>
 
-                  <div className="mt-4 overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead>
-                        <tr className="border-b border-border bg-surface-raised text-[11px] text-ink-muted uppercase font-mono">
-                          <th className="py-2.5 px-3 rounded-l-lg">Source Provider</th>
-                          <th className="py-2.5 px-3">Latest Ingest Age</th>
-                          <th className="py-2.5 px-3">Telemetry Health</th>
-                          <th className="py-2.5 px-3 rounded-r-lg text-right">Cadence</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border">
-                        {data.data_freshness.map((src) => (
-                          <tr key={src.source} className="hover:bg-surface-raised/40 transition-colors">
-                            <td className="py-3 px-3 font-semibold text-ink flex items-center gap-2">
-                              <span
-                                className={`h-2 w-2 rounded-full ${
-                                  src.status === "ok" ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
-                                }`}
-                              />
-                              {src.name}
-                            </td>
-                            <td className="py-3 px-3 font-mono text-ink-muted">
-                              {src.age_minutes < 999 ? `${src.age_minutes}m ago` : "Pending initial sync"}
-                            </td>
-                            <td className="py-3 px-3">
-                              <span
-                                className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                  src.status === "ok"
-                                    ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
-                                    : src.status === "stale"
-                                    ? "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
-                                    : "bg-surface-raised text-ink-muted border border-border"
-                                }`}
-                              >
-                                {src.status.toUpperCase()}
-                              </span>
-                            </td>
-                            <td className="py-3 px-3 font-mono text-ink-muted text-right">Hourly</td>
+                  {data.saved_locations.length === 0 ? (
+                    <div className="p-8 text-center text-xs text-ink-muted">
+                      <p>No waypoints saved yet. Add your home harbour to monitor live wave thresholds.</p>
+                      <Link to="/locations" className="btn-editorial-secondary inline-block mt-3 text-xs">
+                        Add First Location
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs divide-y divide-border">
+                        <thead className="bg-surface text-ink-muted font-mono text-[10px] uppercase tracking-wider">
+                          <tr>
+                            <th className="px-4 py-2.5">Station & Coords</th>
+                            <th className="px-4 py-2.5">Safety Verdict</th>
+                            <th className="px-4 py-2.5">Primary Factor</th>
+                            <th className="px-4 py-2.5 text-right">Window</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-border font-sans">
+                          {data.saved_locations.map((loc) => (
+                            <tr key={loc.location.id} className="hover:bg-surface-raised transition-colors">
+                              <td className="px-4 py-3">
+                                <Link
+                                  to={`/ports/${loc.location.id}`}
+                                  className="font-medium text-ink hover:text-forest dark:hover:text-sage transition-colors block"
+                                >
+                                  {loc.location.name}
+                                </Link>
+                                <span className="font-mono text-[10px] text-ink-muted">
+                                  {loc.location.lat.toFixed(2)}°N, {loc.location.lon.toFixed(2)}°E
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                <RiskBadge level={loc.level} size="sm" />
+                              </td>
+                              <td className="px-4 py-3 text-ink-muted font-mono text-xs">
+                                {loc.top_factor || "Optimal sea state"}
+                              </td>
+                              <td className="px-4 py-3 text-right font-mono text-[11px] text-ink-muted">
+                                Next 24h
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* 7-Day Coastal Risk Horizon Matrix */}
+                <div className="editorial-card p-5 bg-surface flex flex-col gap-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-border">
+                    <div>
+                      <h3 className="text-sm font-semibold text-ink font-sans">
+                        7-Day Coastal Risk Horizon
+                      </h3>
+                      <p className="text-[11px] text-ink-muted font-mono">
+                        Forecasted wave height (Hs) & wind trend
+                      </p>
+                    </div>
+                    <span className="text-[10px] font-mono text-ink-muted uppercase">
+                      Updated hourly
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-2">
+                    {forecastDays.map((fc, i) => (
+                      <div
+                        key={i}
+                        className={`p-3 rounded-md border text-center flex flex-col justify-between gap-1.5 transition-colors ${
+                          fc.risk === "safe"
+                            ? "bg-surface-raised border-border"
+                            : fc.risk === "caution"
+                            ? "bg-risk-caution-bg border-risk-caution/30"
+                            : "bg-risk-unsafe-bg border-risk-unsafe/30"
+                        }`}
+                      >
+                        <span className="font-mono text-xs font-semibold text-ink">{fc.day}</span>
+                        <div className="my-1">
+                          <span className="font-mono text-sm font-bold text-ink block">
+                            {fc.wave}m
+                          </span>
+                          <span className="font-mono text-[10px] text-ink-muted block">
+                            {fc.wind}km/h
+                          </span>
+                        </div>
+                        <span
+                          className={`text-[9px] font-mono uppercase font-bold tracking-wider ${
+                            fc.risk === "safe"
+                              ? "text-risk-safe"
+                              : fc.risk === "caution"
+                              ? "text-risk-caution"
+                              : "text-risk-unsafe"
+                          }`}
+                        >
+                          {fc.risk}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-[11px] text-ink-muted font-sans pt-1">
+                    Mid-week squall alert: Projected surge crossing coastal sectors Wednesday. Artisanal craft advised to seek inner harbour anchorage by Tuesday evening.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column (4 cols): Checklist, Ingested Feeds & System Health */}
+              <div className="lg:col-span-4 flex flex-col gap-6">
+                {/* Pre-Departure Operational Checklist */}
+                <div className="editorial-card p-5 bg-surface flex flex-col gap-3.5">
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-forest dark:text-sage" />
+                      <h3 className="text-xs font-mono font-semibold uppercase text-ink">
+                        Pre-Casting Checklist
+                      </h3>
+                    </div>
+                    <span className="font-mono text-xs font-bold text-ink">
+                      {completedChecks}/{totalChecks}
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    {[
+                      { key: "vhf", label: "VHF Marine Radio Test (Ch 16 / DSC)" },
+                      { key: "lifejackets", label: "SOLAS Lifejackets & Beacon Inspected" },
+                      { key: "telemetry", label: "48h Forecast Synced to Local Cache" },
+                      { key: "fuel", label: "Reserve Fuel & Engine Oil Verified" },
+                      { key: "bilge", label: "Bilge Pump & Drainage Ports Clear" },
+                    ].map((item) => (
+                      <label
+                        key={item.key}
+                        className="flex items-center gap-2.5 p-2 rounded-md hover:bg-surface-raised cursor-pointer text-xs font-sans text-ink transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checklist[item.key as keyof typeof checklist]}
+                          onChange={() => toggleCheck(item.key as keyof typeof checklist)}
+                          className="rounded border-border text-forest focus:ring-forest h-4 w-4"
+                        />
+                        <span className={checklist[item.key as keyof typeof checklist] ? "line-through text-ink-muted" : "text-ink font-medium"}>
+                          {item.label}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs text-ink-muted">
-                  <span>Fail-closed deterministic security model active</span>
-                  <Link to="/how-it-works" className="text-primary hover:underline font-semibold">
-                    View Pipeline Architecture
-                  </Link>
+                {/* Statutory Activity Feed */}
+                <div className="editorial-card p-5 bg-surface flex flex-col gap-3.5">
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <span className="text-xs font-mono font-semibold uppercase text-ink">
+                      Operational Ledger
+                    </span>
+                    <span className="text-[10px] font-mono text-ink-muted">Last 24 Hours</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {mockRecentActivity.map((act) => (
+                      <div key={act.id} className="text-xs flex items-start gap-2.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-forest dark:bg-sage mt-1.5 shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-medium text-ink leading-tight">{act.title}</p>
+                          <div className="flex items-center gap-2 text-[10px] font-mono text-ink-muted mt-0.5">
+                            <span>{act.station}</span>
+                            <span>•</span>
+                            <span>{act.time}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Telemetry Ingestion Health */}
+                <div className="editorial-card p-5 bg-surface-raised border border-border flex flex-col gap-3">
+                  <span className="text-[11px] font-mono font-semibold uppercase text-ink-muted">
+                    Scientific Ingestion Feeds
+                  </span>
+
+                  <div className="space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                      <span className="text-ink">Open-Meteo Marine</span>
+                      <span className="text-forest dark:text-sage font-medium">Synced (4m)</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                      <span className="text-ink">INCOIS Swell Advisories</span>
+                      <span className="text-forest dark:text-sage font-medium">Live (12m)</span>
+                    </div>
+                    <div className="flex items-center justify-between pb-1.5 border-b border-border/60">
+                      <span className="text-ink">NOAA CoastWatch SST</span>
+                      <span className="text-forest dark:text-sage font-medium">Valid (1h)</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-ink">IMD Coastal Bulletins</span>
+                      <span className="text-forest dark:text-sage font-medium">Active (30m)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -628,3 +460,5 @@ export const DashboardPage: React.FC = () => {
     </AppShell>
   );
 };
+
+export default DashboardPage;

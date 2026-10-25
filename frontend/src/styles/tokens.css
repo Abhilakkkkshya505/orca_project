@@ -1,94 +1,100 @@
-/* Design System Color Tokens — Refined Maritime / Linear-Grade Typography & Surface System */
+/* Design System Color Tokens — Aesop / Patagonia / Notion Inspired Editorial Palette (Option A) */
 
 :root,
 [data-theme="light"],
 .light {
-  /* Restrained Scandinavian & Coastal Architecture Palette (Light) */
-  --color-bg: #FAFAF9;               /* Warm porcelain white ground */
-  --color-bg-alt: #F5F5F4;           /* Warm stone neutral */
-  --color-surface: #FFFFFF;          /* Pure crisp surface */
-  --color-surface-raised: #F5F5F4;   /* Subtle tone-step surface */
-  --color-surface-elevated: #E7E5E4; /* Elevated container surface */
-  --color-border: #E7E5E4;           /* Crisp 1px warm neutral border */
-  --color-border-strong: #D6D3D1;    /* Strong structured border */
-  --color-ink: #0F172A;              /* Deep slate graphite ink */
-  --color-ink-secondary: #334155;    /* Secondary slate */
-  --color-ink-muted: #64748B;        /* Muted editorial slate */
-  --color-primary: #0284C7;          /* Refined coastal maritime blue */
-  --color-primary-hover: #0369A1;    /* Deep sea navy */
-  --color-on-primary: #FFFFFF;       /* Pure white on primary */
-  --color-secondary: #0D9488;        /* Architectural muted teal */
-  --color-accent: #E0F2FE;           /* Sea mist wash */
-  --color-focus: #0284C7;            /* Accessible focus ring */
-  --color-water: #F0F9FF;            /* Very light marine tint */
+  /* Warm White, Stone, Sand, Charcoal, Forest Green, Muted Sage, Soft Bronze */
+  --color-bg: #FAF8F5;               /* Warm natural alabaster / gallery white ground */
+  --color-bg-alt: #F2EFE9;           /* Pale stone neutral ground */
+  --color-surface: #FFFFFF;          /* Pure crisp surface canvas */
+  --color-surface-raised: #F5F2EB;   /* Tone-step limestone surface */
+  --color-surface-elevated: #EAE5DC; /* Elevated card / container surface */
+  --color-border: #E5E0D6;           /* Crisp 1px warm stone rule */
+  --color-border-strong: #D1C9BC;    /* Structured architectural boundary */
+  --color-ink: #1A1816;              /* Deep warm charcoal ink */
+  --color-ink-secondary: #423E39;    /* Warm stone slate text */
+  --color-ink-muted: #7A746C;        /* Quiet sand-gray editorial caption */
+  --color-primary: #233F33;          /* Deep Alpine / Heritage Forest Pine */
+  --color-primary-hover: #192E25;    /* Deep woodland shadow */
+  --color-on-primary: #FAF8F5;       /* Warm ivory text on primary */
+  --color-secondary: #8A6F4D;        /* Soft Architectural Bronze / Ochre */
+  --color-accent: #EBF1ED;           /* Subdued sage wash */
+  --color-focus: #233F33;            /* Focus ring */
+  --color-water: #F4F6F4;            /* Soft mineral mist */
 
-  /* Ocean Palette */
-  --color-ocean-deep: #0C4A6E;       /* Deep ocean slate */
-  --color-ocean-blue: #0284C7;       /* Maritime blue */
-  --color-sky-blue: #38BDF8;         /* Clear sky */
-  --color-aqua: #0D9488;             /* Muted teal */
-  --color-seafoam: #CCFBF1;          /* Soft seafoam */
-  --color-coral: #E11D48;            /* Refined ruby alert */
-  --color-emerald: #059669;          /* Emerald success */
-  --color-amber: #D97706;            /* Amber warning */
+  /* Palette Accents */
+  --color-forest: #233F33;           /* Heritage Forest */
+  --color-sage: #5E7A6C;             /* Muted Sage */
+  --color-bronze: #8A6F4D;           /* Soft Bronze */
+  --color-sand: #EFECE6;             /* Fine Sand */
+  --color-stone: #E5E0D6;            /* Natural Stone */
+  --color-charcoal: #1A1816;         /* Charcoal */
+  --color-terracotta: #944638;       /* Terracotta Brick */
 
-  /* Shadows — Restrained, 0 neon blur */
-  --shadow-card-color: rgba(15, 23, 42, 0.04);
+  /* Shadows — Restrained, architectural hairline, 0 neon blur */
+  --shadow-card-color: rgba(26, 24, 22, 0.04);
   --shadow-glow-color: transparent;
 
-  /* Risk Tokens (Restrained Semantics) */
-  --color-risk-safe: #15803D;
-  --color-risk-safe-bg: #F0FDF4;
-  --color-risk-caution: #B45309;
-  --color-risk-caution-bg: #FFFBEB;
-  --color-risk-unsafe: #BE123C;
-  --color-risk-unsafe-bg: #FFF1F2;
-  --color-risk-unknown: #475569;
-  --color-risk-unknown-bg: #F1F5F9;
+  /* Semantic Risk Tokens — Restrained Natural Earth & Mineral Tones */
+  --color-risk-safe: #2B5E46;
+  --color-risk-safe-bg: #EFF6F1;
+  --color-risk-safe-border: #C9DFD1;
+  --color-risk-caution: #8E5B23;
+  --color-risk-caution-bg: #FBF6EE;
+  --color-risk-caution-border: #E8D5BC;
+  --color-risk-unsafe: #8C3329;
+  --color-risk-unsafe-bg: #FAF0EE;
+  --color-risk-unsafe-border: #E8C5C0;
+  --color-risk-unknown: #5C564E;
+  --color-risk-unknown-bg: #F4F2EE;
+  --color-risk-unknown-border: #DCD7CE;
 }
 
 [data-theme="dark"],
 .dark {
-  /* Deep Ocean Graphite — Linear & Raycast Inspired (Dark) */
-  --color-bg: #0B0F17;               /* Deep graphite navy, never muddy */
-  --color-bg-alt: #0F1420;           /* Midnight slate ground */
-  --color-surface: #131926;          /* Dark ocean surface */
-  --color-surface-raised: #1A2234;   /* Tone-step raised panel */
-  --color-surface-elevated: #222D42; /* Highlight layer */
-  --color-border: rgba(255, 255, 255, 0.08); /* Crisp translucent hairline border */
-  --color-border-strong: rgba(255, 255, 255, 0.16);
-  --color-ink: #F8FAFC;              /* Pure crisp moonlight text */
-  --color-ink-secondary: #CBD5E1;    /* Clean cool silver */
-  --color-ink-muted: #94A3B8;        /* Muted slate text */
-  --color-primary: #38BDF8;          /* Crisp maritime sky */
-  --color-primary-hover: #7DD3FC;    /* Bright coastal highlight */
-  --color-on-primary: #0B0F17;       /* Deep slate on primary */
-  --color-secondary: #2DD4BF;        /* Clean teal */
-  --color-accent: #164E63;           /* Subdued deep sea */
-  --color-focus: #38BDF8;            /* Crisp focus ring */
-  --color-water: #0F172A;            /* Deep marine wash */
+  /* Rich Matte Charcoal & Deep Graphite Pine (Dark) */
+  --color-bg: #111312;               /* Matte Charcoal ground, never blue or muddy */
+  --color-bg-alt: #161917;           /* Midnight stone ground */
+  --color-surface: #1B1E1C;          /* Warm stone slate surface */
+  --color-surface-raised: #222624;   /* Tone-step raised panel */
+  --color-surface-elevated: #2A302D; /* Elevated panel */
+  --color-border: rgba(235, 230, 220, 0.09); /* Crisp translucent hairline border */
+  --color-border-strong: rgba(235, 230, 220, 0.16);
+  --color-ink: #F5F2EB;              /* Warm ivory moonlight text */
+  --color-ink-secondary: #D5CEBF;    /* Clean warm sand stone */
+  --color-ink-muted: #928B7E;        /* Quiet taupe editorial caption */
+  --color-primary: #6F9581;          /* Crisp Heritage Sage / Forest highlight */
+  --color-primary-hover: #8BB19D;    /* Gentle sage hover */
+  --color-on-primary: #111312;       /* Deep slate on primary */
+  --color-secondary: #C7A275;        /* Soft Antique Bronze */
+  --color-accent: #1E2521;           /* Deep matte pine wash */
+  --color-focus: #6F9581;            /* Crisp focus ring */
+  --color-water: #181C1A;            /* Mineral dark wash */
 
-  /* Ocean Palette (Dark) */
-  --color-ocean-deep: #070B12;       /* Deepest trench */
-  --color-ocean-blue: #38BDF8;       /* Crisp ocean blue */
-  --color-sky-blue: #7DD3FC;         /* Soft daylight sky */
-  --color-aqua: #2DD4BF;             /* Clean aqua */
-  --color-seafoam: #99F6E4;          /* Pale seafoam */
-  --color-coral: #FB7185;            /* Rose alert */
-  --color-emerald: #34D399;          /* Emerald success */
-  --color-amber: #FBBF24;            /* Warm amber */
+  /* Palette Accents (Dark) */
+  --color-forest: #6F9581;
+  --color-sage: #8FAEA0;
+  --color-bronze: #C7A275;
+  --color-sand: #2A302D;
+  --color-stone: #222624;
+  --color-charcoal: #F5F2EB;
+  --color-terracotta: #D66254;
 
   /* Shadows */
-  --shadow-card-color: rgba(0, 0, 0, 0.4);
+  --shadow-card-color: rgba(0, 0, 0, 0.35);
   --shadow-glow-color: transparent;
 
-  /* Risk Tokens (Dark Semantic) */
-  --color-risk-safe: #34D399;
-  --color-risk-safe-bg: rgba(16, 185, 129, 0.12);
-  --color-risk-caution: #FBBF24;
-  --color-risk-caution-bg: rgba(245, 158, 11, 0.12);
-  --color-risk-unsafe: #FB7185;
-  --color-risk-unsafe-bg: rgba(244, 63, 94, 0.12);
-  --color-risk-unknown: #94A3B8;
-  --color-risk-unknown-bg: rgba(148, 163, 184, 0.12);
+  /* Semantic Risk Tokens (Dark Semantic) */
+  --color-risk-safe: #5DB085;
+  --color-risk-safe-bg: rgba(43, 94, 70, 0.18);
+  --color-risk-safe-border: rgba(93, 176, 133, 0.28);
+  --color-risk-caution: #D99548;
+  --color-risk-caution-bg: rgba(142, 91, 35, 0.18);
+  --color-risk-caution-border: rgba(217, 149, 72, 0.28);
+  --color-risk-unsafe: #D66254;
+  --color-risk-unsafe-bg: rgba(140, 51, 41, 0.18);
+  --color-risk-unsafe-border: rgba(214, 98, 84, 0.28);
+  --color-risk-unknown: #9C958B;
+  --color-risk-unknown-bg: rgba(92, 86, 78, 0.18);
+  --color-risk-unknown-border: rgba(156, 149, 139, 0.28);
 }

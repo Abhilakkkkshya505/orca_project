@@ -23,47 +23,51 @@ export default {
         focus: "var(--color-focus)",
         water: "var(--color-water)",
         
-        // Ocean Specific Theme Colors
-        ocean: {
-          deep: "var(--color-ocean-deep, #0C4A6E)",
-          blue: "var(--color-ocean-blue, #0284C7)",
-          sky: "var(--color-sky-blue, #38BDF8)",
-          aqua: "var(--color-aqua, #0D9488)",
-          seafoam: "var(--color-seafoam, #CCFBF1)",
-        },
-        coral: "var(--color-coral, #E11D48)",
-        emerald: "var(--color-emerald, #059669)",
+        // Option A Earth & Mineral Tokens
+        forest: "var(--color-forest)",
+        sage: "var(--color-sage)",
+        bronze: "var(--color-bronze)",
+        sand: "var(--color-sand)",
+        stone: "var(--color-stone)",
+        charcoal: "var(--color-charcoal)",
+        terracotta: "var(--color-terracotta)",
 
-        // Semantic Risk Tokens
+        // Semantic Risk Tokens (Quiet, natural earth tones)
         risk: {
           safe: "var(--color-risk-safe)",
           "safe-bg": "var(--color-risk-safe-bg)",
+          "safe-border": "var(--color-risk-safe-border)",
           caution: "var(--color-risk-caution)",
           "caution-bg": "var(--color-risk-caution-bg)",
+          "caution-border": "var(--color-risk-caution-border)",
           unsafe: "var(--color-risk-unsafe)",
           "unsafe-bg": "var(--color-risk-unsafe-bg)",
+          "unsafe-border": "var(--color-risk-unsafe-border)",
           unknown: "var(--color-risk-unknown)",
           "unknown-bg": "var(--color-risk-unknown-bg)",
+          "unknown-border": "var(--color-risk-unknown-border)",
         },
       },
       fontFamily: {
         sans: ["'Inter'", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
         heading: ["'Space Grotesk'", "'Inter'", "sans-serif"],
+        editorial: ["'Instrument Serif'", "'Newsreader'", "Georgia", "serif"],
+        serif: ["'Instrument Serif'", "'Newsreader'", "Georgia", "serif"],
         mono: ["'Geist Mono'", "'IBM Plex Mono'", "ui-monospace", "monospace"],
       },
       boxShadow: {
-        xs: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-        card: "0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)",
-        "card-hover": "0 4px 12px -2px rgba(0, 0, 0, 0.06)",
-        overlay: "0 12px 28px -4px rgba(0, 0, 0, 0.15)",
+        xs: "0 1px 2px 0 rgba(26, 24, 22, 0.04)",
+        card: "0 1px 3px 0 rgba(26, 24, 22, 0.04), 0 1px 2px -1px rgba(26, 24, 22, 0.03)",
+        "card-hover": "0 2px 8px -2px rgba(26, 24, 22, 0.07)",
+        overlay: "0 10px 25px -4px rgba(26, 24, 22, 0.12)",
       },
       borderRadius: {
-        xs: "4px",
+        xs: "3px",
         sm: "6px",
-        md: "8px",
-        lg: "10px",
+        md: "8px",   // 8-10px for buttons
+        lg: "10px",  // 10-14px for cards
         xl: "12px",
-        "2xl": "16px",
+        "2xl": "14px",
       },
     },
   },
