@@ -776,6 +776,9 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
                         <th className="px-3 py-2">Period (s)</th>
                         <th className="px-3 py-2">Swell (m)</th>
                         <th className="px-3 py-2">MSL Surge (m)</th>
+                        <th className="px-3 py-2">Air Temp</th>
+                        <th className="px-3 py-2">Precip</th>
+                        <th className="px-3 py-2">Wind</th>
                         <th className="px-3 py-2">Douglas</th>
                         <th className="px-3 py-2">Condition</th>
                       </tr>
@@ -803,6 +806,15 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
                           </td>
                           <td className="px-3 py-1.5 text-indigo-600 font-medium">
                             {pt.sea_level_msl_m !== null ? `${pt.sea_level_msl_m}m` : "—"}
+                          </td>
+                          <td className="px-3 py-1.5 text-emerald-600 font-medium">
+                            {pt.temperature_c !== undefined && pt.temperature_c !== null ? `${pt.temperature_c}°C` : "—"}
+                          </td>
+                          <td className="px-3 py-1.5 text-blue-500 font-medium">
+                            {pt.precipitation_mm !== undefined && pt.precipitation_mm !== null ? `${pt.precipitation_mm}mm` : "—"}
+                          </td>
+                          <td className="px-3 py-1.5 text-teal-600 font-medium">
+                            {pt.wind_speed_kmh !== undefined && pt.wind_speed_kmh !== null ? `${pt.wind_speed_kmh}km/h` : "—"}
                           </td>
                           <td className="px-3 py-1.5 text-amber-600 font-semibold">
                             Scale {pt.douglas_scale}
