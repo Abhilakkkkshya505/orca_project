@@ -479,16 +479,17 @@ export const MapView: React.FC<MapViewProps> = ({
         </button>
       </div>
 
-      {/* "Use this point" / Coordinate Indicator (Bottom Left) */}
+      {/* Waypoint Coordinate Indicator & Target Button (Bottom Left) */}
       {selectedLocation && (
-        <div className="absolute bottom-6 left-4 z-10 flex items-center gap-2 bg-surface/95 backdrop-blur-md border border-border px-3.5 py-2 rounded-xl shadow-card text-xs">
-          <span className="font-mono text-ink">
-            {selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lon.toFixed(4)}°E
-          </span>
+        <div className="absolute bottom-6 left-4 z-10 flex items-center gap-2.5 bg-slate-900/90 backdrop-blur-md border border-white/25 px-4 py-2.5 rounded-xl shadow-2xl text-xs text-white">
+          <div className="flex items-center gap-1.5 font-mono text-white">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
+            <span className="font-semibold">{selectedLocation.lat.toFixed(4)}°N, {selectedLocation.lon.toFixed(4)}°E</span>
+          </div>
           {onSelectLocation && (
             <button
               onClick={() => onSelectLocation(selectedLocation)}
-              className="text-primary font-semibold hover:underline px-1 py-0.5 ml-1"
+              className="text-white font-bold bg-cyan-600 hover:bg-cyan-500 active:bg-cyan-700 px-3 py-1 rounded-lg transition-all shadow-md hover:scale-105 active:scale-95 ml-1"
             >
               Target this waypoint
             </button>

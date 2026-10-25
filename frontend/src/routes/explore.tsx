@@ -143,10 +143,10 @@ export const ExplorePage: React.FC = () => {
           {/* Floating Pill on Map to open Telemetry for active waypoint */}
           <button
             onClick={() => setShowTelemetryDrawer(true)}
-            className="absolute bottom-6 right-4 z-10 flex items-center gap-2 bg-surface/95 backdrop-blur-md border border-border px-3.5 py-2 rounded-full shadow-card text-xs font-semibold text-primary hover:bg-surface hover:scale-105 transition-all"
+            className="absolute bottom-6 right-4 z-10 flex items-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 text-white backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold hover:scale-105 active:scale-95 transition-all"
           >
-            <Waves className="h-4 w-4 text-primary" />
-            <span>Live Wave Telemetry ({selectedLocation.lat.toFixed(2)}°, {selectedLocation.lon.toFixed(2)}°)</span>
+            <Waves className="h-4 w-4 text-cyan-400 animate-pulse" />
+            <span className="text-white">Live Marine Telemetry ({selectedLocation.lat.toFixed(2)}°, {selectedLocation.lon.toFixed(2)}°)</span>
           </button>
         </div>
       </div>
