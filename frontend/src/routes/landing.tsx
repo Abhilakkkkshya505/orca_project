@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
 import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 interface SamplePortSummary {
   slug: string;
@@ -371,112 +372,128 @@ export const LandingPage: React.FC = () => {
 
         {/* SECTION 2: LIVE OPEN-METEO GLOBAL MARINE OBSERVATORY */}
         <section id="marine-telemetry" className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">02 / Telemetry Engine & Timeseries</span>
-            <span>Direct FlatBuffers</span>
-          </div>
-
-          <div className="editorial-card p-5 sm:p-7 bg-surface">
-            <div className="mb-5">
-              <h2 className="text-2xl font-editorial font-normal italic text-ink">
-                Global Open-Meteo Oceanographic Observatory
-              </h2>
-              <p className="text-xs text-ink-muted mt-1 max-w-2xl">
-                Real-time ocean coordinate telemetry. Evaluates significant wave height, primary and secondary swell bearings, sea level MSL tidal surge, and ambient meteorology.
-              </p>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">02 / Telemetry Engine & Timeseries</span>
+              <span>Direct FlatBuffers</span>
             </div>
-            <LiveMarineTelemetry
-              initialLat={18.93}
-              initialLon={72.84}
-              title="Indian Ocean Coastal Telemetry"
-            />
-          </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={80} yOffset={24} duration={550}>
+            <div className="editorial-card p-5 sm:p-7 bg-surface">
+              <div className="mb-5">
+                <h2 className="text-2xl font-editorial font-normal italic text-ink">
+                  Global Open-Meteo Oceanographic Observatory
+                </h2>
+                <p className="text-xs text-ink-muted mt-1 max-w-2xl">
+                  Real-time ocean coordinate telemetry. Evaluates significant wave height, primary and secondary swell bearings, sea level MSL tidal surge, and ambient meteorology.
+                </p>
+              </div>
+              <LiveMarineTelemetry
+                initialLat={18.93}
+                initialLon={72.84}
+                title="Indian Ocean Coastal Telemetry"
+              />
+            </div>
+          </ScrollReveal>
         </section>
 
         {/* SECTION 3: REASONING ENGINE & MARITIME INQUIRY */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">03 / Conversational Safety Gate</span>
-            <span>Zero Hallucinations</span>
-          </div>
-
-          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
-                Natural inquiry with deterministic verdict gates.
-              </h2>
-              <p className="text-xs sm:text-sm text-ink-muted mt-1.5 max-w-xl leading-relaxed">
-                Inspect how calibrated safety parameters evaluate unstructured mariner queries without probabilistic drift:
-              </p>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">03 / Conversational Safety Gate</span>
+              <span>Zero Hallucinations</span>
             </div>
+          </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Link
-                to="/explore?q=Is%20it%20safe%20for%20a%20small%20canoe%20out%20of%20Mumbai%20tomorrow%20morning%3F"
-                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
-              >
-                <div>
-                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
-                    Small Craft Seaworthiness
-                  </span>
-                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
-                    &ldquo;Is it safe for a small canoe out of Mumbai tomorrow morning?&rdquo;
-                  </p>
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
-                  <span>Inspect rule trail</span>
-                  <ArrowRight className="h-3 w-3" />
-                </div>
-              </Link>
+          <ScrollReveal delay={60} yOffset={24} duration={520}>
+            <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
+                  Natural inquiry with deterministic verdict gates.
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-muted mt-1.5 max-w-xl leading-relaxed">
+                  Inspect how calibrated safety parameters evaluate unstructured mariner queries without probabilistic drift:
+                </p>
+              </div>
 
-              <Link
-                to="/explore?q=Where%20are%20the%20productive%20fishing%20zones%20near%20Visakhapatnam%20today%3F"
-                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
-              >
-                <div>
-                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
-                    Thermal Fronts & PFZ
-                  </span>
-                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
-                    &ldquo;Where are the productive fishing zones near Visakhapatnam today?&rdquo;
-                  </p>
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
-                  <span>Inspect rule trail</span>
-                  <ArrowRight className="h-3 w-3" />
-                </div>
-              </Link>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <ScrollReveal delay={80} yOffset={20} duration={500}>
+                  <Link
+                    to="/explore?q=Is%20it%20safe%20for%20a%20small%20canoe%20out%20of%20Mumbai%20tomorrow%20morning%3F"
+                    className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group h-full"
+                  >
+                    <div>
+                      <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                        Small Craft Seaworthiness
+                      </span>
+                      <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
+                        &ldquo;Is it safe for a small canoe out of Mumbai tomorrow morning?&rdquo;
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                      <span>Inspect rule trail</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </Link>
+                </ScrollReveal>
 
-              <Link
-                to="/explore?q=What%20is%20the%20wave%20height%20and%20swell%20period%20off%20Chennai%20right%20now%3F"
-                className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group"
-              >
-                <div>
-                  <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
-                    Hydrodynamic Ingestion
-                  </span>
-                  <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
-                    &ldquo;What is the wave height and swell period off Chennai right now?&rdquo;
-                  </p>
-                </div>
-                <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
-                  <span>Inspect rule trail</span>
-                  <ArrowRight className="h-3 w-3" />
-                </div>
-              </Link>
+                <ScrollReveal delay={150} yOffset={20} duration={500}>
+                  <Link
+                    to="/explore?q=Where%20are%20the%20productive%20fishing%20zones%20near%20Visakhapatnam%20today%3F"
+                    className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group h-full"
+                  >
+                    <div>
+                      <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                        Thermal Fronts & PFZ
+                      </span>
+                      <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
+                        &ldquo;Where are the productive fishing zones near Visakhapatnam today?&rdquo;
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                      <span>Inspect rule trail</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </Link>
+                </ScrollReveal>
+
+                <ScrollReveal delay={220} yOffset={20} duration={500}>
+                  <Link
+                    to="/explore?q=What%20is%20the%20wave%20height%20and%20swell%20period%20off%20Chennai%20right%20now%3F"
+                    className="p-5 rounded-md bg-surface-raised border border-border hover:border-ink transition-colors flex flex-col justify-between gap-4 group h-full"
+                  >
+                    <div>
+                      <span className="text-[11px] font-mono text-forest dark:text-sage font-semibold uppercase tracking-wider">
+                        Hydrodynamic Ingestion
+                      </span>
+                      <p className="text-sm font-sans font-medium text-ink mt-2 leading-snug">
+                        &ldquo;What is the wave height and swell period off Chennai right now?&rdquo;
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-border/60 text-xs text-ink-muted group-hover:text-ink font-mono transition-colors">
+                      <span>Inspect rule trail</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
+                  </Link>
+                </ScrollReveal>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* SECTION 4: THE ARCHITECTURE OF OCEAN RISK */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left flex flex-col gap-6">
-          <div className="flex items-center justify-between pb-4 mb-2 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">04 / Multi-Agent Ingestion Topology</span>
-            <span>ECMWF • Copernicus • NOAA</span>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-2 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">04 / Multi-Agent Ingestion Topology</span>
+              <span>ECMWF • Copernicus • NOAA</span>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Agent Ledger */}
+            {/* Agent Ledger with subtle staggered item reveals */}
             <div className="lg:col-span-7 flex flex-col gap-3">
               {[
                 {
@@ -509,24 +526,26 @@ export const LandingPage: React.FC = () => {
                   desc: "Ingests bulletins from IMD and INCOIS, triggering immediate status overrides on cyclone, storm surge, or gale watches.",
                   source: "IMD Marine Bulletin Protocol",
                 },
-              ].map((agent) => (
-                <div key={agent.id} className="p-4 rounded-md bg-surface border border-border flex items-start gap-4">
-                  <span className="font-mono text-xs text-ink-muted font-bold shrink-0 pt-0.5">
-                    {agent.id}
-                  </span>
-                  <div className="flex-1 text-xs">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-semibold text-ink text-sm font-sans">{agent.name}</h3>
-                      <span className="font-mono text-[10px] text-ink-muted">{agent.source}</span>
+              ].map((agent, idx) => (
+                <ScrollReveal key={agent.id} delay={idx * 60} yOffset={18} duration={480}>
+                  <div className="p-4 rounded-md bg-surface border border-border flex items-start gap-4">
+                    <span className="font-mono text-xs text-ink-muted font-bold shrink-0 pt-0.5">
+                      {agent.id}
+                    </span>
+                    <div className="flex-1 text-xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold text-ink text-sm font-sans">{agent.name}</h3>
+                        <span className="font-mono text-[10px] text-ink-muted">{agent.source}</span>
+                      </div>
+                      <p className="text-ink-muted mt-1 leading-relaxed">{agent.desc}</p>
                     </div>
-                    <p className="text-ink-muted mt-1 leading-relaxed">{agent.desc}</p>
                   </div>
-                </div>
+                </ScrollReveal>
               ))}
             </div>
 
             {/* Deterministic Boundary Manifesto Box */}
-            <div className="lg:col-span-5 editorial-card p-6 bg-surface-raised flex flex-col gap-4">
+            <ScrollReveal as="div" delay={100} yOffset={24} duration={520} className="lg:col-span-5 editorial-card p-6 bg-surface-raised flex flex-col gap-4">
               <div>
                 <span className="text-[10px] font-mono text-forest dark:text-sage uppercase font-semibold">
                   Safety Governance Rule
@@ -562,80 +581,93 @@ export const LandingPage: React.FC = () => {
               <p className="text-[11px] text-ink-muted leading-normal">
                 * Calibrated against DG Shipping & INCOIS Small Craft seaworthiness standards.
               </p>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* SECTION 5: FOUR PRECISE OPERATIONAL TIERS */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">05 / Verdict Classifications</span>
-            <span>Deterministic Tiers</span>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">05 / Verdict Classifications</span>
+              <span>Deterministic Tiers</span>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <span className="font-editorial text-lg italic text-ink">Safe</span>
-                  <RiskBadge level="safe" size="sm" />
+            <ScrollReveal delay={0} yOffset={20} duration={500}>
+              <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3 h-full">
+                <div>
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <span className="font-editorial text-lg italic text-ink">Safe</span>
+                    <RiskBadge level="safe" size="sm" />
+                  </div>
+                  <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                    Hydrodynamic conditions are well within standard seaworthiness limits. Sustained wind &lt; 30 km/h, wave height &lt; 1.5 m, zero active gale alerts.
+                  </p>
                 </div>
-                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
-                  Hydrodynamic conditions are well within standard seaworthiness limits. Sustained wind &lt; 30 km/h, wave height &lt; 1.5 m, zero active gale alerts.
-                </p>
+                <span className="text-[10px] font-mono text-ink-muted">Standard transit permitted</span>
               </div>
-              <span className="text-[10px] font-mono text-ink-muted">Standard transit permitted</span>
-            </div>
+            </ScrollReveal>
 
-            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <span className="font-editorial text-lg italic text-ink">Caution</span>
-                  <RiskBadge level="caution" size="sm" />
+            <ScrollReveal delay={70} yOffset={20} duration={500}>
+              <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3 h-full">
+                <div>
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <span className="font-editorial text-lg italic text-ink">Caution</span>
+                    <RiskBadge level="caution" size="sm" />
+                  </div>
+                  <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                    Elevated chop, gusty winds, or long-period deepwater swell. Small canoes and artisanal craft must exercise extreme care or remain inshore.
+                  </p>
                 </div>
-                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
-                  Elevated chop, gusty winds, or long-period deepwater swell. Small canoes and artisanal craft must exercise extreme care or remain inshore.
-                </p>
+                <span className="text-[10px] font-mono text-ink-muted">Artisanal craft warning</span>
               </div>
-              <span className="text-[10px] font-mono text-ink-muted">Artisanal craft warning</span>
-            </div>
+            </ScrollReveal>
 
-            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <span className="font-editorial text-lg italic text-ink">Unsafe</span>
-                  <RiskBadge level="unsafe" size="sm" />
+            <ScrollReveal delay={140} yOffset={20} duration={500}>
+              <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3 h-full">
+                <div>
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <span className="font-editorial text-lg italic text-ink">Unsafe</span>
+                    <RiskBadge level="unsafe" size="sm" />
+                  </div>
+                  <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
+                    Hazardous sea state, wave height &gt; 2.5 m, squall gusts &gt; 45 km/h, or statutory gale warnings active. Operations strictly not advised.
+                  </p>
                 </div>
-                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed">
-                  Hazardous sea state, wave height &gt; 2.5 m, squall gusts &gt; 45 km/h, or statutory gale warnings active. Operations strictly not advised.
-                </p>
+                <span className="text-[10px] font-mono text-ink-muted">Vessel departure closed</span>
               </div>
-              <span className="text-[10px] font-mono text-ink-muted">Vessel departure closed</span>
-            </div>
+            </ScrollReveal>
 
-            <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <span className="font-editorial text-lg italic text-ink">Unknown</span>
-                  <RiskBadge level="unknown" size="sm" />
+            <ScrollReveal delay={210} yOffset={20} duration={500}>
+              <div className="p-5 rounded-md bg-surface border border-border flex flex-col justify-between gap-3 h-full">
+                <div>
+                  <div className="flex items-center justify-between pb-2 border-b border-border">
+                    <span className="font-editorial text-lg italic text-ink">Unknown</span>
+                    <RiskBadge level="unknown" size="sm" />
+                  </div>
+                  <p className="text-xs text-ink mt-2.5 font-medium leading-relaxed">
+                    ORCA outputs Unknown when buoy or satellite telemetry is stale. It never guesses calm waters without verified live feeds.
+                  </p>
                 </div>
-                <p className="text-xs text-ink mt-2.5 font-medium leading-relaxed">
-                  ORCA outputs Unknown when buoy or satellite telemetry is stale. It never guesses calm waters without verified live feeds.
-                </p>
+                <span className="text-[10px] font-mono text-ink-muted">Zero assumption policy</span>
               </div>
-              <span className="text-[10px] font-mono text-ink-muted">Zero assumption policy</span>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* SECTION 6: COASTAL STATION DIRECTORY */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">06 / Geographic Coverage</span>
-            <span>3,874 Coastal Stations</span>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">06 / Geographic Coverage</span>
+              <span>3,874 Coastal Stations</span>
+            </div>
+          </ScrollReveal>
 
-          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
+          <ScrollReveal delay={60} yOffset={24} duration={520}>
+            <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
               <div>
                 <h2 className="text-2xl sm:text-3xl font-editorial font-normal italic text-ink">
@@ -701,17 +733,20 @@ export const LandingPage: React.FC = () => {
               </Link>
             </div>
           </div>
+          </ScrollReveal>
         </section>
 
         {/* SECTION 7: OFFSHORE PWA RESILIENCE */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">07 / Low-Connectivity Architecture</span>
-            <span>Progressive Web App</span>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">07 / Low-Connectivity Architecture</span>
+              <span>Progressive Web App</span>
+            </div>
+          </ScrollReveal>
 
           <div className="editorial-card p-6 sm:p-8 bg-surface grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="flex flex-col gap-4">
+            <ScrollReveal delay={60} yOffset={24} duration={520} className="flex flex-col gap-4">
               <span className="inline-flex items-center gap-1.5 text-xs font-mono text-forest dark:text-sage uppercase font-semibold">
                 <WifiOff className="h-3.5 w-3.5" aria-hidden="true" /> Offshore Cache Engine
               </span>
@@ -737,43 +772,47 @@ export const LandingPage: React.FC = () => {
                   <span>Marine Fish Game</span>
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="p-5 rounded-md bg-surface-raised border border-border text-xs space-y-3 font-mono">
-              <div className="flex items-start gap-2.5">
-                <span className="text-forest dark:text-sage font-bold">✓</span>
-                <div>
-                  <strong className="text-ink font-sans">Persistent Local Cache:</strong>
-                  <p className="text-ink-muted font-sans text-xs mt-0.5">The last synchronized 48h sea state outlook stays interactive offshore.</p>
+            <ScrollReveal delay={130} yOffset={24} duration={520}>
+              <div className="p-5 rounded-md bg-surface-raised border border-border text-xs space-y-3 font-mono">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-forest dark:text-sage font-bold">✓</span>
+                  <div>
+                    <strong className="text-ink font-sans">Persistent Local Cache:</strong>
+                    <p className="text-ink-muted font-sans text-xs mt-0.5">The last synchronized 48h sea state outlook stays interactive offshore.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="text-forest dark:text-sage font-bold">✓</span>
+                  <div>
+                    <strong className="text-ink font-sans">Sub-100KB Payloads:</strong>
+                    <p className="text-ink-muted font-sans text-xs mt-0.5">FlatBuffers and compressed JSON ensure fast transfers over 2G/3G links.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="text-forest dark:text-sage font-bold">✓</span>
+                  <div>
+                    <strong className="text-ink font-sans">Zero Extraneous Bloat:</strong>
+                    <p className="text-ink-muted font-sans text-xs mt-0.5">No video trackers or heavy advertising scripts draining mariner data.</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-2.5">
-                <span className="text-forest dark:text-sage font-bold">✓</span>
-                <div>
-                  <strong className="text-ink font-sans">Sub-100KB Payloads:</strong>
-                  <p className="text-ink-muted font-sans text-xs mt-0.5">FlatBuffers and compressed JSON ensure fast transfers over 2G/3G links.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <span className="text-forest dark:text-sage font-bold">✓</span>
-                <div>
-                  <strong className="text-ink font-sans">Zero Extraneous Bloat:</strong>
-                  <p className="text-ink-muted font-sans text-xs mt-0.5">No video trackers or heavy advertising scripts draining mariner data.</p>
-                </div>
-              </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* SECTION 8: STATUTORY BOUNDARIES & SOLAS */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">08 / Governance & Legal Precedence</span>
-            <span>SOLAS Compliance</span>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">08 / Governance & Legal Precedence</span>
+              <span>SOLAS Compliance</span>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div className="lg:col-span-7 editorial-card bg-surface overflow-hidden">
+            <ScrollReveal as="div" delay={60} yOffset={24} duration={520} className="lg:col-span-7 editorial-card bg-surface overflow-hidden">
               <div className="p-4 border-b border-border bg-surface-raised flex items-center justify-between">
                 <h3 className="text-xs font-mono font-semibold text-ink flex items-center gap-1.5">
                   <Database className="h-3.5 w-3.5 text-forest dark:text-sage" />
@@ -805,9 +844,9 @@ export const LandingPage: React.FC = () => {
                   <div className="p-4 text-xs text-ink-muted">Awaiting telemetry telemetry response...</div>
                 )}
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="lg:col-span-5 flex flex-col gap-4">
+            <ScrollReveal as="div" delay={130} yOffset={24} duration={520} className="lg:col-span-5 flex flex-col gap-4">
               <div className="p-5 rounded-md bg-surface-raised border border-terracotta/30 text-ink space-y-1.5">
                 <div className="flex items-center gap-1.5 text-terracotta font-semibold text-xs font-mono uppercase">
                   <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -830,65 +869,76 @@ export const LandingPage: React.FC = () => {
                   <li>Does not relieve vessel masters of statutory SOLAS duties.</li>
                 </ul>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
         {/* SECTION 9: UNITED NATIONS SDG 14 COMMITMENT */}
         <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left">
-          <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">09 / Sustainability Mandate</span>
-            <span>UN SDG 14 Life Below Water</span>
-          </div>
-
-          <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
-            <div>
-              <span className="font-mono text-xs text-forest dark:text-sage font-bold">UN SDG 14</span>
-              <h2 className="text-2xl font-editorial font-normal italic text-ink mt-1">
-                Preserving life at sea and protecting marine habitats.
-              </h2>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-4 mb-6 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">09 / Sustainability Mandate</span>
+              <span>UN SDG 14 Life Below Water</span>
             </div>
+          </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
-              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
-                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.b</span>
-                <h3 className="font-bold text-ink text-sm font-sans">Artisanal Small-Scale Fisheries</h3>
-                <p className="text-ink-muted leading-relaxed">
-                  Provide artisanal coastal fishers with free, deterministic safety intelligence to eliminate avoidable casualties and gear destruction at sea.
-                </p>
+          <ScrollReveal delay={60} yOffset={24} duration={520}>
+            <div className="editorial-card p-6 sm:p-8 bg-surface flex flex-col gap-6">
+              <div>
+                <span className="font-mono text-xs text-forest dark:text-sage font-bold">UN SDG 14</span>
+                <h2 className="text-2xl font-editorial font-normal italic text-ink mt-1">
+                  Preserving life at sea and protecting marine habitats.
+                </h2>
               </div>
 
-              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
-                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.1</span>
-                <h3 className="font-bold text-ink text-sm font-sans">Prevent Marine Contamination</h3>
-                <p className="text-ink-muted leading-relaxed">
-                  Avert vessel wreckage, hull breaching, and coastal diesel spills by providing reliable advance warnings against cross-sea swells.
-                </p>
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+                <ScrollReveal delay={70} yOffset={18} duration={500}>
+                  <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2 h-full">
+                    <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.b</span>
+                    <h3 className="font-bold text-ink text-sm font-sans">Artisanal Small-Scale Fisheries</h3>
+                    <p className="text-ink-muted leading-relaxed">
+                      Provide artisanal coastal fishers with free, deterministic safety intelligence to eliminate avoidable casualties and gear destruction at sea.
+                    </p>
+                  </div>
+                </ScrollReveal>
 
-              <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2">
-                <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.2</span>
-                <h3 className="font-bold text-ink text-sm font-sans">Marine Protected Area Enclaves</h3>
-                <p className="text-ink-muted leading-relaxed">
-                  Strictly exclude sensitive coral reefs, mangrove estuaries, and Marine Protected Areas (MPAs) from all recommended fishing zones.
-                </p>
+                <ScrollReveal delay={140} yOffset={18} duration={500}>
+                  <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2 h-full">
+                    <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.1</span>
+                    <h3 className="font-bold text-ink text-sm font-sans">Prevent Marine Contamination</h3>
+                    <p className="text-ink-muted leading-relaxed">
+                      Avert vessel wreckage, hull breaching, and coastal diesel spills by providing reliable advance warnings against cross-sea swells.
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+                <ScrollReveal delay={210} yOffset={18} duration={500}>
+                  <div className="p-4 rounded-md bg-surface-raised border border-border flex flex-col gap-2 h-full">
+                    <span className="font-mono text-forest dark:text-sage font-semibold text-[11px]">Target 14.2</span>
+                    <h3 className="font-bold text-ink text-sm font-sans">Marine Protected Area Enclaves</h3>
+                    <p className="text-ink-muted leading-relaxed">
+                      Strictly exclude sensitive coral reefs, mangrove estuaries, and Marine Protected Areas (MPAs) from all recommended fishing zones.
+                    </p>
+                  </div>
+                </ScrollReveal>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* SECTION 10: ACCESSIBLE FAQ */}
         <section className="max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 text-left flex flex-col gap-6">
-          <div className="flex items-center justify-between pb-3 border-b border-border text-xs font-mono text-ink-muted">
-            <span className="tracking-widest uppercase">10 / Methodological Reference</span>
-            <span>FAQ</span>
-          </div>
-
-          <div>
-            <h2 className="text-3xl font-editorial font-normal italic text-ink">
-              Frequently clarified questions.
-            </h2>
-          </div>
+          <ScrollReveal yOffset={16} duration={480}>
+            <div className="flex items-center justify-between pb-3 border-b border-border text-xs font-mono text-ink-muted">
+              <span className="tracking-widest uppercase">10 / Methodological Reference</span>
+              <span>FAQ</span>
+            </div>
+            <div>
+              <h2 className="text-3xl font-editorial font-normal italic text-ink mt-6">
+                Frequently clarified questions.
+              </h2>
+            </div>
+          </ScrollReveal>
 
           <div className="space-y-2.5">
             {[
@@ -913,15 +963,17 @@ export const LandingPage: React.FC = () => {
                 a: "No. Official statutory warnings from the India Meteorological Department (IMD) and the Indian National Centre for Ocean Information Services (INCOIS) always take precedence over ORCA. ORCA is an advisory decision-support tool.",
               },
             ].map((faq, i) => (
-              <details key={i} className="group border border-border rounded-md bg-surface p-4 cursor-pointer">
-                <summary className="font-medium text-sm text-ink flex items-center justify-between list-none">
-                  <span>{faq.q}</span>
-                  <ChevronDown className="h-4 w-4 text-ink-muted group-open:rotate-180 transition-transform" />
-                </summary>
-                <p className="text-xs text-ink-muted mt-2.5 leading-relaxed font-sans">
-                  {faq.a}
-                </p>
-              </details>
+              <ScrollReveal key={i} delay={i * 55} yOffset={16} duration={450}>
+                <details className="group border border-border rounded-md bg-surface p-4 cursor-pointer">
+                  <summary className="font-medium text-sm text-ink flex items-center justify-between list-none">
+                    <span>{faq.q}</span>
+                    <ChevronDown className="h-4 w-4 text-ink-muted group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <p className="text-xs text-ink-muted mt-2.5 leading-relaxed font-sans">
+                    {faq.a}
+                  </p>
+                </details>
+              </ScrollReveal>
             ))}
           </div>
         </section>

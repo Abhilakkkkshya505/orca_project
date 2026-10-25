@@ -1254,6 +1254,7 @@ export default function GlimmerVale(props: GlimmerValeProps) {
         let last = -1
         let tw = 0
         let raf = 0
+        let isVisible = true
 
         const allocate = (cw: number, ch: number) => {
             if (scene) freeTarget(gl, scene)
@@ -1274,6 +1275,7 @@ export default function GlimmerVale(props: GlimmerValeProps) {
         }
 
         const frame = (now: number) => {
+            if (!isVisible) return
             raf = requestAnimationFrame(frame)
             const L = liveRef.current
             const adv = { ...DEFAULT_ADVANCED, ...(L.advanced ?? {}) }
@@ -1568,9 +1570,28 @@ export default function GlimmerVale(props: GlimmerValeProps) {
             gl.drawArrays(gl.TRIANGLES, 0, 3)
             gl.bindVertexArray(null)
         }
+        const io = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    const visible = entry.isIntersecting
+                    if (visible && !isVisible) {
+                        isVisible = true
+                        last = -1
+                        raf = requestAnimationFrame(frame)
+                    } else if (!visible && isVisible) {
+                        isVisible = false
+                        cancelAnimationFrame(raf)
+                    }
+                }
+            },
+            { threshold: 0.01 }
+        )
+        io.observe(root)
+
         raf = requestAnimationFrame(frame)
         return () => {
             cancelAnimationFrame(raf)
+            io.disconnect()
             ro.disconnect()
             if (scene) freeTarget(gl, scene)
             bloom.forEach((t) => freeTarget(gl, t))
