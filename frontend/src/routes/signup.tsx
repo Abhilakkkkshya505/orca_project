@@ -9,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useTheme } from "@/lib/theme/ThemeContext";
+import LightBloom from "@/components/originkit/ui/light-bloom";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { resolvedTheme } = useTheme();
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -81,26 +84,45 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20">
-      {/* Brand Header */}
-      <div className="w-full max-w-md mb-6 text-center space-y-2">
-        <Link to="/" className="inline-flex items-center gap-2.5 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
-            <Anchor className="h-5 w-5" />
-          </div>
-          <span className="font-heading font-bold text-2xl tracking-tight text-ink">
-            ORCA
-          </span>
-        </Link>
-        <h1 className="text-2xl font-bold tracking-tight text-ink">
-          Join the Coastal Safety Network
-        </h1>
-        <p className="text-xs text-ink-muted leading-relaxed">
-          Create an account to monitor coastal ports, receive automated swell alerts, and log voyages.
-        </p>
+    <div className="min-h-screen relative flex flex-col justify-center items-center p-4 bg-bg text-ink selection:bg-primary/20 overflow-hidden">
+      {/* Originkit Light Bloom Atmospheric WebGL Background */}
+      <div className="absolute inset-0 z-0 pointer-events-auto" aria-hidden="true">
+        <LightBloom
+          edge="bottom"
+          styleVariant="both"
+          color={resolvedTheme === "dark" ? "#4DA3FF" : "#1E88E5"}
+          secondaryColor={resolvedTheme === "dark" ? "#0B2447" : "#B2EBF2"}
+          background={resolvedTheme === "dark" ? "#071A2F" : "#F2F8FC"}
+          intensity={resolvedTheme === "dark" ? 85 : 55}
+          spread={resolvedTheme === "dark" ? 65 : 50}
+          speed={40}
+          grain={resolvedTheme === "dark" ? 18 : 10}
+          className="w-full h-full"
+        />
+        {/* Soft radial overlay ensuring high contrast readability */}
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-bg/50 dark:to-[#071A2F]/60 pointer-events-none" />
       </div>
 
-      <div className="w-full max-w-md bg-surface border border-border rounded-2xl p-6 sm:p-8 shadow-card card-hover">
+      <div className="relative z-10 w-full max-w-md flex flex-col items-center">
+        {/* Brand Header */}
+        <div className="w-full mb-6 text-center space-y-2">
+          <Link to="/" className="inline-flex items-center gap-2.5 group">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200">
+              <Anchor className="h-5 w-5" />
+            </div>
+            <span className="font-heading font-bold text-2xl tracking-tight text-ink">
+              ORCA
+            </span>
+          </Link>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">
+            Join the Coastal Safety Network
+          </h1>
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Create an account to monitor coastal ports, receive automated swell alerts, and log voyages.
+          </p>
+        </div>
+
+        <div className="w-full bg-surface/92 dark:bg-[#132F4C]/92 backdrop-blur-md border border-border rounded-2xl p-6 sm:p-8 shadow-2xl card-hover">
         {serverError && (
           <div
             className="flex items-center gap-2.5 p-3.5 mb-5 rounded-xl bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20 text-xs"
@@ -265,12 +287,12 @@ export const SignupPage: React.FC = () => {
             Sign In to Bridge
           </Link>
         </div>
-      </div>
-
-      <div className="mt-8 flex items-center gap-2 text-xs text-ink-muted">
-        <ShieldCheck className="h-4 w-4 text-emerald-600" />
-        <span>Certified SDG 14 Oceanographic Safety Infrastructure</span>
+        <div className="mt-8 flex items-center gap-2 text-xs text-ink-muted">
+          <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <span>Certified SDG 14 Oceanographic Safety Infrastructure</span>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
