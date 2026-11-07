@@ -26,6 +26,29 @@
     scroll-padding-top: 5rem;
     scroll-behavior: smooth;
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Full RTL Layout and Bidirectional Support */
+  html[dir="rtl"] {
+    direction: rtl;
+  }
+  html[dir="ltr"] {
+    direction: ltr;
+  }
+  html[dir="rtl"] body {
+    direction: rtl;
+    text-align: right;
+  }
+  html[dir="rtl"] [dir="ltr"] {
+    direction: ltr;
+    text-align: left;
+  }
+  html[dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -45,6 +68,8 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -52,6 +77,20 @@
     color: var(--color-ink);
     line-height: 1.6;
     letter-spacing: -0.011em;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Touch optimization: Remove 300ms tap delay on mobile devices */
+  a, button, input, select, textarea, [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Prevent automatic iOS Safari zoom by enforcing min 16px on mobile viewports */
+  @media screen and (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
   }
 
   /* Smooth color transitions when toggling theme */
@@ -202,5 +241,73 @@
     height: 1px;
     width: 100%;
     background-color: var(--color-border);
+  }
+
+  /* Full RTL Support */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+  }
+
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(-1);
+  }
+
+  [dir="rtl"] .rtl-mr {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+
+  /* Headless Google Translate UI shield (ensures zero Google bars, popups, or shifts) */
+  body > .skiptranslate,
+  iframe[title="Language Translate Widget"],
+  .goog-te-banner-frame,
+  .goog-te-banner-frame.skiptranslate,
+  iframe.goog-te-banner-frame,
+  iframe[id^=":1."],
+  iframe[id^=":2."],
+  iframe[class*="goog-te-banner"],
+  .VIpgJd-ZVi9od-ORHb-OEVmcd,
+  .VIpgJd-ZVi9od-aZ2wEe-OEVmcd,
+  .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+  .VIpgJd-ZVi9od-xl07Ob-OEVmcd,
+  .VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q,
+  #goog-gt-tt,
+  .goog-te-balloon-frame,
+  .goog-tooltip,
+  .goog-tooltip:hover {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    width: 0 !important;
+  }
+
+  html,
+  body {
+    top: 0px !important;
+    position: static !important;
+  }
+
+  .skiptranslate:not(.orca-allow) {
+    display: none !important;
+  }
+
+  #google_translate_element {
+    position: fixed !important;
+    top: -9999px !important;
+    left: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+  }
+
+  /* Remove default Google highlight box on hover */
+  font {
+    background-color: transparent !important;
+    box-shadow: none !important;
   }
 }

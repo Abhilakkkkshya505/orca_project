@@ -14,9 +14,12 @@ import {
   type ChangePasswordInput,
   type ProfileSettingsInput,
 } from "@/lib/schemas/auth";
-import { CheckCircle2, AlertCircle, Shield, User as UserIcon, Trash2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Shield, User as UserIcon, Trash2, Globe } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 
 export const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { data: user } = useMe();
   const queryClient = useQueryClient();
 
@@ -161,16 +164,30 @@ export const SettingsPage: React.FC = () => {
             </div>
 
             <Button type="submit" variant="primary" className="self-start mt-2" isLoading={isProfileSubmitting}>
-              Save Preferences
+              {t("common.save", "Save Preferences")}
             </Button>
           </form>
         </div>
 
-        {/* 2. Password & Security */}
+        {/* 2. Language & Internationalization */}
+        <div className="bg-surface border border-border rounded-lg p-6 shadow-card">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border font-semibold text-base text-ink">
+            <Globe className="h-5 w-5 text-primary" />
+            <span>{t("settings.languageSection", "Language & Region")}</span>
+          </div>
+
+          <p className="text-xs text-ink-muted mb-4">
+            {t("settings.languageDescription", "Choose your preferred interface language. Supports 37 languages with full RTL layout support.")}
+          </p>
+
+          <LanguageSelector variant="settings" />
+        </div>
+
+        {/* 3. Password & Security */}
         <div className="bg-surface border border-border rounded-lg p-6 shadow-card">
           <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border font-semibold text-base text-ink">
             <Shield className="h-5 w-5 text-primary" />
-            <span>Password & Security</span>
+            <span>{t("settings.changePassword", "Password & Security")}</span>
           </div>
 
           {passwordSuccess && (

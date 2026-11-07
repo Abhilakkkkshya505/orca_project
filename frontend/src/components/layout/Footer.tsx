@@ -13,8 +13,11 @@ import {
   Radio,
   Waves,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <footer className="w-full bg-surface border-t border-border text-left select-none transition-colors">
       <div className="max-w-7xl mx-auto py-12 lg:py-16 px-4 sm:px-6 lg:px-8 space-y-12">
@@ -167,17 +170,19 @@ export const Footer: React.FC = () => {
         {/* Divider & Sub-Footer */}
         <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-muted">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span>&copy; {new Date().getFullYear()} ORCA Marine Technologies. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} ORCA Marine Technologies. {t("footer.allRightsReserved", "All rights reserved.")}</span>
             <div className="flex items-center gap-4 text-[11px]">
-              <Link to="/privacy" className="hover:text-ink transition-colors">Privacy</Link>
-              <Link to="/terms" className="hover:text-ink transition-colors">Terms</Link>
-              <Link to="/cookies" className="hover:text-ink transition-colors">Cookies</Link>
+              <Link to="/privacy" className="hover:text-ink transition-colors">{t("footer.privacy", "Privacy")}</Link>
+              <Link to="/terms" className="hover:text-ink transition-colors">{t("footer.terms", "Terms")}</Link>
+              <Link to="/cookies" className="hover:text-ink transition-colors">{t("footer.cookies", "Cookies")}</Link>
               <Link to="/contact" className="hover:text-ink transition-colors">Support</Link>
             </div>
           </div>
 
-          {/* Social Icons */}
-          <div className="flex items-center gap-2">
+          {/* Right Controls: Language Selector + Social */}
+          <div className="flex items-center gap-3">
+            <LanguageSelector variant="button" />
+
             <a
               href="https://github.com/Abhilakkkkshya505/orca_project"
               target="_blank"

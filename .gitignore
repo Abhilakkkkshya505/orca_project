@@ -78,6 +78,7 @@ infra/cloudflared/*.json
 infra/cloudflared/*.cert
 
 *.sqlite3
+!backend/db.sqlite3
 *.sqlite3-journal
 .originkit/
 

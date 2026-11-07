@@ -11,7 +11,6 @@ import {
   Navigation,
   ChevronLeft,
   ChevronRight,
-  Anchor,
   X,
   Compass,
 } from "lucide-react";
@@ -122,24 +121,19 @@ export const PortsPage: React.FC = () => {
   const totalPages = data?.count ? Math.ceil(data.count / 20) : 1;
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-border bg-surface px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-base hover:opacity-90">
-            <Anchor className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>ORCA</span>
-          </Link>
-          <span className="text-xs text-ink-muted">/ Port Directory</span>
+    <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 flex flex-col gap-6 text-left">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center justify-between text-xs text-ink-muted">
+        <div className="flex items-center gap-2">
+          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <span>/</span>
+          <span className="text-ink font-medium">Port Directory</span>
         </div>
-        <nav className="flex items-center gap-4 text-xs font-medium">
-          <Link to="/explore" className="hover:text-primary">Explore Map</Link>
-          <Link to="/compare" className="hover:text-primary">Compare Ports</Link>
-        </nav>
-      </header>
-
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex flex-col gap-6 text-left">
+        <div className="flex items-center gap-4">
+          <Link to="/explore" className="hover:text-primary transition-colors">Explore Map</Link>
+          <Link to="/compare" className="hover:text-primary transition-colors">Compare Ports</Link>
+        </div>
+      </div>
         {/* Title & Stats */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
           <div>
@@ -365,12 +359,6 @@ export const PortsPage: React.FC = () => {
             </div>
           )}
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
-    </div>
+      </div>
   );
 };

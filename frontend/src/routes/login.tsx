@@ -11,9 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import GlimmerVale from "@/components/originkit/ui/glimmer-vale";
 
 export const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const nextParam = searchParams.get("next");
   const navigate = useNavigate();
@@ -134,21 +137,28 @@ export const LoginPage: React.FC = () => {
       </div>
 
       {/* Brand Header */}
-      <div className="relative z-10 w-full max-w-md mb-6 text-center space-y-1.5">
-        <Link to="/" className="inline-flex items-center gap-2 group">
-          <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
-            <Anchor className="h-4 w-4" />
-          </div>
-          <span className="font-heading font-bold text-xl tracking-tight text-ink">
-            ORCA
-          </span>
-        </Link>
-        <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
-          Sign In to ORCA Bridge
-        </h1>
-        <p className="text-xs text-ink-muted leading-relaxed">
-          Access coastal harbour telemetry, automated swell gates, and voyage logs.
-        </p>
+      <div className="relative z-10 w-full max-w-md mb-6 flex flex-col items-center text-center space-y-2">
+        <div className="w-full flex items-center justify-between">
+          <Link to="/" className="inline-flex items-center gap-2 group">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+              <Anchor className="h-4 w-4" />
+            </div>
+            <span className="font-heading font-bold text-xl tracking-tight text-ink">
+              ORCA
+            </span>
+          </Link>
+
+          <LanguageSelector variant="button" />
+        </div>
+
+        <div className="pt-2">
+          <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
+            {t("auth.loginTitle", "Sign In to ORCA Bridge")}
+          </h1>
+          <p className="text-xs text-ink-muted leading-relaxed mt-1">
+            {t("auth.loginSubtitle", "Access coastal harbour telemetry, active advisories, and vessel routing.")}
+          </p>
+        </div>
       </div>
 
       <div className="relative z-10 w-full max-w-md bg-surface/90 backdrop-blur-md border border-border rounded-xl p-6 sm:p-7 shadow-xs">
@@ -221,7 +231,7 @@ export const LoginPage: React.FC = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
           <Input
-            label="Captain / Mariner Email"
+            label={t("auth.email", "Captain / Mariner Email")}
             type="email"
             autoComplete="email"
             placeholder="captain@orca.example"
@@ -232,7 +242,7 @@ export const LoginPage: React.FC = () => {
           <div>
             <div className="relative">
               <Input
-                label="Password"
+                label={t("auth.password", "Password")}
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 placeholder="••••••••••••"
@@ -264,7 +274,7 @@ export const LoginPage: React.FC = () => {
                 to="/forgot-password"
                 className="text-primary hover:underline font-semibold focus-visible:outline-2"
               >
-                Forgot password?
+                {t("auth.forgotPassword", "Forgot password?")}
               </Link>
             </div>
           </div>
@@ -275,15 +285,15 @@ export const LoginPage: React.FC = () => {
             className="w-full mt-2 py-2.5 font-bold shadow-md"
             isLoading={isSubmitting}
           >
-            Sign In to Bridge
+            {t("auth.signInBtn", "Sign In to Bridge")}
           </Button>
         </form>
 
         {/* Footer sign up prompt */}
         <div className="text-center text-xs text-ink-muted mt-6 pt-5 border-t border-border">
-          <span>Don&apos;t have an ORCA account yet? </span>
+          <span>{t("auth.noAccount", "Don't have an account?")} </span>
           <Link to="/signup" className="text-primary font-bold hover:underline">
-            Create an account
+            {t("auth.createAccount", "Create an account")}
           </Link>
         </div>
       </div>

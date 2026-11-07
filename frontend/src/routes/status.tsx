@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
 import { formatDataAge } from "@/lib/format";
 import {
-  Anchor,
   Activity,
   CheckCircle2,
   AlertTriangle,
@@ -68,15 +67,13 @@ export const StatusPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-border bg-surface px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-base hover:opacity-90">
-            <Anchor className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>ORCA</span>
-          </Link>
-          <span className="text-xs text-ink-muted">/ System Status</span>
+    <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 flex flex-col gap-8 text-left">
+      {/* Breadcrumb & Action Navigation */}
+      <div className="flex items-center justify-between text-xs text-ink-muted">
+        <div className="flex items-center gap-2">
+          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <span>/</span>
+          <span className="text-ink font-medium">System Status</span>
         </div>
         <Button
           size="sm"
@@ -87,10 +84,9 @@ export const StatusPage: React.FC = () => {
         >
           <RefreshCw className="h-3.5 w-3.5" /> Refresh
         </Button>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-8 text-left">
+      <div className="flex flex-col gap-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2.5">
@@ -164,12 +160,7 @@ export const StatusPage: React.FC = () => {
             When any primary ocean wave or atmospheric wind feed fails or goes stale beyond calibrated limits, ORCA automatically marks conditions as &quot;Unknown&quot; to prevent hazardous maritime excursions.
           </p>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
+      </div>
     </div>
   );
 };

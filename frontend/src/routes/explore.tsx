@@ -5,6 +5,7 @@ import { api } from "@/lib/api/client";
 import { ChatPanel } from "@/features/chat/ChatPanel";
 import { MapView } from "@/features/map/MapView";
 import { LiveMarineTelemetry } from "@/features/marine/LiveMarineTelemetry";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 
 export const ExplorePage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -73,29 +74,58 @@ export const ExplorePage: React.FC = () => {
     }
   };
 
+  const [mobileTab, setMobileTab] = useState<"map" | "chat">("map");
+
   return (
     <div className="h-screen w-screen flex flex-col bg-bg text-ink overflow-hidden">
       {/* Navigation Bar */}
-      <header className="h-14 border-b border-border bg-surface px-4 flex items-center justify-between shrink-0 z-20">
-        <div className="flex items-center gap-3">
+      <header className="h-14 border-b border-border bg-surface px-3 sm:px-4 flex items-center justify-between shrink-0 z-20">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/"
-            className="p-1.5 rounded hover:bg-surface-raised text-ink-muted hover:text-ink transition-colors"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-surface-raised text-ink-muted hover:text-ink transition-colors"
             aria-label="Back to landing page"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div className="flex items-center gap-2">
             <Anchor className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-base tracking-tight">ORCA Explore</span>
+            <span className="font-semibold text-sm sm:text-base tracking-tight truncate max-w-[130px] sm:max-w-none">ORCA Explore</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Mobile View Toggle Segment (< md) */}
+        <div className="flex md:hidden items-center bg-surface-raised p-1 rounded-xl border border-border">
+          <button
+            type="button"
+            onClick={() => setMobileTab("map")}
+            className={`min-h-[32px] px-3 rounded-lg text-xs font-semibold transition-all ${
+              mobileTab === "map"
+                ? "bg-primary text-white shadow-xs"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            Map
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("chat")}
+            className={`min-h-[32px] px-3 rounded-lg text-xs font-semibold transition-all ${
+              mobileTab === "chat"
+                ? "bg-primary text-white shadow-xs"
+                : "text-ink-muted hover:text-ink"
+            }`}
+          >
+            Copilot
+          </button>
+        </div>
+
+        <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Live Open-Meteo Waves Trigger */}
           <button
+            type="button"
             onClick={() => setShowTelemetryDrawer(true)}
-            className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            className="min-h-[40px] flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
             title="Open live Open-Meteo marine wave and swell telemetry"
           >
             <Waves className="h-4 w-4 animate-pulse" />
@@ -104,25 +134,29 @@ export const ExplorePage: React.FC = () => {
           </button>
 
           <button
+            type="button"
             onClick={toggleTheme}
-            className="p-2 rounded border border-border text-ink hover:bg-surface-raised transition-colors"
+            className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-lg border border-border text-ink hover:bg-surface-raised transition-colors"
             aria-label="Toggle dark/light nautical theme"
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
+          <LanguageSelector />
           <Link
             to="/dashboard"
-            className="text-xs font-semibold px-3 py-1.5 rounded bg-primary text-on-primary hover:bg-primary-hover transition-colors"
+            className="hidden sm:inline-flex text-xs font-semibold px-3 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-hover transition-colors shadow-xs"
           >
-            My Dashboard
+            Dashboard
           </Link>
         </div>
       </header>
 
-      {/* Main Split Interface */}
+      {/* Main Split Interface (Responsive: Side-by-side on desktop, Toggle on mobile) */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-        {/* Chat Panel (Left on Desktop, Bottom on Mobile) */}
-        <div className="w-full md:w-[460px] lg:w-[500px] h-1/2 md:h-full shrink-0 z-10 flex flex-col shadow-card">
+        {/* Chat Panel (Desktop: Left column, Mobile: Full screen when active) */}
+        <div className={`w-full md:w-[440px] lg:w-[480px] h-full shrink-0 z-10 flex flex-col shadow-card ${
+          mobileTab === "chat" ? "flex" : "hidden md:flex"
+        }`}>
           <ChatPanel
             threadId={threadId}
             selectedLocation={selectedLocation}
@@ -132,8 +166,10 @@ export const ExplorePage: React.FC = () => {
           />
         </div>
 
-        {/* Map View (Right on Desktop, Top on Mobile) */}
-        <div className="flex-1 h-1/2 md:h-full relative">
+        {/* Map View (Desktop: Right column, Mobile: Full screen when active) */}
+        <div className={`flex-1 h-full relative ${
+          mobileTab === "map" ? "block" : "hidden md:block"
+        }`}>
           <MapView
             selectedLocation={selectedLocation}
             onSelectLocation={setSelectedLocation}
@@ -142,11 +178,13 @@ export const ExplorePage: React.FC = () => {
 
           {/* Floating Pill on Map to open Telemetry for active waypoint */}
           <button
+            type="button"
             onClick={() => setShowTelemetryDrawer(true)}
-            className="absolute bottom-6 right-4 z-10 flex items-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 text-white backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold hover:scale-105 active:scale-95 transition-all"
+            className="absolute bottom-6 right-3 sm:right-4 z-10 max-w-[90vw] flex items-center gap-2 bg-slate-900/95 hover:bg-slate-800 text-white backdrop-blur-md border border-white/20 px-3.5 sm:px-4 py-2.5 rounded-full shadow-2xl text-xs font-bold hover:scale-105 active:scale-95 transition-all truncate"
           >
-            <Waves className="h-4 w-4 text-cyan-400 animate-pulse" />
-            <span className="text-white">Live Marine Telemetry ({selectedLocation.lat.toFixed(2)}°, {selectedLocation.lon.toFixed(2)}°)</span>
+            <Waves className="h-4 w-4 text-cyan-400 animate-pulse shrink-0" />
+            <span className="hidden sm:inline">Live Marine Telemetry ({selectedLocation.lat.toFixed(2)}°, {selectedLocation.lon.toFixed(2)}°)</span>
+            <span className="sm:hidden">Telemetry ({selectedLocation.lat.toFixed(1)}°, {selectedLocation.lon.toFixed(1)}°)</span>
           </button>
         </div>
       </div>

@@ -23,6 +23,7 @@ env = environ.Env(
     LLM_MODEL=(str, "qwen/qwen3.8-27b"),
     LLM_API_KEY=(str, ""),
     GROQ_API_KEY=(str, ""),
+    GROQ_MODEL=(str, "qwen/qwen3.8-27b"),
     LLM_DAILY_TOKEN_BUDGET=(int, 100000),
     COVERAGE_BBOX=(str, "68.0,6.0,89.0,24.0"),
     RISK_OUTPUT_ENABLED=(bool, True),
@@ -38,7 +39,10 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ENVIRONMENT = env("ENVIRONMENT")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "api.localtest.me"])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "api.localtest.me", ".vercel.app"])
+
+if os.environ.get("VERCEL"):
+    ALLOWED_HOSTS = ["*"]
 
 # Application definition
 DJANGO_APPS = [
@@ -125,7 +129,18 @@ DATABASES = {"default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / '
 
 if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
     db_name = DATABASES["default"].get("NAME")
-    if db_name and db_name != ":memory:" and not Path(db_name).is_absolute():
+    if os.environ.get("VERCEL"):
+        import shutil
+        tmp_db = Path("/tmp/db.sqlite3")
+        orig_db = BASE_DIR / "db.sqlite3"
+        if not tmp_db.exists() and orig_db.exists():
+            try:
+                shutil.copyfile(orig_db, tmp_db)
+            except Exception:
+                pass
+        if tmp_db.exists():
+            DATABASES["default"]["NAME"] = str(tmp_db)
+    elif db_name and db_name != ":memory:" and not Path(db_name).is_absolute():
         DATABASES["default"]["NAME"] = str(BASE_DIR / db_name)
 
 # Fix dialect if postgis is specified but running on sqlite
@@ -262,6 +277,7 @@ LLM_PROVIDER = env("LLM_PROVIDER")
 LLM_MODEL = env("LLM_MODEL")
 LLM_API_KEY = env("LLM_API_KEY")
 GROQ_API_KEY = env("GROQ_API_KEY")
+GROQ_MODEL = env("GROQ_MODEL", default=env("LLM_MODEL", default="qwen/qwen3.8-27b"))
 LLM_DAILY_TOKEN_BUDGET = env.int("LLM_DAILY_TOKEN_BUDGET")
 
 RISK_OUTPUT_ENABLED = env.bool("RISK_OUTPUT_ENABLED")

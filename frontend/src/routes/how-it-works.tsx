@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
 import {
-  Anchor,
   ShieldCheck,
   Cpu,
   BookOpen,
@@ -27,24 +26,18 @@ export const HowItWorksPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col justify-between">
-      {/* Header */}
-      <header className="border-b border-border bg-surface px-4 sm:px-6 py-3.5 flex items-center justify-between max-w-7xl mx-auto w-full sticky top-0 z-30">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-base hover:opacity-90">
-            <Anchor className="h-5 w-5 text-primary" aria-hidden="true" />
-            <span>ORCA</span>
-          </Link>
-          <span className="text-xs text-ink-muted">/ System Methodology</span>
-        </div>
-        <div className="flex items-center gap-4 text-xs font-medium">
-          <Link to="/ports" className="hover:text-primary">Port Directory</Link>
-          <Link to="/status" className="hover:text-primary">Data Status</Link>
-        </div>
-      </header>
+    <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 flex flex-col gap-10 text-left">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center gap-2 text-xs text-ink-muted">
+        <Link to="/" className="hover:text-primary transition-colors">
+          Home
+        </Link>
+        <span>/</span>
+        <span className="text-ink font-medium">Methodology & Architecture</span>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-12 text-left">
+      <div className="flex flex-col gap-12">
         {/* Title & Philosophy */}
         <div className="space-y-3 pb-6 border-b border-border">
           <span className="text-xs font-mono uppercase tracking-widest text-primary font-semibold">
@@ -297,12 +290,7 @@ export const HowItWorksPage: React.FC = () => {
             </div>
           </div>
         </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-surface px-6 py-6 text-xs text-ink-muted text-center">
-        <p>© 2026 Project ORCA • Marine Ecosystem Reasoning for SDG 14</p>
-      </footer>
+      </div>
     </div>
   );
 };

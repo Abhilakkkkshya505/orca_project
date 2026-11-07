@@ -167,7 +167,11 @@ class ProviderRegistry:
         llm_provider = getattr(settings, "LLM_PROVIDER", "template")
         gemini_key = os.environ.get("GEMINI_API_KEY", "")
         anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
-        if llm_provider == "gemini":
+        groq_key = getattr(settings, "GROQ_API_KEY", "") or os.environ.get("GROQ_API_KEY", "")
+        if llm_provider == "groq":
+            llm_configured = bool(groq_key)
+            llm_status = "ok" if llm_configured else "disabled (no key)"
+        elif llm_provider == "gemini":
             llm_configured = bool(gemini_key)
             llm_status = "ok" if llm_configured else "disabled (no key)"
         elif llm_provider == "anthropic":

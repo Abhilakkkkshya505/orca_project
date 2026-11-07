@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { ensureCsrfToken } from "@/lib/api/client";
+import { ensureCsrfToken, API_BASE_URL } from "@/lib/api/client";
 import type { RiskAssessmentData } from "./RiskCard";
 
 export interface ClarificationOptionData {
@@ -108,11 +108,12 @@ export function useChatStream(threadId: string | null) {
       abortControllerRef.current = abortController;
 
       try {
-        await ensureCsrfToken();
-        const csrfTokenMatch = document.cookie.match(/(^|;\s*)csrftoken=([^;]*)/);
-        const csrfToken = csrfTokenMatch ? decodeURIComponent(csrfTokenMatch[2]) : "";
+        const tokenFromFetch = await ensureCsrfToken();
+        const csrfTokenMatch = typeof document !== "undefined" ? document.cookie.match(/(^|;\s*)csrftoken=([^;]*)/) : null;
+        const csrfToken = tokenFromFetch || (csrfTokenMatch ? decodeURIComponent(csrfTokenMatch[2]) : "");
 
-        const response = await fetch(`/api/v1/chat/threads/${threadId}/messages/`, {
+        const endpoint = `${API_BASE_URL.replace(/\/$/, "")}/chat/threads/${threadId}/messages/`;
+        const response = await fetch(endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

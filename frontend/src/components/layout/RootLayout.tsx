@@ -5,11 +5,24 @@ import { Footer } from "./Footer";
 import { ConsentBanner } from "./ConsentBanner";
 import LiquidFilm from "@/components/originkit/ui/liquid-film";
 import { useTheme } from "@/lib/theme/ThemeContext";
+import { useTranslation } from "react-i18next";
+import { triggerGoogleTranslate } from "@/lib/i18n";
 
 /** Root layout — delivers unified sticky SaaS navbar, footer, consent banner, and ambient liquid film background */
 export const RootLayout: React.FC = () => {
   const location = useLocation();
   const { resolvedTheme } = useTheme();
+  const { i18n } = useTranslation();
+
+  // Re-sync full-DOM translation on route transitions so newly mounted pages translate immediately
+  React.useEffect(() => {
+    if (i18n.language && i18n.language !== "en") {
+      const timer = setTimeout(() => {
+        triggerGoogleTranslate(i18n.language);
+      }, 120);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, i18n.language]);
 
   // Landing page has bespoke editorial layout
   const isLanding = location.pathname === "/";
@@ -34,10 +47,10 @@ export const RootLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink selection:bg-primary/20 selection:text-primary relative">
-      {/* Originkit Liquid Film Ambient Fluid Background on all non-landing pages */}
+      {/* Originkit Liquid Film Ambient Fluid Background (desktop/tablet optimized for 60fps mobile) */}
       {!isLanding && !isExplore && (
         <div
-          className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30 dark:opacity-40"
+          className="hidden md:block fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-30 dark:opacity-40"
           aria-hidden="true"
         >
           <LiquidFilm

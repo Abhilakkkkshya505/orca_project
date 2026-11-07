@@ -426,20 +426,24 @@ class GroqProvider(BaseLLMProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message[:1000]},
         ]
-        payload = {
-            "model": self.model_name,
-            "messages": messages,
-            "temperature": 0.3,
-            "max_tokens": 300,
-        }
-        try:
-            resp = requests.post(self.api_url, headers=headers, json=payload, timeout=12)
-            if resp.status_code == 200:
-                return resp.json()["choices"][0]["message"]["content"].strip()
-            return ""
-        except Exception as e:
-            logger.warning("groq_chat_reply_failed", error=str(e))
-            return ""
+        models_to_try = [self.model_name or "qwen/qwen3.8-27b", "llama-3.3-70b-versatile", "qwen/qwen3.8-27b"]
+        for mod in dict.fromkeys(models_to_try):
+            payload = {
+                "model": mod,
+                "messages": messages,
+                "temperature": 0.3,
+                "max_tokens": 300,
+            }
+            try:
+                resp = requests.post(self.api_url, headers=headers, json=payload, timeout=12)
+                if resp.status_code == 200:
+                    return resp.json()["choices"][0]["message"]["content"].strip()
+                else:
+                    logger.warning("groq_chat_reply_http_error", model=mod, status=resp.status_code, body=resp.text[:200])
+            except Exception as e:
+                logger.warning("groq_chat_reply_failed", model=mod, error=str(e))
+
+        return ""
 
 
 class LLMClient:

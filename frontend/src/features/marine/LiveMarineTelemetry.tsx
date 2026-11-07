@@ -135,7 +135,7 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
     queryKey,
     queryFn: async () => {
       const url = portSlug
-        ? `/marine/?port=${portSlug}&forecast_days=${forecastDays}`
+        ? `/marine/?port=${encodeURIComponent(portSlug)}&forecast_days=${forecastDays}`
         : `/marine/?latitude=${lat}&longitude=${lon}&forecast_days=${forecastDays}`;
       return api.get<MarineTelemetryResponse>(url);
     },

@@ -15,6 +15,7 @@ import {
   ExternalLink,
   Ship,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SavedLocationOverview {
   location: { id: string; name: string; lat: number; lon: number };
@@ -84,6 +85,7 @@ const mockRecentActivity = [
 ];
 
 export const DashboardPage: React.FC = () => {
+  const { t } = useTranslation();
   const [vesselClass, setVesselClass] = useState<"small" | "mechanised">("small");
   const [checklist, setChecklist] = useState({
     vhf: true,
@@ -123,7 +125,7 @@ export const DashboardPage: React.FC = () => {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-editorial italic font-normal text-ink mt-1">
-              Maritime Operations Bridge
+              {t("dashboard.title", "Maritime Operations Bridge")}
             </h1>
           </div>
 
@@ -142,14 +144,14 @@ export const DashboardPage: React.FC = () => {
               className="btn-editorial-secondary inline-flex items-center gap-1.5 text-xs font-mono"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Add Waypoint</span>
+              <span>{t("dashboard.addPort", "Add Waypoint")}</span>
             </Link>
             <Link
               to="/explore"
               className="btn-editorial-primary inline-flex items-center gap-1.5 text-xs font-semibold"
             >
               <Compass className="h-3.5 w-3.5" />
-              <span>Map Explorer</span>
+              <span>{t("dashboard.exploreMap", "Map Explorer")}</span>
             </Link>
           </div>
         </div>
@@ -260,49 +262,78 @@ export const DashboardPage: React.FC = () => {
                       </Link>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs divide-y divide-border">
-                        <thead className="bg-surface text-ink-muted font-mono text-[10px] uppercase tracking-wider">
-                          <tr>
-                            <th className="px-4 py-2.5">Station & Coords</th>
-                            <th className="px-4 py-2.5">Safety Verdict</th>
-                            <th className="px-4 py-2.5">Primary Factor</th>
-                            <th className="px-4 py-2.5 text-right">Window</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border font-sans">
-                          {data.saved_locations.map((loc) => (
-                            <tr key={loc.location.id} className="hover:bg-surface-raised transition-colors">
-                              <td className="px-4 py-3">
+                    <>
+                      {/* Mobile Card Stack (< sm) */}
+                      <div className="sm:hidden divide-y divide-border font-sans">
+                        {data.saved_locations.map((loc) => (
+                          <div key={loc.location.id} className="p-4 space-y-2 hover:bg-surface-raised transition-colors">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
                                 <Link
                                   to={`/ports/${loc.location.id}`}
-                                  className="font-medium text-ink hover:text-forest dark:hover:text-sage transition-colors block"
+                                  className="font-bold text-sm text-ink hover:text-primary transition-colors block"
                                 >
                                   {loc.location.name}
                                 </Link>
-                                <span className="font-mono text-[10px] text-ink-muted">
+                                <span className="font-mono text-[11px] text-ink-muted">
                                   {loc.location.lat.toFixed(2)}°N, {loc.location.lon.toFixed(2)}°E
                                 </span>
-                              </td>
-                              <td className="px-4 py-3">
-                                <RiskBadge level={loc.level} size="sm" />
-                              </td>
-                              <td className="px-4 py-3 text-ink-muted font-mono text-xs">
-                                {loc.top_factor || "Optimal sea state"}
-                              </td>
-                              <td className="px-4 py-3 text-right font-mono text-[11px] text-ink-muted">
-                                Next 24h
-                              </td>
+                              </div>
+                              <RiskBadge level={loc.level} size="sm" />
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-ink-muted pt-1">
+                              <span className="font-mono text-[11px]">Factor: <strong className="text-ink font-sans font-medium">{loc.top_factor || "Optimal"}</strong></span>
+                              <span className="font-mono text-[10px] uppercase">Next 24h</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop / Tablet Table (>= sm) */}
+                      <div className="hidden sm:block overflow-x-auto">
+                        <table className="w-full text-left text-xs divide-y divide-border">
+                          <thead className="bg-surface text-ink-muted font-mono text-[10px] uppercase tracking-wider">
+                            <tr>
+                              <th className="px-4 py-2.5">Station & Coords</th>
+                              <th className="px-4 py-2.5">Safety Verdict</th>
+                              <th className="px-4 py-2.5">Primary Factor</th>
+                              <th className="px-4 py-2.5 text-right">Window</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody className="divide-y divide-border font-sans">
+                            {data.saved_locations.map((loc) => (
+                              <tr key={loc.location.id} className="hover:bg-surface-raised transition-colors">
+                                <td className="px-4 py-3">
+                                  <Link
+                                    to={`/ports/${loc.location.id}`}
+                                    className="font-medium text-ink hover:text-forest dark:hover:text-sage transition-colors block"
+                                  >
+                                    {loc.location.name}
+                                  </Link>
+                                  <span className="font-mono text-[10px] text-ink-muted">
+                                    {loc.location.lat.toFixed(2)}°N, {loc.location.lon.toFixed(2)}°E
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3">
+                                  <RiskBadge level={loc.level} size="sm" />
+                                </td>
+                                <td className="px-4 py-3 text-ink-muted font-mono text-xs">
+                                  {loc.top_factor || "Optimal sea state"}
+                                </td>
+                                <td className="px-4 py-3 text-right font-mono text-[11px] text-ink-muted">
+                                  Next 24h
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
                   )}
                 </div>
 
-                {/* 7-Day Coastal Risk Horizon Matrix */}
-                <div className="editorial-card p-5 bg-surface flex flex-col gap-4">
+                {/* 7-Day Coastal Risk Horizon Matrix (Responsive columns: 2 on phone, 4 on tablet, 7 on desktop) */}
+                <div className="editorial-card p-4 sm:p-5 bg-surface flex flex-col gap-4">
                   <div className="flex items-center justify-between pb-3 border-b border-border">
                     <div>
                       <h3 className="text-sm font-semibold text-ink font-sans">
@@ -317,11 +348,11 @@ export const DashboardPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-7 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
                     {forecastDays.map((fc, i) => (
                       <div
                         key={i}
-                        className={`p-3 rounded-md border text-center flex flex-col justify-between gap-1.5 transition-colors ${
+                        className={`p-3 rounded-xl border text-center flex flex-col justify-between gap-1.5 transition-colors ${
                           fc.risk === "safe"
                             ? "bg-surface-raised border-border"
                             : fc.risk === "caution"
@@ -331,7 +362,7 @@ export const DashboardPage: React.FC = () => {
                       >
                         <span className="font-mono text-xs font-semibold text-ink">{fc.day}</span>
                         <div className="my-1">
-                          <span className="font-mono text-sm font-bold text-ink block">
+                          <span className="font-mono text-sm sm:text-base font-bold text-ink block">
                             {fc.wave}m
                           </span>
                           <span className="font-mono text-[10px] text-ink-muted block">

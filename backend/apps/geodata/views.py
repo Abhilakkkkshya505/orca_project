@@ -93,6 +93,7 @@ class MarineTelemetryView(APIView):
     def get(self, request):
         from apps.geodata.marine_service import fetch_openmeteo_marine_telemetry
         from apps.ports.models import Port
+        from apps.ports.snapping import snap_port_coordinate
 
         port_slug = request.query_params.get("port")
         lat = request.query_params.get("latitude")
@@ -101,23 +102,35 @@ class MarineTelemetryView(APIView):
 
         port_meta = None
         if port_slug:
-            try:
-                p = Port.objects.get(slug=port_slug)
-                m_lat = getattr(p, "marine_lat", None)
-                m_lon = getattr(p, "marine_lon", None)
+            slug_clean = port_slug.strip().lower().rstrip("/")
+            p = (
+                Port.objects.filter(slug=slug_clean).first()
+                or Port.objects.filter(slug__iexact=slug_clean).first()
+                or Port.objects.filter(slug__istartswith=slug_clean).first()
+                or Port.objects.filter(name__icontains=slug_clean).first()
+            )
+            if not p:
+                return Response({"error": f"Port '{port_slug}' not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            m_lat = getattr(p, "marine_lat", None)
+            m_lon = getattr(p, "marine_lon", None)
+            if m_lat is not None and m_lon is not None:
+                lat = float(m_lat)
+                lon = float(m_lon)
+            else:
+                m_lat, m_lon, _, _ = snap_port_coordinate(float(p.lat), float(p.lon))
                 lat = float(m_lat if m_lat is not None else p.lat)
                 lon = float(m_lon if m_lon is not None else p.lon)
-                port_meta = {
-                    "slug": p.slug,
-                    "name": p.name,
-                    "country": p.country_name,
-                    "port_type": p.port_type,
-                    "is_coastal": p.is_coastal,
-                    "lat": float(p.lat),
-                    "lon": float(p.lon),
-                }
-            except Port.DoesNotExist:
-                return Response({"error": f"Port '{port_slug}' not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            port_meta = {
+                "slug": p.slug,
+                "name": p.name,
+                "country": p.country_name,
+                "port_type": p.port_type,
+                "is_coastal": p.is_coastal,
+                "lat": float(p.lat),
+                "lon": float(p.lon),
+            }
 
         elif lat is not None and lon is not None:
             try:
@@ -126,12 +139,20 @@ class MarineTelemetryView(APIView):
             except ValueError:
                 return Response({"error": "Invalid latitude or longitude"}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            # Default to user's example: Baltic Sea (54.544587, 10.227487)
-            lat = 54.544587
-            lon = 10.227487
+            # Default to Kochi marine coordinates if neither is specified
+            lat = 9.9667
+            lon = 76.2333
 
         try:
             data = fetch_openmeteo_marine_telemetry(lat=lat, lon=lon, forecast_days=forecast_days)
+            # If coordinates were slightly on land and returned null waves, try snapping to ocean
+            if data and data.get("current") and data["current"].get("wave_height_m") is None:
+                m_lat, m_lon, _, _ = snap_port_coordinate(lat, lon)
+                if m_lat is not None and m_lon is not None and (m_lat != lat or m_lon != lon):
+                    snapped_data = fetch_openmeteo_marine_telemetry(lat=m_lat, lon=m_lon, forecast_days=forecast_days)
+                    if snapped_data and snapped_data.get("current") and snapped_data["current"].get("wave_height_m") is not None:
+                        data = snapped_data
+
             if port_meta:
                 data["port"] = port_meta
             return Response(data, status=status.HTTP_200_OK)

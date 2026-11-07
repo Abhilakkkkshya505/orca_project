@@ -161,21 +161,52 @@ class Orchestrator:
         lat = primary_place.lat
         lon = primary_place.lon
         location_name = primary_place.text
+        resolution_options = []
 
         # Verify coordinates from database if slug or place text present
         if lat is None or lon is None:
             if primary_place.port_slug:
-                port = Port.objects.filter(slug=primary_place.port_slug).first()
+                slug_candidate = primary_place.port_slug.strip().lower()
+                port = (
+                    Port.objects.filter(slug=slug_candidate).first()
+                    or Port.objects.filter(slug__istartswith=slug_candidate).first()
+                )
                 if port:
                     lat, lon = port.lat, port.lon
                     location_name = port.name
+
             if (lat is None or lon is None) and primary_place.text:
+                import re
                 from apps.agents.parser import resolve_port_from_db
-                port, _, _ = resolve_port_from_db(primary_place.text)
+                port, _, opts = resolve_port_from_db(primary_place.text)
                 if port:
                     lat, lon = port.lat, port.lon
                     location_name = port.name
                     primary_place.port_slug = port.slug
+                elif opts:
+                    resolution_options = opts
+                    place_words = [w.lower() for w in re.findall(r"\b[A-Za-z]{3,}\b", primary_place.text)]
+                    for o in opts:
+                        o_words = [w.lower() for w in re.findall(r"\b[A-Za-z]{3,}\b", o.name)]
+                        if any(w in o_words for w in place_words):
+                            matched = Port.objects.filter(slug=o.slug).first()
+                            if matched:
+                                lat, lon = matched.lat, matched.lon
+                                location_name = matched.name
+                                primary_place.port_slug = matched.slug
+                                break
+
+            # Word-by-word DB fallback for place text
+            if (lat is None or lon is None) and primary_place.text:
+                import re
+                words = [w for w in re.findall(r"\b[A-Za-z]{4,}\b", primary_place.text) if w.lower() not in ("fort", "port", "near", "cape", "harbour", "beach", "today", "tomorrow")]
+                for w in words:
+                    candidate = Port.objects.filter(name__icontains=w).first()
+                    if candidate:
+                        lat, lon = candidate.lat, candidate.lon
+                        location_name = candidate.name
+                        primary_place.port_slug = candidate.slug
+                        break
 
         # Fallback to query context location if provided
         if (lat is None or lon is None) and location and isinstance(location, dict):
@@ -200,15 +231,37 @@ class Orchestrator:
                 "mangalore": (12.914, 74.856, "New Mangalore"),
                 "tuticorin": (8.764, 78.134, "V.O. Chidambaranar (Tuticorin)"),
                 "mormugao": (15.416, 73.800, "Mormugao (Goa)"),
+                "goa": (15.416, 73.800, "Mormugao (Goa)"),
             }
             from apps.ports.normalisation import to_ascii
             from apps.agents.parser import COMMON_TRANSLITERATIONS
-            stem = COMMON_TRANSLITERATIONS.get(to_ascii(primary_place.text).lower(), to_ascii(primary_place.text).lower())
+            place_raw = to_ascii(primary_place.text).lower()
+            stem = COMMON_TRANSLITERATIONS.get(place_raw, place_raw)
             if stem in KNOWN_COORDINATES:
                 lat, lon, def_name = KNOWN_COORDINATES[stem]
                 location_name = def_name
+            else:
+                for k, (klat, klon, kname) in KNOWN_COORDINATES.items():
+                    if k in place_raw or k in stem:
+                        lat, lon = klat, klon
+                        location_name = kname
+                        break
 
         if lat is None or lon is None:
+            if resolution_options:
+                clarification_data = {
+                    "reason": "ambiguous_place",
+                    "options": [o.model_dump() if hasattr(o, "model_dump") else o.__dict__ for o in resolution_options],
+                    "message": f"Multiple coastal locations match '{primary_place.text}'. Which one did you mean?",
+                }
+                yield {"event": "clarification", "data": clarification_data}
+                yield {"event": "token", "data": {"text": clarification_data["message"]}}
+                yield {
+                    "event": "done",
+                    "data": {"intent": intent.model_dump(mode="json"), "fallback": False},
+                }
+                return
+
             yield {"event": "error", "data": {"code": "unresolved_location", "message": f"Could not determine sea coordinates for {location_name}."}}
             return
 

@@ -10,10 +10,13 @@ import { Input } from "@/components/ui/input";
 import { AlertCircle, Anchor, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { useTheme } from "@/lib/theme/ThemeContext";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import BeamSweep from "@/components/originkit/ui/beam-sweep";
 import WaterButton from "@/components/originkit/ui/water-button";
 
 export const SignupPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -124,21 +127,28 @@ export const SignupPage: React.FC = () => {
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         {/* Brand Header */}
-        <div className="w-full mb-6 text-center space-y-1.5">
-          <Link to="/" className="inline-flex items-center gap-2 group">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
-              <Anchor className="h-4 w-4" />
-            </div>
-            <span className="font-heading font-bold text-xl tracking-tight text-ink">
-              ORCA
-            </span>
-          </Link>
-          <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
-            Create Mariner Account
-          </h1>
-          <p className="text-xs text-ink-muted leading-relaxed">
-            Access verified harbour telemetry, deterministic swell gates, and offshore cache.
-          </p>
+        <div className="w-full mb-6 flex flex-col items-center text-center space-y-2">
+          <div className="w-full flex items-center justify-between">
+            <Link to="/" className="inline-flex items-center gap-2 group">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+                <Anchor className="h-4 w-4" />
+              </div>
+              <span className="font-heading font-bold text-xl tracking-tight text-ink">
+                ORCA
+              </span>
+            </Link>
+
+            <LanguageSelector variant="button" />
+          </div>
+
+          <div className="pt-2">
+            <h1 className="text-xl font-heading font-bold tracking-tight text-ink">
+              {t("auth.signupTitle", "Create Mariner Account")}
+            </h1>
+            <p className="text-xs text-ink-muted leading-relaxed mt-1">
+              {t("auth.signupSubtitle", "Access verified harbour telemetry, deterministic swell gates, and offshore cache.")}
+            </p>
+          </div>
         </div>
 
         <div className="w-full bg-surface/90 backdrop-blur-md border border-border/80 rounded-xl p-6 sm:p-7 shadow-lg">

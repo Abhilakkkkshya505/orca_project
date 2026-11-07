@@ -128,10 +128,12 @@ class CsrfView(APIView):
     @extend_schema(
         summary="Acquire CSRF Cookie",
         description="Sets the csrftoken cookie for subsequent state-changing POST/PATCH/DELETE requests.",
-        responses={204: None},
+        responses={200: dict},
     )
     def get(self, request):
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        from django.middleware.csrf import get_token
+        token = get_token(request)
+        return Response({"csrfToken": token, "status": "ok"}, status=status.HTTP_200_OK)
 
 
 def handler404_view(request, exception=None):

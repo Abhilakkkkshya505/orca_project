@@ -6,6 +6,7 @@ from .base import *  # noqa: F403
 
 DEBUG = True
 ENVIRONMENT = "local"
+ALLOWED_HOSTS = ["*"]
 
 # Shared parent domain cookie configuration (None allows cookies on localhost/127.0.0.1)
 SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN", default=None)
