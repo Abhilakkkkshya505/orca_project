@@ -12,8 +12,8 @@ from retry_requests import retry
 
 logger = logging.getLogger(__name__)
 
-# Setup persistent cached session and retry mechanism (1 hour cache)
-_cache_session = requests_cache.CachedSession(".cache/openmeteo_marine", expire_after=3600)
+# Setup cached session and retry mechanism (in-memory cache to guarantee compatibility with read-only serverless environments like Vercel)
+_cache_session = requests_cache.CachedSession(backend="memory", expire_after=3600)
 _retry_session = retry(_cache_session, retries=5, backoff_factor=0.2)
 _client = openmeteo_requests.Client(session=_retry_session)
 

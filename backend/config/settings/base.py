@@ -132,7 +132,9 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
     db_name = DATABASES["default"].get("NAME")
     if os.environ.get("VERCEL"):
         import shutil
-        tmp_db = Path("/tmp/db.sqlite3")
+        import tempfile
+        tmp_dir = Path(tempfile.gettempdir())
+        tmp_db = tmp_dir / "db.sqlite3"
         orig_db = BASE_DIR / "db.sqlite3"
         if not tmp_db.exists() and orig_db.exists():
             try:
