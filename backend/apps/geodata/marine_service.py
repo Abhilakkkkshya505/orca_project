@@ -200,5 +200,147 @@ def fetch_openmeteo_marine_telemetry(lat: float, lon: float, forecast_days: int 
             "fetched_at": datetime.now(timezone.utc).isoformat(),
         }
     except Exception as e:
-        logger.error(f"fetch_openmeteo_marine_telemetry failed for ({lat}, {lon}): {e}")
-        raise
+        logger.warning(f"FlatBuffer marine telemetry failed for ({lat}, {lon}), falling back to direct REST JSON: {e}")
+        return fetch_openmeteo_marine_telemetry_rest(lat=lat, lon=lon, forecast_days=forecast_days)
+
+
+def fetch_openmeteo_marine_telemetry_rest(lat: float, lon: float, forecast_days: int = 7) -> dict:
+    """
+    Direct REST JSON client for Open-Meteo Marine API.
+    Provides ultra-reliable, zero-C-dependency oceanographic wave, swell, and meteorological telemetry.
+    """
+    import requests
+
+    params = {
+        "latitude": round(lat, 6),
+        "longitude": round(lon, 6),
+        "hourly": "wave_height,wave_direction,wind_wave_height,wind_wave_direction,wind_wave_period,secondary_swell_wave_height,sea_level_height_msl",
+        "forecast_days": min(max(int(forecast_days), 1), 7),
+    }
+
+    resp = requests.get(OPEN_METEO_MARINE_URL, params=params, timeout=10)
+    if resp.status_code != 200:
+        raise ValueError(f"Open-Meteo HTTP {resp.status_code}: {resp.text[:100]}")
+    m_data = resp.json()
+
+    # Atmospheric weather supplement
+    weather_params = {
+        "latitude": round(lat, 6),
+        "longitude": round(lon, 6),
+        "hourly": "temperature_2m,precipitation,wind_speed_10m",
+        "current": "temperature_2m,relative_humidity_2m",
+        "forecast_days": min(max(int(forecast_days), 1), 7),
+    }
+    w_data = {}
+    try:
+        w_resp = requests.get(OPEN_METEO_WEATHER_URL, params=weather_params, timeout=8)
+        if w_resp.status_code == 200:
+            w_data = w_resp.json()
+    except Exception as we:
+        logger.warning(f"weather_rest_warning: {we}")
+
+    m_hourly = m_data.get("hourly", {})
+    w_hourly = w_data.get("hourly", {})
+    time_list = m_hourly.get("time", [])
+
+    v_wh = m_hourly.get("wave_height", [])
+    v_wdir = m_hourly.get("wave_direction", [])
+    v_wwh = m_hourly.get("wind_wave_height", [])
+    v_wwdir = m_hourly.get("wind_wave_direction", [])
+    v_wwper = m_hourly.get("wind_wave_period", [])
+    v_sw2 = m_hourly.get("secondary_swell_wave_height", [])
+    v_slmsl = m_hourly.get("sea_level_height_msl", [])
+
+    v_temps = w_hourly.get("temperature_2m", [])
+    v_rains = w_hourly.get("precipitation", [])
+    v_winds = w_hourly.get("wind_speed_10m", [])
+
+    curr_weather = w_data.get("current", {})
+    curr_temp = curr_weather.get("temperature_2m")
+    curr_humidity = curr_weather.get("relative_humidity_2m")
+
+    hourly_points = []
+    cross_sea_count = 0
+
+    for i, t_str in enumerate(time_list):
+        try:
+            dt = datetime.fromisoformat(t_str).replace(tzinfo=timezone.utc)
+        except Exception:
+            dt = datetime.now(timezone.utc)
+
+        wh = float(v_wh[i]) if i < len(v_wh) and v_wh[i] is not None else None
+        wdir = float(v_wdir[i]) if i < len(v_wdir) and v_wdir[i] is not None else None
+        wwh = float(v_wwh[i]) if i < len(v_wwh) and v_wwh[i] is not None else None
+        wwdir = float(v_wwdir[i]) if i < len(v_wwdir) and v_wwdir[i] is not None else None
+        wwper = float(v_wwper[i]) if i < len(v_wwper) and v_wwper[i] is not None else None
+        sw2 = float(v_sw2[i]) if i < len(v_sw2) and v_sw2[i] is not None else None
+        slmsl = float(v_slmsl[i]) if i < len(v_slmsl) and v_slmsl[i] is not None else None
+
+        temp_c = float(v_temps[i]) if i < len(v_temps) and v_temps[i] is not None else None
+        rain_mm = float(v_rains[i]) if i < len(v_rains) and v_rains[i] is not None else None
+        wind_kmh = float(v_winds[i]) if i < len(v_winds) and v_winds[i] is not None else None
+
+        scale, cond = get_douglas_state(wh)
+        cross_sea = bool(sw2 and wwh and sw2 >= 1.0 and wwh >= 1.0)
+        if cross_sea:
+            cross_sea_count += 1
+
+        hourly_points.append({
+            "valid_time": dt.isoformat(),
+            "time_label": dt.strftime("%a %H:%M"),
+            "date": dt.strftime("%Y-%m-%d"),
+            "hour": dt.hour,
+            "wave_height_m": round(wh, 2) if wh is not None else None,
+            "wave_direction_deg": round(wdir, 1) if wdir is not None else None,
+            "wind_wave_height_m": round(wwh, 2) if wwh is not None else None,
+            "wind_wave_direction_deg": round(wwdir, 1) if wwdir is not None else None,
+            "wind_wave_period_s": round(wwper, 1) if wwper is not None else None,
+            "secondary_swell_m": round(sw2, 2) if sw2 is not None else None,
+            "sea_level_msl_m": round(slmsl, 2) if slmsl is not None else None,
+            "temperature_c": round(temp_c, 1) if temp_c is not None else None,
+            "precipitation_mm": round(rain_mm, 1) if rain_mm is not None else None,
+            "wind_speed_kmh": round(wind_kmh, 1) if wind_kmh is not None else None,
+            "douglas_scale": scale,
+            "sea_condition": cond,
+            "cross_sea_warning": cross_sea,
+        })
+
+    current_pt = hourly_points[0] if hourly_points else None
+    if current_pt:
+        if curr_temp is not None:
+            current_pt["temperature_c"] = round(float(curr_temp), 1)
+        if curr_humidity is not None:
+            current_pt["relative_humidity_pct"] = round(float(curr_humidity), 1)
+
+    valid_whs = [p["wave_height_m"] for p in hourly_points if p["wave_height_m"] is not None]
+    valid_sls = [p["sea_level_msl_m"] for p in hourly_points if p["sea_level_msl_m"] is not None]
+    valid_sws = [p["secondary_swell_m"] for p in hourly_points if p["secondary_swell_m"] is not None]
+
+    return {
+        "query": {
+            "latitude": lat,
+            "longitude": lon,
+            "resolved_latitude": float(m_data.get("latitude", lat)),
+            "resolved_longitude": float(m_data.get("longitude", lon)),
+            "elevation_m": float(m_data.get("elevation", 0.0)),
+            "forecast_days": forecast_days,
+        },
+        "source": {
+            "name": "Open-Meteo Marine API",
+            "url": OPEN_METEO_MARINE_URL,
+            "attribution": "Open-Meteo / Copernicus Marine Service (CMEMS)",
+        },
+        "current": current_pt,
+        "summary": {
+            "total_hours": len(hourly_points),
+            "max_wave_height_m": max(valid_whs) if valid_whs else None,
+            "min_wave_height_m": min(valid_whs) if valid_whs else None,
+            "avg_wave_height_m": round(sum(valid_whs) / len(valid_whs), 2) if valid_whs else None,
+            "max_secondary_swell_m": max(valid_sws) if valid_sws else None,
+            "max_sea_level_surge_m": max(valid_sls) if valid_sls else None,
+            "min_sea_level_surge_m": min(valid_sls) if valid_sls else None,
+            "cross_sea_hours_count": cross_sea_count,
+        },
+        "hourly": hourly_points,
+        "fetched_at": datetime.now(timezone.utc).isoformat(),
+    }

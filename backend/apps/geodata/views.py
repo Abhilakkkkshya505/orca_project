@@ -110,27 +110,56 @@ class MarineTelemetryView(APIView):
                 or Port.objects.filter(name__icontains=slug_clean).first()
             )
             if not p:
-                return Response({"error": f"Port '{port_slug}' not found"}, status=status.HTTP_404_NOT_FOUND)
-
-            m_lat = getattr(p, "marine_lat", None)
-            m_lon = getattr(p, "marine_lon", None)
-            if m_lat is not None and m_lon is not None:
-                lat = float(m_lat)
-                lon = float(m_lon)
+                FALLBACK_PORTS = {
+                    "kochi": (9.9656, 76.2711, "Kochi Port", "India"),
+                    "cochin": (9.9656, 76.2711, "Kochi Port", "India"),
+                    "mumbai": (18.93, 72.84, "Mumbai Harbour", "India"),
+                    "chennai": (13.08, 80.28, "Chennai Port", "India"),
+                    "vizag": (17.68, 83.22, "Visakhapatnam Port", "India"),
+                    "visakhapatnam": (17.68, 83.22, "Visakhapatnam Port", "India"),
+                    "paradip": (20.316, 86.611, "Paradip Port", "India"),
+                    "kandla": (23.003, 70.219, "Kandla Port", "India"),
+                    "kolkata": (22.572, 88.363, "Kolkata Port", "India"),
+                    "mangalore": (12.914, 74.856, "New Mangalore Port", "India"),
+                    "tuticorin": (8.764, 78.134, "V.O. Chidambaranar Port", "India"),
+                    "mormugao": (15.416, 73.800, "Mormugao Port", "India"),
+                    "goa": (15.416, 73.800, "Mormugao Port", "India"),
+                }
+                matched_key = next((k for k in FALLBACK_PORTS if k in slug_clean or slug_clean in k), None)
+                if matched_key:
+                    f_lat, f_lon, f_name, f_country = FALLBACK_PORTS[matched_key]
+                    lat, lon = f_lat, f_lon
+                    port_meta = {
+                        "slug": slug_clean,
+                        "name": f_name,
+                        "country": f_country,
+                        "port_type": "commercial",
+                        "is_coastal": True,
+                        "lat": f_lat,
+                        "lon": f_lon,
+                    }
+                else:
+                    return Response({"error": f"Port '{port_slug}' not found"}, status=status.HTTP_404_NOT_FOUND)
             else:
-                m_lat, m_lon, _, _ = snap_port_coordinate(float(p.lat), float(p.lon))
-                lat = float(m_lat if m_lat is not None else p.lat)
-                lon = float(m_lon if m_lon is not None else p.lon)
+                m_lat = getattr(p, "marine_lat", None)
+                m_lon = getattr(p, "marine_lon", None)
+                if m_lat is not None and m_lon is not None:
+                    lat = float(m_lat)
+                    lon = float(m_lon)
+                else:
+                    m_lat, m_lon, _, _ = snap_port_coordinate(float(p.lat), float(p.lon))
+                    lat = float(m_lat if m_lat is not None else p.lat)
+                    lon = float(m_lon if m_lon is not None else p.lon)
 
-            port_meta = {
-                "slug": p.slug,
-                "name": p.name,
-                "country": p.country_name,
-                "port_type": p.port_type,
-                "is_coastal": p.is_coastal,
-                "lat": float(p.lat),
-                "lon": float(p.lon),
-            }
+                port_meta = {
+                    "slug": p.slug,
+                    "name": p.name,
+                    "country": p.country_name,
+                    "port_type": p.port_type,
+                    "is_coastal": p.is_coastal,
+                    "lat": float(p.lat),
+                    "lon": float(p.lon),
+                }
 
         elif lat is not None and lon is not None:
             try:

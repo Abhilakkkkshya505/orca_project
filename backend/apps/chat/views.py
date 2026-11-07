@@ -8,6 +8,7 @@ import uuid
 from collections.abc import Generator
 from typing import Any
 
+import structlog
 from django.core.cache import cache
 from django.http import StreamingHttpResponse
 from django.utils import timezone
@@ -17,6 +18,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import BaseRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+logger = structlog.get_logger(__name__)
 
 
 class ServerSentEventRenderer(BaseRenderer):
@@ -145,7 +148,30 @@ class ChatMessageStreamView(APIView):
     renderer_classes = [ServerSentEventRenderer, JSONRenderer]
 
     def post(self, request, thread_id):
-        thread = _get_thread_for_request(request, thread_id)
+        try:
+            thread = _get_thread_for_request(request, thread_id)
+        except NotFound:
+            # In serverless environments (e.g. Vercel), instances do not share ephemeral SQLite files.
+            # Gracefully get or create the thread record so that reasoning succeeds without crashing.
+            try:
+                uuid_val = uuid.UUID(str(thread_id))
+            except (ValueError, TypeError):
+                uuid_val = uuid.uuid4()
+            try:
+                thread, _ = Thread.objects.get_or_create(
+                    public_id=uuid_val,
+                    defaults={
+                        "title": "Coastal Inquiry",
+                        "user": request.user if request.user.is_authenticated else None,
+                        "session_key": getattr(getattr(request, "session", None), "session_key", "") or "",
+                    },
+                )
+            except Exception:
+                thread = Thread(
+                    public_id=uuid_val,
+                    title="Coastal Inquiry",
+                    user=request.user if request.user.is_authenticated else None,
+                )
 
         serializer = ChatMessagePostSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -193,18 +219,25 @@ class ChatMessageStreamView(APIView):
 
         # Multi-turn context: retrieve last assistant message's intent (Part F1)
         prev_intent = None
-        last_assistant_msg = (
-            thread.messages.filter(role="assistant").order_by("-created_at").first()
-        )
-        if last_assistant_msg and last_assistant_msg.payload and isinstance(last_assistant_msg.payload, dict):
-            prev_intent = last_assistant_msg.payload.get("intent")
+        try:
+            last_assistant_msg = (
+                thread.messages.filter(role="assistant").order_by("-created_at").first()
+            )
+            if last_assistant_msg and last_assistant_msg.payload and isinstance(last_assistant_msg.payload, dict):
+                prev_intent = last_assistant_msg.payload.get("intent")
+        except Exception:
+            pass
 
-        # Save user message immediately
-        Message.objects.create(
-            thread=thread,
-            role="user",
-            content=content,
-        )
+        # Save user message immediately if thread is persisted
+        try:
+            if thread.pk:
+                Message.objects.create(
+                    thread=thread,
+                    role="user",
+                    content=content,
+                )
+        except Exception:
+            pass
 
         def event_stream_generator() -> Generator[str, None, None]:
             # Flush connection immediately with a comment
@@ -237,22 +270,26 @@ class ChatMessageStreamView(APIView):
 
                     yield f"event: {evt_type}\ndata: {json.dumps(evt_data)}\n\n"
 
-                # Persist assistant reply
-                assistant_text = "".join(assistant_tokens).strip()
-                payload_to_store: dict[str, Any] = {}
-                if risk_payload:
-                    payload_to_store["risk"] = risk_payload
-                if resolved_intent:
-                    payload_to_store["intent"] = resolved_intent
+                # Persist assistant reply safely
+                try:
+                    assistant_text = "".join(assistant_tokens).strip()
+                    payload_to_store: dict[str, Any] = {}
+                    if risk_payload:
+                        payload_to_store["risk"] = risk_payload
+                    if resolved_intent:
+                        payload_to_store["intent"] = resolved_intent
 
-                Message.objects.create(
-                    thread=thread,
-                    role="assistant",
-                    content=assistant_text,
-                    payload=payload_to_store if payload_to_store else None,
-                )
-                thread.last_message_at = timezone.now()
-                thread.save(update_fields=["last_message_at"])
+                    if thread.pk:
+                        Message.objects.create(
+                            thread=thread,
+                            role="assistant",
+                            content=assistant_text,
+                            payload=payload_to_store if payload_to_store else None,
+                        )
+                        thread.last_message_at = timezone.now()
+                        thread.save(update_fields=["last_message_at"])
+                except Exception as save_err:
+                    logger.warning("chat_message_persistence_warning", error=str(save_err))
 
             except Exception as exc:
                 logger.error("chat_stream_error", error=str(exc))

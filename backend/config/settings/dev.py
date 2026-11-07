@@ -21,9 +21,13 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
     "http://app.localtest.me:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+if os.environ.get("VERCEL"):
+    CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

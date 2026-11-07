@@ -420,9 +420,25 @@ export const LiveMarineTelemetry: React.FC<LiveMarineTelemetryProps> = ({
       )}
 
       {isError && (
-        <div className="p-4 rounded-lg bg-risk-unsafe-bg text-risk-unsafe border border-risk-unsafe/30 text-xs flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
-          <span>Could not retrieve marine telemetry for these coordinates. Ensure coordinate is over open water.</span>
+        <div className="p-4 rounded-lg bg-risk-unsafe-bg text-risk-unsafe border border-risk-unsafe/30 text-xs flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 shrink-0" />
+            <span>Could not retrieve marine telemetry for these coordinates. Ensure coordinate is over open water.</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="px-2 py-0.5 rounded bg-surface border border-border hover:border-primary text-ink text-xs font-semibold shrink-0"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {data && current && current.wave_height_m === null && (
+        <div className="p-3.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 text-xs flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+          <span>Selected coordinate is on land. Showing coastal atmospheric meteorology. Select a coastal port or open sea coordinates for wave &amp; swell data.</span>
         </div>
       )}
 

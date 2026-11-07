@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { ensureCsrfToken, API_BASE_URL } from "@/lib/api/client";
+import { api, ensureCsrfToken, API_BASE_URL } from "@/lib/api/client";
 import type { RiskAssessmentData } from "./RiskCard";
 
 export interface ClarificationOptionData {
@@ -47,6 +47,7 @@ export interface MapPayload {
 }
 
 export function useChatStream(threadId: string | null) {
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(threadId);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -54,6 +55,12 @@ export function useChatStream(threadId: string | null) {
   const [mapData, setMapData] = useState<MapPayload | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const stallTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (threadId) {
+      setActiveThreadId(threadId);
+    }
+  }, [threadId]);
 
   const cancelStream = useCallback(() => {
     if (abortControllerRef.current) {
@@ -81,9 +88,29 @@ export function useChatStream(threadId: string | null) {
       location?: { lat: number; lon: number },
       vesselClass: "small_craft" | "mechanised" = "small_craft",
     ) => {
-      if (!threadId || isStreaming) return;
+      if (isStreaming) return;
 
       cancelStream();
+
+      // Ensure thread exists or lazily create one
+      let currentId = activeThreadId || threadId;
+      if (!currentId) {
+        try {
+          const res = await api.post<{ id: string }>("/chat/threads/", {
+            title: content.slice(0, 40) || "Coastal Inquiry",
+          });
+          if (res?.id) {
+            currentId = res.id;
+            setActiveThreadId(res.id);
+          }
+        } catch (err) {
+          console.warn("Lazy thread creation failed, using client UUID fallback", err);
+          currentId = crypto.randomUUID();
+          setActiveThreadId(currentId);
+        }
+      }
+
+      if (!currentId) return;
 
       // Add user message and pending assistant message
       const userMsgId = `user-${Date.now()}`;
@@ -112,7 +139,7 @@ export function useChatStream(threadId: string | null) {
         const csrfTokenMatch = typeof document !== "undefined" ? document.cookie.match(/(^|;\s*)csrftoken=([^;]*)/) : null;
         const csrfToken = tokenFromFetch || (csrfTokenMatch ? decodeURIComponent(csrfTokenMatch[2]) : "");
 
-        const endpoint = `${API_BASE_URL.replace(/\/$/, "")}/chat/threads/${threadId}/messages/`;
+        const endpoint = `${API_BASE_URL.replace(/\/$/, "")}/chat/threads/${currentId}/messages/`;
         const response = await fetch(endpoint, {
           method: "POST",
           headers: {
@@ -264,7 +291,7 @@ export function useChatStream(threadId: string | null) {
         abortControllerRef.current = null;
       }
     },
-    [threadId, isStreaming, cancelStream],
+    [threadId, activeThreadId, isStreaming, cancelStream],
   );
 
   return {

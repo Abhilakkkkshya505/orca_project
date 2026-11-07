@@ -369,7 +369,7 @@ class GroqProvider(BaseLLMProvider):
         for attempt in range(2):
             try:
                 payload = {
-                    "model": self.model_name,
+                    "model": self.model_name or "qwen/qwen3.8-27b",
                     "messages": [
                         {
                             "role": "system",
@@ -426,7 +426,7 @@ class GroqProvider(BaseLLMProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message[:1000]},
         ]
-        models_to_try = [self.model_name or "qwen/qwen3.8-27b", "llama-3.3-70b-versatile", "qwen/qwen3.8-27b"]
+        models_to_try = [self.model_name or "qwen/qwen3.8-27b", "qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
         for mod in dict.fromkeys(models_to_try):
             payload = {
                 "model": mod,

@@ -15,7 +15,24 @@ export interface RequestOptions extends RequestInit {
   skipAuthRedirect?: boolean;
 }
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api/v1";
+function getApiBaseUrl(): string {
+  // If running in browser and on a live production domain (e.g. vercel.app or any https host),
+  // always use relative /api/v1 unless an explicit production HTTPS API URL is configured.
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".localtest.me");
+    if (!isLocal) {
+      const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+      if (typeof envUrl === "string" && envUrl.startsWith("https://")) {
+        return envUrl;
+      }
+      return "/api/v1";
+    }
+  }
+  return import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "/api/v1";
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export async function ensureCsrfToken(): Promise<string | null> {
   let existing = getCookie("csrftoken");
@@ -51,7 +68,10 @@ export async function apiRequest<T = unknown>(
 
   // On state-mutating requests (POST, PATCH, DELETE, PUT), include CSRF token
   if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
-    const csrfToken = getCookie("csrftoken");
+    let csrfToken = getCookie("csrftoken");
+    if (!csrfToken) {
+      csrfToken = await ensureCsrfToken();
+    }
     if (csrfToken) {
       headers.set("X-CSRFToken", csrfToken);
     }
