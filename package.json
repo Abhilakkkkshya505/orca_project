@@ -6,3 +6,4 @@
     "vercel-build": "pnpm --filter orca-frontend run build"
   }
 }
+
