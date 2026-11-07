@@ -318,6 +318,12 @@ class GroqProvider(BaseLLMProvider):
                 content = resp.json()["choices"][0]["message"]["content"]
                 clean = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip(), flags=re.MULTILINE)
                 data = json.loads(clean)
+                if isinstance(data.get("needs_clarification"), str):
+                    data["needs_clarification"] = {
+                        "reason": "no_place",
+                        "options": [],
+                        "message": data["needs_clarification"],
+                    }
                 return Intent(**data)
             else:
                 logger.warning("groq_intent_http_error", status=resp.status_code, body=resp.text[:200])

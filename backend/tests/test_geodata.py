@@ -53,17 +53,41 @@ def test_ingestion_idempotency():
     """Running ingestion tasks multiple times does not duplicate snapshots."""
     cell, _ = GridCell.objects.get_or_create(lat=9.97, lon=76.24, defaults={"resolution_deg": 0.1})
     source, _ = DataSource.objects.get_or_create(
-        slug="open_meteo",
-        defaults={"name": "Open Meteo", "is_enabled": True},
+        slug="open_meteo_marine",
+        defaults={"name": "Open-Meteo Marine", "is_enabled": True},
     )
 
-    with patch("apps.geodata.sources.open_meteo.OpenMeteoAdapter.fetch", _mock_fetch):
+    fixed_issued = datetime(2026, 10, 18, 10, 0, tzinfo=UTC)
+    t1 = datetime(2026, 10, 18, 11, 0, tzinfo=UTC).isoformat()
+    t2 = datetime(2026, 10, 18, 12, 0, tzinfo=UTC).isoformat()
+    mock_data = {
+        "hourly": {
+            "time": [t1, t2],
+            "wave_height": [1.4, 1.5],
+            "wave_period": [7.0, 7.2],
+        }
+    }
+
+    def _mock_marine(self, lat: float, lon: float, since=None):
+        return [
+            RawRecord(
+                source_slug=self.slug,
+                lat=lat,
+                lon=lon,
+                issued_at=fixed_issued,
+                data=mock_data,
+            )
+        ]
+
+    with patch("apps.geodata.tasks.KEY_COASTAL_POINTS", [(9.97, 76.24)]), \
+         patch("apps.geodata.sources.open_meteo_marine.OpenMeteoMarineAdapter.fetch", _mock_marine), \
+         patch("apps.geodata.sources.open_meteo_forecast.OpenMeteoForecastAdapter.fetch", return_value=[]):
         # Ingest first time
-        res1 = ingest_source_task("open_meteo")
+        res1 = ingest_source_task("open_meteo_marine")
         initial_count = ForecastSnapshot.objects.filter(cell=cell, source=source).count()
 
         # Ingest second time
-        res2 = ingest_source_task("open_meteo")
+        res2 = ingest_source_task("open_meteo_marine")
         final_count = ForecastSnapshot.objects.filter(cell=cell, source=source).count()
 
     assert res1.get("status") == "success"

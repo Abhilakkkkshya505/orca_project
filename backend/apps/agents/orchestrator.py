@@ -389,19 +389,72 @@ class Orchestrator:
             },
         }
 
+    def _resolve_place_coords(self, place) -> tuple[float | None, float | None, str]:
+        """Resolves sea coordinates for PlaceRef via slug, database lookup, or known Indian port stems."""
+        lat = getattr(place, "lat", None)
+        lon = getattr(place, "lon", None)
+        name = getattr(place, "text", "") or ""
+
+        # 1. By slug
+        slug = getattr(place, "port_slug", None)
+        if (lat is None or lon is None) and slug:
+            p = Port.objects.filter(slug=slug.strip().lower()).first()
+            if p:
+                return float(p.lat), float(p.lon), p.name
+
+        # 2. By text DB lookup
+        if (lat is None or lon is None) and name:
+            from apps.agents.parser import resolve_port_from_db
+            p, _, _ = resolve_port_from_db(name)
+            if p:
+                return float(p.lat), float(p.lon), p.name
+
+        # 3. Known Indian ports fallback
+        KNOWN = {
+            "kochi": (9.967, 76.242, "Kochi (Cochin)"),
+            "cochin": (9.967, 76.242, "Kochi (Cochin)"),
+            "mumbai": (18.940, 72.840, "Mumbai (Bombay)"),
+            "chennai": (13.084, 80.292, "Chennai (Madras)"),
+            "visakhapatnam": (17.686, 83.218, "Visakhapatnam (Vizag)"),
+            "vizag": (17.686, 83.218, "Visakhapatnam (Vizag)"),
+            "paradip": (20.316, 86.611, "Paradip"),
+            "kandla": (23.003, 70.219, "Kandla"),
+            "kolkata": (22.572, 88.363, "Kolkata (Calcutta)"),
+            "mangalore": (12.914, 74.856, "New Mangalore"),
+            "tuticorin": (8.764, 78.134, "V.O. Chidambaranar (Tuticorin)"),
+            "mormugao": (15.416, 73.800, "Mormugao (Goa)"),
+            "goa": (15.416, 73.800, "Mormugao (Goa)"),
+        }
+        name_lower = name.lower()
+        for k, (klat, klon, kname) in KNOWN.items():
+            if k in name_lower:
+                return klat, klon, kname
+
+        return lat, lon, name
+
     def _handle_comparison_flow(self, places: list, intent: Intent, user) -> Generator[dict[str, Any], None, None]:
         """Runs side-by-side evaluation for two ports and yields comparison data."""
         p1, p2 = places[0], places[1]
+        lat1, lon1, name1 = self._resolve_place_coords(p1)
+        lat2, lon2, name2 = self._resolve_place_coords(p2)
+
+        if lat1 is None or lon1 is None or lat2 is None or lon2 is None:
+            yield {
+                "event": "error",
+                "data": {"code": "unresolved_location", "message": f"Could not determine sea coordinates to compare {p1.text} and {p2.text}."},
+            }
+            return
+
         now = timezone.now()
         vessel = intent.vessel_class or "small_craft"
 
         yield {
             "event": "status",
-            "data": {"step": "evaluating_ports", "label": f"Evaluating conditions for {p1.text} and {p2.text}..."},
+            "data": {"step": "evaluating_ports", "label": f"Evaluating conditions for {name1} and {name2}..."},
         }
 
-        a1 = evaluate_and_record_risk(lat=p1.lat, lon=p1.lon, valid_from=now, valid_to=now + timedelta(hours=12), vessel_class=vessel, user=user)
-        a2 = evaluate_and_record_risk(lat=p2.lat, lon=p2.lon, valid_from=now, valid_to=now + timedelta(hours=12), vessel_class=vessel, user=user)
+        a1 = evaluate_and_record_risk(lat=lat1, lon=lon1, valid_from=now, valid_to=now + timedelta(hours=12), vessel_class=vessel, user=user)
+        a2 = evaluate_and_record_risk(lat=lat2, lon=lon2, valid_from=now, valid_to=now + timedelta(hours=12), vessel_class=vessel, user=user)
 
         # Emit both risk cards
         yield {"event": "risk", "data": RiskAssessmentSerializer(a1).data}
@@ -409,7 +462,7 @@ class Orchestrator:
 
         # Map showing both ports
         map_payload = {
-            "focus": {"lat": (p1.lat + p2.lat) / 2.0, "lon": (p1.lon + p2.lon) / 2.0, "zoom": 6},
+            "focus": {"lat": (lat1 + lat2) / 2.0, "lon": (lon1 + lon2) / 2.0, "zoom": 6},
             "layers": [
                 {
                     "id": "compare-ports",
@@ -417,8 +470,8 @@ class Orchestrator:
                     "data": {
                         "type": "FeatureCollection",
                         "features": [
-                            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [p1.lon, p1.lat]}, "properties": {"name": p1.text, "level": a1.level}},
-                            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [p2.lon, p2.lat]}, "properties": {"name": p2.text, "level": a2.level}},
+                            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon1, lat1]}, "properties": {"name": name1, "level": a1.level}},
+                            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon2, lat2]}, "properties": {"name": name2, "level": a2.level}},
                         ],
                     },
                 }
@@ -427,9 +480,9 @@ class Orchestrator:
         yield {"event": "map", "data": map_payload}
 
         comp_text = render_comparison_explanation(
-            port1_name=p1.text,
+            port1_name=name1,
             assessment1=a1,
-            port2_name=p2.text,
+            port2_name=name2,
             assessment2=a2,
             units=intent.units or "metric",
         )
