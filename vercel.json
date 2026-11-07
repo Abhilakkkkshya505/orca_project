@@ -22,6 +22,18 @@
       "dest": "api/index.py"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "frontend/assets/$1"
+    },
+    {
+      "src": "/(favicon\\.ico|favicon\\.svg|icon\\.svg|manifest\\.webmanifest|sw\\.js|offline\\.html|robots\\.txt|sitemap\\.xml)",
+      "dest": "frontend/$1"
+    },
+    {
+      "src": "/(.*\\.(?:js|css|svg|ico|png|jpg|jpeg|webp|webmanifest|json|woff|woff2|ttf|eot|wasm|txt|html|pmtiles))",
+      "dest": "frontend/$1"
+    },
+    {
       "handle": "filesystem"
     },
     {
@@ -30,4 +42,3 @@
     }
   ]
 }
-
