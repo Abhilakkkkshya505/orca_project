@@ -1,44 +1,14 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "frontend/assets/$1"
-    },
-    {
-      "src": "/(favicon\\.ico|favicon\\.svg|icon\\.svg|manifest\\.webmanifest|sw\\.js|offline\\.html|robots\\.txt|sitemap\\.xml)",
-      "dest": "frontend/$1"
-    },
-    {
-      "src": "/(.*\\.(?:js|css|svg|ico|png|jpg|jpeg|webp|webmanifest|json|woff|woff2|ttf|eot|wasm|txt|html|pmtiles))",
-      "dest": "frontend/$1"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
