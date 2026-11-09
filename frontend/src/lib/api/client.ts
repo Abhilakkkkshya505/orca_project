@@ -16,13 +16,21 @@ export interface RequestOptions extends RequestInit {
 }
 
 function getApiBaseUrl(): string {
-  // If running in browser and on a live production domain (e.g. vercel.app or any https host),
-  // always use relative /api/v1 unless an explicit production HTTPS API URL is configured.
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    const isLocal = hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".localtest.me");
-    if (!isLocal) {
-      const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+    const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "";
+
+    // When running locally on localhost or 127.0.0.1, always route through Vite's dev proxy (/api/v1)
+    // to eliminate CORS cross-origin blocks, third-party cookie restrictions, and DNS rebinding errors.
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      if (!envUrl || (typeof envUrl === "string" && envUrl.includes("localtest.me"))) {
+        return "/api/v1";
+      }
+      return envUrl;
+    }
+
+    // On live production domains (e.g. *.vercel.app or HTTPS hosts), use relative /api/v1
+    if (window.location.protocol === "https:" || hostname.endsWith(".vercel.app")) {
       if (typeof envUrl === "string" && envUrl.startsWith("https://")) {
         return envUrl;
       }

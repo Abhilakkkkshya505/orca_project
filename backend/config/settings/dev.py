@@ -14,10 +14,15 @@ CSRF_COOKIE_DOMAIN = env("CSRF_COOKIE_DOMAIN", default=None)
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://app.localtest.me:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -25,9 +30,10 @@ CSRF_TRUSTED_ORIGINS = [
     "http://app.localtest.me:5173",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
-
-if os.environ.get("VERCEL"):
-    CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
